@@ -43,11 +43,11 @@ class settings_menu(ui_base):
             
     def update_sfx_volume(self):
         value = self.sfx_volume_slider["value"]
-        set_sfx_volume(value)
+        set_sfx_volume(value/100)
             
     def update_music_volume(self):
         value = self.music_volume_slider["value"]
-        set_music_volume(value)
+        set_music_volume(value/100)
         
     def play_sample_sound(self):
         sample_sfx = base.loader.loadSfx(join("assets", "sfx", "sample.wav")) 

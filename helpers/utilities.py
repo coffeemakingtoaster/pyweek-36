@@ -37,8 +37,7 @@ def setup_windowed():
     wp.set_size(GAME_CONFIG.DEFAULT_WINDOW_WIDTH, GAME_CONFIG.DEFAULT_WINDOW_HEIGHT)
     wp.set_origin(-2, -2)
     base.win.requestProperties(wp) 
-    
-        
+            
 def save_config(path):
     config = {"sfx_volume": float(get_sfx_volume()), "music_volume": float(get_music_volume()), "fullscreen": get_fullscreen_value() }
     
@@ -51,13 +50,13 @@ def get_sfx_volume():
     
 def set_sfx_volume(value):
     for manager in base.sfxManagerList:
-        manager.setVolume(value/100)
+        manager.setVolume(value)
         
 def get_music_volume():
     return base.musicManager.getVolume()
             
 def set_music_volume(value):
-    base.musicManager.setVolume(value/100)
+    base.musicManager.setVolume(value)
     
 def get_fullscreen_value():
     wp = WindowProperties(base.win.getProperties())  
