@@ -4,8 +4,9 @@ from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
 from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
-from panda3d.core import WindowProperties
+from helpers.utilities import load_config, save_config
 
+from panda3d.core import WindowProperties
 
 from direct.showbase.ShowBase import ShowBase
 from direct.task.Task import Task
@@ -13,7 +14,7 @@ from direct.gui.OnscreenText import OnscreenText
 
 from os.path import join
 
-# Load configfile that disables model caching
+# Load panda3d configfile that disables model caching
 loadPrcFile("./settings.prc")
 
 class main_game(ShowBase):
@@ -21,11 +22,7 @@ class main_game(ShowBase):
         
         ShowBase.__init__(self)
         
-        # Set window properties to default
-        wp = WindowProperties(base.win.getProperties())  
-        wp.set_size(GAME_CONFIG.DEFAULT_WINDOW_WIDTH, GAME_CONFIG.DEFAULT_WINDOW_HEIGHT)
-        wp.set_origin(-2, -2)
-        base.win.requestProperties(wp)
+        load_config(join("user_config.json"))
 
         self.game_status = GAME_STATUS.MAIN_MENU 
 
@@ -75,7 +72,6 @@ class main_game(ShowBase):
         # Do not progress game logic if game is not active
         if self.game_status == GAME_STATUS.RUNNING:
            return Task.cont 
-        
 
         return Task.cont
     
