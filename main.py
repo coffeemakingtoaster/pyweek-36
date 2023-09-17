@@ -27,9 +27,7 @@ class main_game(ShowBase):
         self.game_status = GAME_STATUS.MAIN_MENU 
 
         self.status_display = OnscreenText(text=GAME_STATUS.MAIN_MENU, pos=(0.9,0.9 ), scale=0.07,fg=(255,0,0, 1))
-
-        self.fps_counter = OnscreenText(text="0", pos=(-0.9,0.9 ), scale=0.07,fg=(255,0,0, 1))
-
+        
         # Set value high to instantly trigger update 
         self.ticks_since_last_fps_update = 1000
 
@@ -56,12 +54,6 @@ class main_game(ShowBase):
     def game_loop(self, task):
 
         dt = self.clock.dt 
-
-        if self.ticks_since_last_fps_update > GAME_CONSTANTS.FPS_COUNTER_UPDATE_TICK_INTERVAL:
-            self.fps_counter["text"] = str(1 // dt)
-            self.ticks_since_last_fps_update = 0
-        else:
-            self.ticks_since_last_fps_update += 1
 
         if self.game_status == GAME_STATUS.STARTING:
             print("Starting")

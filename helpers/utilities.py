@@ -29,6 +29,9 @@ def load_config(path):
             setup_windowed()
     else:
       setup_windowed() 
+      
+    if "show_fps" in config:
+        base.setFrameRateMeter(config["show_fps"])
         
         
 def setup_windowed():
