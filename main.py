@@ -1,0 +1,102 @@
+from panda3d.core import loadPrcFile
+
+from ui.main_menu import main_menu
+from ui.pause_menu import pause_menu
+from constants import GAME_STATUS, GAME_CONSTANTS
+
+
+from direct.showbase.ShowBase import ShowBase
+from direct.task.Task import Task
+from direct.gui.OnscreenText import OnscreenText
+
+
+# Load configfile that disables model caching
+loadPrcFile("./settings.prc")
+
+class main_game(ShowBase):
+    def __init__(self):
+
+        self.game_status = GAME_STATUS.MAIN_MENU 
+
+        self.status_display = OnscreenText(text=GAME_STATUS.MAIN_MENU, pos=(0.9,0.9 ), scale=0.07,fg=(255,0,0, 1))
+
+        self.fps_counter = OnscreenText(text="0", pos=(-0.9,0.9 ), scale=0.07,fg=(255,0,0, 1))
+
+        # Set value high to instantly trigger update 
+        self.ticks_since_last_fps_update = 1000
+
+        ShowBase.__init__(self)
+        self.active_ui = main_menu()
+        self.setBackgroundColor((0, 0, 0, 0))
+
+        # Create event handlers for events fired by UI
+        self.accept("start_game", self.set_game_status, [GAME_STATUS.STARTING])
+
+        # Create event handlers for events fired by keyboard
+        self.accept("escape", self.toggle_pause)
+        self.accept("pause_game", self.toggle_pause)
+
+        self.accept("goto_main_menu", self.goto_to_main_menu)
+
+        self.gameTask = base.taskMgr.add(self.game_loop, "gameLoop")
+
+    def game_loop(self, task):
+
+        dt = self.clock.dt 
+
+        if self.ticks_since_last_fps_update > GAME_CONSTANTS.FPS_COUNTER_UPDATE_TICK_INTERVAL:
+            self.fps_counter["text"] = str(1 // dt)
+            self.ticks_since_last_fps_update = 0
+        else:
+            self.ticks_since_last_fps_update += 1
+
+        if self.game_status == GAME_STATUS.STARTING:
+            print("Starting")
+            self.set_game_status(GAME_STATUS.LOADING_LEVEL)
+            # Move this to task?
+            self.load_game()
+
+        # Do not progress game logic if game is not active
+        if self.game_status == GAME_STATUS.RUNNING:
+           return Task.cont 
+        
+
+        return Task.cont
+    
+    def load_game(self):
+        print("Loading game")
+        self.active_ui.destroy()
+        self.setBackgroundColor((1, 1, 1, 1))
+        self.set_game_status(GAME_STATUS.RUNNING)
+
+    def set_game_status(self, status):
+        self.status_display["text"] = status
+        self.game_status = status
+
+    def toggle_pause(self):
+        if self.game_status == GAME_STATUS.RUNNING:
+            self.set_game_status(GAME_STATUS.PAUSED)
+            # Not needed as of now as gui does not exist 
+            #self.active_ui.destroy()
+            self.active_ui = pause_menu()
+        elif self.game_status == GAME_STATUS.PAUSED:
+            self.active_ui.destroy()
+            #self.active_ui = hud
+            self.set_game_status(GAME_STATUS.RUNNING)
+
+    def goto_to_main_menu(self):
+        print("Return to main menu")
+        # no hud yet
+        self.active_ui.destroy()
+        self.active_ui = main_menu()
+        self.setBackgroundColor((0, 0, 0, 0))
+        self.set_game_status(GAME_STATUS.MAIN_MENU)
+
+
+def start_game():
+    print("Starting game..")
+    game = main_game()
+    game.run()
+
+if __name__ == "__main__":
+    start_game()
