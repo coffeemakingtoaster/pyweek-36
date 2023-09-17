@@ -11,6 +11,7 @@ from direct.showbase.ShowBase import ShowBase
 from direct.task.Task import Task
 from direct.gui.OnscreenText import OnscreenText
 
+from os.path import join
 
 # Load configfile that disables model caching
 loadPrcFile("./settings.prc")
@@ -49,7 +50,12 @@ class main_game(ShowBase):
         self.accept("toggle_settings", self.toggle_settings)
 
         self.gameTask = base.taskMgr.add(self.game_loop, "gameLoop")
-
+        
+        # Load music
+        background_music = base.loader.loadMusic(join("assets", "music", "music.mp3")) 
+        background_music.setLoop(True)
+        background_music.play()
+        
     def game_loop(self, task):
 
         dt = self.clock.dt 
