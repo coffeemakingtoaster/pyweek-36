@@ -2,7 +2,9 @@ from panda3d.core import loadPrcFile
 
 from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
-from constants import GAME_STATUS, GAME_CONSTANTS
+from ui.settings_menu import settings_menu
+from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
+from panda3d.core import WindowProperties
 
 
 from direct.showbase.ShowBase import ShowBase
@@ -15,6 +17,14 @@ loadPrcFile("./settings.prc")
 
 class main_game(ShowBase):
     def __init__(self):
+        
+        ShowBase.__init__(self)
+        
+        # Set window properties to default
+        wp = WindowProperties(base.win.getProperties())  
+        wp.set_size(GAME_CONFIG.DEFAULT_WINDOW_WIDTH, GAME_CONFIG.DEFAULT_WINDOW_HEIGHT)
+        wp.set_origin(-2, -2)
+        base.win.requestProperties(wp)
 
         self.game_status = GAME_STATUS.MAIN_MENU 
 
@@ -25,9 +35,8 @@ class main_game(ShowBase):
         # Set value high to instantly trigger update 
         self.ticks_since_last_fps_update = 1000
 
-        ShowBase.__init__(self)
-        self.active_ui = main_menu()
-        self.setBackgroundColor((0, 0, 0, 0))
+        self.active_ui = None 
+        self.goto_to_main_menu()
 
         # Create event handlers for events fired by UI
         self.accept("start_game", self.set_game_status, [GAME_STATUS.STARTING])
@@ -37,6 +46,7 @@ class main_game(ShowBase):
         self.accept("pause_game", self.toggle_pause)
 
         self.accept("goto_main_menu", self.goto_to_main_menu)
+        self.accept("toggle_settings", self.toggle_settings)
 
         self.gameTask = base.taskMgr.add(self.game_loop, "gameLoop")
 
@@ -66,7 +76,7 @@ class main_game(ShowBase):
     def load_game(self):
         print("Loading game")
         self.active_ui.destroy()
-        self.setBackgroundColor((1, 1, 1, 1))
+        self.setBackgroundColor((0, 0, 0, 0))
         self.set_game_status(GAME_STATUS.RUNNING)
 
     def set_game_status(self, status):
@@ -87,12 +97,24 @@ class main_game(ShowBase):
     def goto_to_main_menu(self):
         print("Return to main menu")
         # no hud yet
-        self.active_ui.destroy()
+        if self.active_ui is not None:
+            self.active_ui.destroy()
         self.active_ui = main_menu()
-        self.setBackgroundColor((0, 0, 0, 0))
+        self.setBackgroundColor((1, 1, 1, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
-
-
+        
+        
+    def toggle_settings(self):
+        if self.game_status == GAME_STATUS.MAIN_MENU:
+            self.active_ui.destroy()
+            self.active_ui = settings_menu()
+            self.set_game_status(GAME_STATUS.SETTINGS)
+        elif self.game_status == GAME_STATUS.SETTINGS:
+            self.active_ui.destroy()
+            self.active_ui = main_menu() 
+            self.set_game_status(GAME_STATUS.MAIN_MENU)
+            
+        
 def start_game():
     print("Starting game..")
     game = main_game()

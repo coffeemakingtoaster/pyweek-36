@@ -1,5 +1,5 @@
 from ui.ui_base import ui_base 
-from constants import GAME_STATUS
+from config import GAME_STATUS
 
 from direct.gui.DirectGui import DirectButton 
 
@@ -20,5 +20,4 @@ class pause_menu(ui_base):
         messenger.send('pause_game') 
     
     def goto_main_menu(self):
-        print("goto")
         messenger.send('goto_main_menu') 
