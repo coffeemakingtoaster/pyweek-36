@@ -1,4 +1,4 @@
-from panda3d.core import loadPrcFile
+from panda3d.core import loadPrcFile, CollisionHandlerEvent, CollisionTraverser
 
 from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
@@ -46,6 +46,8 @@ class main_game(ShowBase):
         self.currentRoom = None
         self.oldRoom = None
         
+        base.cTrav = CollisionTraverser()
+
         self.entities = []
         
         self.static_entities = []
@@ -95,8 +97,12 @@ class main_game(ShowBase):
        
         self.player.update(dt)
        
-        for entity in self.entities:
+        for i, entity in enumerate(self.entities):
            entity.update(dt, self.player.model.getPos())
+           if hasattr(entity, "is_dead"):
+                if entity.is_dead:
+                    entity.destroy()
+                    del self.entities[i]
 
         return Task.cont
     

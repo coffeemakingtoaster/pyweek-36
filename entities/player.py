@@ -1,5 +1,6 @@
 from entities.entity_base import enity_base
-from config import GAME_CONSTANTS 
+from entities.bullet import bullet_entity
+from config import GAME_CONSTANTS, ENTITY_TEAMS
 from helpers.model_helpers import load_model
 from helpers.utilities import lock_mouse_in_window
 from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane 
@@ -24,6 +25,7 @@ class player_entity(enity_base):
         self.accept("s",self.set_movement_status, ["down"])
         self.accept("s-up", self.unset_movement_status, ["down"])
         
+        self.accept("mouse1", self.shoot_bullet)
         
         # For testing
         self.accept("space", self.take_damage) 
@@ -35,6 +37,10 @@ class player_entity(enity_base):
         self.model.setPos(0,0,0)
         
         self.current_hp = GAME_CONSTANTS.PLAYER_MAX_HP
+        
+        self.bullets = []
+        
+        self.is_dead = False
         
     def set_movement_status(self, direction):
         self.movement_status[direction] = 1
@@ -72,14 +78,35 @@ class player_entity(enity_base):
             print("Man im dead")
             messenger.send("goto_main_menu")
         
+        bullets_to_delete = []
+        for i, bullet in enumerate(self.bullets):
+            bullet.update(dt)
+            if bullet.is_dead:
+                bullet.destroy()
+                del self.bullets[i]
+        
     def take_damage(self):
         self.current_hp -= 1
         messenger.send("display_hp", [self.current_hp])
         
+    def shoot_bullet(self):
+        
+        mouse_pos = base.mouseWatcherNode.getMouse()
+        nearPoint = Point3()
+        base.camLens.extrude(mouse_pos, nearPoint, Point3())
+        
+        target_point = get_vector_intersection_with_y_coordinate_plane(nearPoint, base.cam.getPos())
+        
+        player_pos = self.model.getPos()
+        delta_to_player = Vec3(target_point.x - player_pos.x, 0 , target_point.z - player_pos.z).normalized()
+        
+        print(delta_to_player)
+        
+        self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, ENTITY_TEAMS.PLAYER)) 
+        
     def destroy(self):
         self.model.removeNode()
-        
-        
-        
-
-         
+        for bullet in self.bullets:
+            bullet.destroy()
+        self.is_dead = True
+        self.ignore_all()
