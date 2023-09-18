@@ -39,7 +39,7 @@ class sample_enemy_entity(enity_base):
 
         self.notifier.addInPattern("%fn-into-%in")
         
-        self.accept("enemy-into-bullet".format(self.id), self.bullet_hit)
+        self.accept("enemy-into-bullet", self.bullet_hit)
         
         base.cTrav.addCollider(self.collision, self.notifier)
         

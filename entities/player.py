@@ -5,13 +5,15 @@ from helpers.model_helpers import load_model
 from helpers.utilities import lock_mouse_in_window
 from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane 
 
-from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2
+from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionSphere, CollisionEntry
 import math
 
 class player_entity(enity_base):
     
     def __init__(self):
         super().__init__()
+        
+        self.team = ENTITY_TEAMS.PLAYER
         
         self.movement_status = {"up":0, "down":0, "left": 0, "right": 0}
         
@@ -27,9 +29,6 @@ class player_entity(enity_base):
         
         self.accept("mouse1", self.shoot_bullet)
         
-        # For testing
-        self.accept("space", self.take_damage) 
-        
         self.model = load_model("player")
         
         self.model.reparentTo(render)
@@ -39,6 +38,22 @@ class player_entity(enity_base):
         self.current_hp = GAME_CONSTANTS.PLAYER_MAX_HP
         
         self.bullets = []
+        
+        self.collision = self.model.attachNewNode(CollisionNode("player"))
+        
+        self.collision.node().addSolid(CollisionSphere(0,0,0,0.9))
+        
+        self.collision.show()
+        
+        self.collision.setTag("team", self.team)
+        
+        self.notifier = CollisionHandlerEvent()
+
+        self.notifier.addInPattern("%fn-into-%in")
+        
+        self.accept("player-into-bullet", self.bullet_hit)
+        
+        base.cTrav.addCollider(self.collision, self.notifier)
         
         self.is_dead = False
         
@@ -85,10 +100,6 @@ class player_entity(enity_base):
                 bullet.destroy()
                 del self.bullets[i]
         
-    def take_damage(self):
-        self.current_hp -= 1
-        messenger.send("display_hp", [self.current_hp])
-        
     def shoot_bullet(self):
         
         mouse_pos = base.mouseWatcherNode.getMouse()
@@ -102,7 +113,8 @@ class player_entity(enity_base):
         
         print(delta_to_player)
         
-        self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, ENTITY_TEAMS.PLAYER)) 
+        self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, self.team)) 
+
         
     def destroy(self):
         self.model.removeNode()
@@ -110,3 +122,12 @@ class player_entity(enity_base):
             bullet.destroy()
         self.is_dead = True
         self.ignore_all()
+        
+    # collisionentry is not needed -> we ignore it 
+    def bullet_hit(self, entry: CollisionEntry):
+        # No damage taken by own bullets
+        if entry.into_node.getTag("team") == self.team:
+            return
+        self.current_hp -= 1
+        messenger.send("display_hp", [self.current_hp])
+        
