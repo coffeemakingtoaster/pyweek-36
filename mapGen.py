@@ -31,7 +31,7 @@ class MapLoader:
             
             
             
-            map.append(Room(entry,exit,5,gridPos))
+            map.append(Room(entry,exit,1,gridPos))
             
         return map
     
@@ -40,9 +40,10 @@ class MapLoader:
             self.loadRoom(room)
     
     def loadRoom(self,room):
-        roomModel=load_model(str(room.id))
-        roomModel.reparentTo(render)
-        roomModel.setPos(room.gridPos[0]*10,100,room.gridPos[1]*10)
+        #roomModel=load_model(str(room.id))
+        #roomModel.reparentTo(render)
+        #roomModel.setPos(room.gridPos[0]*10,100,room.gridPos[1]*10)
+        room.build()
         return room
     
     def loadFirstRoom(self,map):

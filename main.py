@@ -10,6 +10,8 @@ from entities.player import player_entity
 from entities.sample_enemy import sample_enemy_entity
 
 from panda3d.core import WindowProperties
+from panda3d.core import AmbientLight, DirectionalLight, LightAttrib
+from panda3d.core import LPoint3, LVector3, BitMask32
 
 from direct.showbase.ShowBase import ShowBase
 from direct.task.Task import Task
@@ -28,6 +30,7 @@ class main_game(ShowBase):
         
         # Set camera position 
         base.cam.setPos(0, -50, 0) 
+        self.setupLights()
         
         load_config(join("user_config.json"))
 
@@ -144,7 +147,16 @@ class main_game(ShowBase):
             self.active_ui.destroy()
             self.active_ui = main_menu() 
             self.set_game_status(GAME_STATUS.MAIN_MENU)
-        
+     
+    def setupLights(self):  
+        #ambientLight = AmbientLight("ambientLight")
+        #ambientLight.setColor((.8, .8, .8, 1))
+        directionalLight = DirectionalLight("directionalLight")
+        directionalLight.setDirection(LVector3(0, 45, -45))
+        directionalLight.setColor((0.6, 0.6, 0.6, 1))
+        render.setLight(render.attachNewNode(directionalLight))
+        #render.setLight(render.attachNewNode(ambientLight))
+           
 def start_game():
     print("Starting game..")
     game = main_game()
@@ -152,3 +164,5 @@ def start_game():
 
 if __name__ == "__main__":
     start_game()
+    
+    
