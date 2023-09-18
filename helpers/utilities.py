@@ -74,3 +74,13 @@ def set_fullscreen_value(fullscreen):
         base.win.requestProperties(wp)
     elif not fullscreen and is_currently_in_fullscreen:
        setup_windowed() 
+       
+def lock_mouse_in_window():
+    props = WindowProperties()
+    props.setMouseMode(WindowProperties.M_confined)
+    base.win.requestProperties(props)
+
+def release_mouse_from_window():
+    props = WindowProperties()
+    props.setMouseMode(WindowProperties.M_absolute)
+    base.win.requestProperties(props)
