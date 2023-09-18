@@ -2,7 +2,7 @@ from direct.showbase import DirectObject
 from config import MAP_CONSTANTS
 import json
 from helpers.model_helpers import load_model
-from panda3d.core import BoundingBox, NodePath, PandaNode, ShowBoundsEffect, CollisionBox, CollisionNode, LVector3f, CollisionHandlerEvent
+from panda3d.core import BoundingBox, NodePath, PandaNode, ShowBoundsEffect, CollisionBox, CollisionNode, LVector3f, CollisionHandlerEvent, CollisionSphere
 from panda3d.core import LPoint3
 
 class Room(DirectObject.DirectObject):
@@ -33,8 +33,10 @@ class Room(DirectObject.DirectObject):
             model.setPos(asset["x"]+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,asset["y"],asset["z"]+self.gridPos[1]*MAP_CONSTANTS.ROOM_SIZE)
             if asset["asset"] != "ground":
                 min_point, max_point = model.getTightBounds()
+                print(min_point)
+                
                 model.show_tight_bounds()
-                cp = CollisionBox(min_point, max_point)
+                cp = CollisionBox(min_point,max_point)
                 csn = model.attach_new_node(CollisionNode("wall"))
                 csn.show()
                 csn.node().addSolid(cp)

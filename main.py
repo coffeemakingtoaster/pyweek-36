@@ -1,5 +1,5 @@
-from panda3d.core import loadPrcFile, CollisionHandlerEvent, CollisionTraverser
-
+from panda3d.core import loadPrcFile, CollisionHandlerEvent, CollisionTraverser, CollisionHandlerPusher
+from panda3d.core import CollisionSphere, CollisionNode, CollisionTube
 from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
@@ -29,7 +29,7 @@ class main_game(ShowBase):
         ShowBase.__init__(self)
         
         # Set camera position 
-        base.cam.setPos(0, 50, 0) 
+        base.cam.setPos(0, 70, 0) 
         base.cam.setHpr(0, 180, 0)
         
         self.setupLights()
@@ -46,7 +46,9 @@ class main_game(ShowBase):
         self.currentRoom = None
         self.oldRoom = None
         
-        base.cTrav = CollisionTraverser()
+        self.cTrav = CollisionTraverser()
+        self.pusher = CollisionHandlerPusher()
+        
 
         self.entities = []
         
@@ -111,8 +113,15 @@ class main_game(ShowBase):
         self.active_ui.destroy()
         self.setBackgroundColor((1, 1, 1, 1))
         self.player = player_entity()
+        
+        self.pusher.addCollider(self.player.collision, self.player.model)
+        self.cTrav.addCollider(self.player.collision,self.pusher)
+        self.pusher.setHorizontal(True)
+        
+        
+        
         self.active_ui = game_hud(self.player.current_hp)
-        self.entities.append(sample_enemy_entity(10,10))
+        #self.entities.append(sample_enemy_entity(10,10))
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
         self.map = self.mapLoader.mapGen()

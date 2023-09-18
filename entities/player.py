@@ -33,7 +33,7 @@ class player_entity(enity_base):
         
         self.model.reparentTo(render)
         
-        self.model.setPos(0,0,0)
+        self.model.setPos(0,0.5,0)
         
         self.current_hp = GAME_CONSTANTS.PLAYER_MAX_HP
         
@@ -73,6 +73,7 @@ class player_entity(enity_base):
         
         self.model.setX(self.model.getX() + x_direction)
         self.model.setZ(self.model.getZ() + z_direction)
+        self.model.setY(0.5)
         
         base.cam.setX(self.model.getX())
         base.cam.setZ(self.model.getZ())
