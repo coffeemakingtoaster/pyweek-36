@@ -31,3 +31,6 @@ class sample_enemy_entity(enity_base):
         x = math.degrees(math.atan2(diff_to_player_normalized.x, diff_to_player_normalized.y))
 
         self.model.setR(x)
+
+    def destroy(self):
+        self.model.removeNode()

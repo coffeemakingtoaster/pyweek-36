@@ -39,6 +39,8 @@ class main_game(ShowBase):
         self.player = None
         
         self.entities = []
+        
+        self.static_entities = []
 
         self.status_display = OnscreenText(text=GAME_STATUS.MAIN_MENU, pos=(0.9,0.9 ), scale=0.07,fg=(255,0,0, 1))
 
@@ -67,8 +69,6 @@ class main_game(ShowBase):
         
     def game_loop(self, task):
         
-        
-
         dt = self.clock.dt 
 
         if self.game_status == GAME_STATUS.STARTING:
@@ -100,11 +100,8 @@ class main_game(ShowBase):
         map = mapLoader.mapGen()
         print(map)
         mapLoader.loadMap(map)
+        self.static_entities = map 
         self.set_game_status(GAME_STATUS.RUNNING)
-
-        
-        
-        
 
     def set_game_status(self, status):
         self.status_display["text"] = status
@@ -131,6 +128,10 @@ class main_game(ShowBase):
         # delete all entities
         for entity in self.entities:
             entity.destroy()
+        self.entities = []
+        for static_entity in self.static_entities:
+            static_entity.destroy()
+        self.static_entities = []
         if self.player is not None:
             self.player.destroy()
         self.active_ui = main_menu()

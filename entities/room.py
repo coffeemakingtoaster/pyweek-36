@@ -13,6 +13,8 @@ class Room(DirectObject.DirectObject):
         self.gridPos = gridPos
         self.roomAssets = self.loadRoomAssets(id)
         
+        self.models = []
+        
     def loadRoomAssets(self, id):
         file_path = f'assets/rooms/{id}.json'
         with open(file_path, 'r') as file:
@@ -24,4 +26,8 @@ class Room(DirectObject.DirectObject):
             model=load_model(asset["asset"])
             model.reparentTo(render)
             model.setPos(0,90,0)
-    
+            self.models.append(model)
+            
+    def destroy(self):
+        for model in self.models:
+            model.removeNode()
