@@ -1,5 +1,10 @@
-class ui_base:
+from direct.showbase import DirectObject
+
+class ui_base(DirectObject.DirectObject):
     def __init__(self):
+        
+        super().__init__()
+        
         self.ui_elements = []
 
     def destroy(self):

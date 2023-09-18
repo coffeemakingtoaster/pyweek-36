@@ -5,7 +5,8 @@ class enity_base(DirectObject.DirectObject):
     
     def __init__(self):
         super().__init__()
-        
+       
+    @abstractmethod 
     def destroy(self):
        pass 
         

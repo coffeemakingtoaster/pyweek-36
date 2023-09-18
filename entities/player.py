@@ -24,11 +24,17 @@ class player_entity(enity_base):
         self.accept("s",self.set_movement_status, ["down"])
         self.accept("s-up", self.unset_movement_status, ["down"])
         
+        
+        # For testing
+        self.accept("space", self.take_damage) 
+        
         self.model = load_model("player")
         
         self.model.reparentTo(render)
         
         self.model.setPos(0,0,0)
+        
+        self.current_hp = GAME_CONSTANTS.PLAYER_MAX_HP
         
     def set_movement_status(self, direction):
         self.movement_status[direction] = 1
@@ -61,6 +67,14 @@ class player_entity(enity_base):
         x = math.degrees(math.atan2(mouse_pos_norm.x, mouse_pos_norm.y))
         
         self.model.setHpr(0,0,x)
+        
+        if self.current_hp <= 0:
+            print("Man im dead")
+            messenger.send("goto_main_menu")
+        
+    def take_damage(self):
+        self.current_hp -= 1
+        messenger.send("display_hp", [self.current_hp])
         
     def destroy(self):
         self.model.removeNode()
