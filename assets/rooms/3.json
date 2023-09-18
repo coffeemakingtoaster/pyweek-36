@@ -2,13 +2,11 @@
     "assets": [
       
         {"asset": "ground", "x": 0, "y": 0, "z":0, "collider": true},
-        
         {"asset": "vertWall", "x": -12, "y": 2.5,"z":0, "collider": true},
         {"asset": "vertWall", "x": 12, "y": 2.5,"z":0, "collider": true},
         {"asset": "horWall", "x": 0, "y": 2.5,"z":12, "collider": true},
         {"asset": "horWall", "x": 0, "y": 2.5,"z":-12, "collider": true},
         {"asset": "vase", "x": -10, "y": 0,"z":0, "collider": true}
-
         
     ]
   }

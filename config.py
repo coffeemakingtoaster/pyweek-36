@@ -19,6 +19,7 @@ class GAME_STATUS:
    
 class MAP_CONSTANTS:
    ROOM_SIZE = 24
+   ROOM_HEIGHT = 5
    MAP_LENGTH = 15
    ROOM_TYPES = 3
    
