@@ -7,7 +7,7 @@
         {"asset": "vertWall", "x": 20, "y": 0,"z":0, "collider": true},
         {"asset": "horWall", "x": 0, "y": 0,"z":20, "collider": true},
         {"asset": "horWall", "x": 0, "y": 0,"z":-20, "collider": true},
-        {"asset": "vase", "x": 0, "y": 0,"z":0, "collider": true}
+        {"asset": "vase", "x": -10, "y": 0,"z":0, "collider": true}
 
         
     ]

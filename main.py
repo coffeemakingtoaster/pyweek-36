@@ -29,6 +29,7 @@ class main_game(ShowBase):
         
         # Set camera position 
         base.cam.setPos(0, -50, 0) 
+        
         self.setupLights()
         
         load_config(join("user_config.json"))
@@ -88,6 +89,7 @@ class main_game(ShowBase):
         self.active_ui.destroy()
         self.setBackgroundColor((0, 0, 0, 0))
         self.player = player_entity()
+        
         self.entities.append(self.player)
         self.active_ui = game_hud(self.player.current_hp)
         lock_mouse_in_window()

@@ -30,8 +30,8 @@ class MapLoader:
             
             
             
-            
-            map.append(Room(entry,exit,1,gridPos))
+            id = random.randint(1,MAP_CONSTANTS.ROOM_TYPES)
+            map.append(Room(entry,exit,id,gridPos))
             
         return map
     

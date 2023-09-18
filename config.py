@@ -1,5 +1,5 @@
 class GAME_CONSTANTS:
-   PLAYER_MOVEMENT_SPEED = 5
+   PLAYER_MOVEMENT_SPEED = 30
    PLAYER_MAX_HP = 5
    
    
@@ -16,6 +16,6 @@ class GAME_STATUS:
    SETTINGS = "settings"
    
 class MAP_CONSTANTS:
-   ROOM_SIZE = 5
+   ROOM_SIZE = 40
    MAP_LENGTH = 15
-   ROOM_TYPES = 10
+   ROOM_TYPES = 3

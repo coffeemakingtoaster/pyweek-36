@@ -23,5 +23,5 @@ class Room(DirectObject.DirectObject):
         for asset in self.roomAssets:
             model=load_model(asset["asset"])
             model.reparentTo(render)
-            model.setPos(0,90,0)
+            model.setPos(asset["x"]+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,asset["y"],asset["z"]+self.gridPos[1]*MAP_CONSTANTS.ROOM_SIZE)
     
