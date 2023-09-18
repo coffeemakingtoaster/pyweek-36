@@ -1,5 +1,5 @@
 from config import MAP_CONSTANTS
-from Entities.room import Room
+from entities.room import Room
 from helpers.model_helpers import load_model
 import random
 
