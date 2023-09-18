@@ -2,7 +2,7 @@ from direct.showbase import DirectObject
 from config import MAP_CONSTANTS
 import json
 from helpers.model_helpers import load_model
-from panda3d.core import BoundingBox
+from panda3d.core import BoundingBox, NodePath, PandaNode, ShowBoundsEffect, CollisionBox, CollisionNode, LVector3f, CollisionHandlerEvent
 from panda3d.core import LPoint3
 
 class Room(DirectObject.DirectObject):
@@ -18,6 +18,8 @@ class Room(DirectObject.DirectObject):
         
         self.models = []
         
+        #messenger.toggleVerbose()
+        
     def loadRoomAssets(self, id):
         file_path = f'assets/rooms/{id}.json'
         with open(file_path, 'r') as file:
@@ -26,11 +28,20 @@ class Room(DirectObject.DirectObject):
     
     def build(self):
         for asset in self.roomAssets:
-            model=load_model(asset["asset"])
+            model: NodePath =load_model(asset["asset"])
             model.reparentTo(render)
             model.setPos(asset["x"]+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,asset["y"],asset["z"]+self.gridPos[1]*MAP_CONSTANTS.ROOM_SIZE)
+            if asset["asset"] != "ground":
+                min_point, max_point = model.getTightBounds()
+                model.show_tight_bounds()
+                cp = CollisionBox(min_point, max_point)
+                csn = model.attach_new_node(CollisionNode("wall"))
+                csn.show()
+                csn.node().addSolid(cp)
+                base.cTrav.addCollider(csn, CollisionHandlerEvent())
+                self.models.append(csn)
             self.models.append(model)
-        self.boundingBox = BoundingBox(LPoint3(-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE),LPoint3(MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE))
+        #self.boundingBox = BoundingBox(LPoint3(-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE),LPoint3(MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE))
         return self
             
     def destroy(self):

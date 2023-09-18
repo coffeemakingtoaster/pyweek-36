@@ -71,6 +71,8 @@ class bullet_entity(enity_base):
         self.model.setZ(self.model.getZ() + self.direction.z * GAME_CONSTANTS.BULLET_SPEED * dt)
         
     def on_collision(self, collision: CollisionEntry):
+        
+        print(collision)
         # Is the bullet in the event the bullet from this entity class
         if collision.from_node.getTag("id") != self.id: 
             return
@@ -78,7 +80,7 @@ class bullet_entity(enity_base):
         # Ignore object that are on the same team 
         if collision.into_node.getTag("team") == self.team:
             return
-
+        
         self.is_dead =  True
         
     def destroy(self):

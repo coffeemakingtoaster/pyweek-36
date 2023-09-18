@@ -51,7 +51,11 @@ class player_entity(enity_base):
 
         self.notifier.addInPattern("%fn-into-%in")
         
+        self.notifier.addInPattern("%fn-into-%in")
+        
         self.accept("player-into-bullet", self.bullet_hit)
+        
+        self.accept("player-into-wall", self.on_movement_collision)
         
         base.cTrav.addCollider(self.collision, self.notifier)
         
@@ -130,4 +134,9 @@ class player_entity(enity_base):
             return
         self.current_hp -= 1
         messenger.send("display_hp", [self.current_hp])
+        
+    
+    def on_movement_collision(self, entry: CollisionEntry):
+        print(entry.getIntoNodePath())
+        print(entry)
         
