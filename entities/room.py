@@ -28,6 +28,7 @@ class Room(DirectObject.DirectObject):
             model.setPos(asset["x"]+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,asset["y"],asset["z"]+self.gridPos[1]*MAP_CONSTANTS.ROOM_SIZE)
     
             self.models.append(model)
+        return self
             
     def destroy(self):
         for model in self.models:

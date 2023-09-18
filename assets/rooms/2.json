@@ -1,13 +1,17 @@
 {
     "assets": [
       
-        {"asset": "ground", "x": 0, "y": 0.5, "z":0, "collider": true},
+        {"asset": "ground", "x": 0, "y": 0, "z":0, "collider": true},
         
-        {"asset": "vertWall", "x": -20, "y": 0,"z":0, "collider": true},
-        {"asset": "vertWall", "x": 20, "y": 0,"z":0, "collider": true},
-        {"asset": "horWall", "x": 0, "y": 0,"z":20, "collider": true},
-        {"asset": "horWall", "x": 0, "y": 0,"z":-20, "collider": true},
-        {"asset": "vase", "x": 10, "y": 0,"z":0, "collider": true}
+        {"asset": "vertWall", "x": -12, "y": 2.5,"z":0, "collider": true},
+        {"asset": "vertWall", "x": 12, "y": 2.5,"z":0, "collider": true},
+        {"asset": "horWall", "x": 0, "y": 2.5,"z":12, "collider": true},
+        {"asset": "horWall", "x": 0, "y": 2.5,"z":-12, "collider": true},
+        {"asset": "vase", "x": 10, "y": -1,"z":0, "collider": true},
+        {"asset": "barrel", "x": 8, "y": -1,"z":2, "collider": true},
+        {"asset": "barrel", "x": 8, "y": 0,"z":3, "collider": true},
+        {"asset": "barrel", "x": 8, "y": 0,"z":4, "collider": true},
+        {"asset": "barrel", "x": 8, "y": 0,"z":5, "collider": true}
 
         
     ]

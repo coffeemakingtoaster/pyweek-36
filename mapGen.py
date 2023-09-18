@@ -10,7 +10,7 @@ class MapLoader:
         
     def mapGen(self):
         map = []
-        gridPos = (0,-2)
+        gridPos = (0,0)
         for i in range(self.mapLength):
             if i == 0:
                 entry = 1
@@ -18,7 +18,7 @@ class MapLoader:
             else:
                 entry = self.convert_entry(map[i-1].exit)
                 if entry == 1:
-                    gridPos = (gridPos[0],gridPos[1]+1)
+                    gridPos = (gridPos[0],gridPos[1]-1)
                     exit = entry + random.randint(1,3)
                 elif entry == 2:
                     gridPos = (gridPos[0]+1,gridPos[1])
@@ -47,9 +47,7 @@ class MapLoader:
         return room
     
     def loadFirstRoom(self,map):
-        roomModel=load_model(str(map[0].id))
-        roomModel.reparentTo(render)
-        roomModel.setPos(0,90,-20)
-        return room
+        map[0].build()
+        
     def convert_entry(self,number):
         return 3 if number == 1 else 4 if number == 2 else 1 if number == 3 else 2 if number == 4 else number

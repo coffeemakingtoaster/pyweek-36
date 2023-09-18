@@ -29,7 +29,8 @@ class main_game(ShowBase):
         ShowBase.__init__(self)
         
         # Set camera position 
-        base.cam.setPos(0, -50, 0) 
+        base.cam.setPos(0, 50, 0) 
+        base.cam.setHpr(0, 180, 0)
         
         self.setupLights()
         
@@ -38,6 +39,12 @@ class main_game(ShowBase):
         self.game_status = GAME_STATUS.MAIN_MENU 
         
         self.player = None
+        
+        self.mapLoader = None
+        self.map = []
+        self.currentRoomNumber = 0
+        self.currentRoom = None
+        self.oldRoom = None
         
         self.entities = []
         
@@ -53,12 +60,16 @@ class main_game(ShowBase):
 
         # Create event handlers for events fired by keyboard
         self.accept("escape", self.toggle_pause)
+        
         self.accept("pause_game", self.toggle_pause)
 
         self.accept("goto_main_menu", self.goto_to_main_menu)
         self.accept("toggle_settings", self.toggle_settings)
 
         self.gameTask = base.taskMgr.add(self.game_loop, "gameLoop")
+        
+        self.accept("l", self.loadNextRoom)
+        self.accept("u", self.unloadPreviousRoom)
         
         # Load music
         background_music = base.loader.loadMusic(join("assets", "music", "music.mp3")) 
@@ -92,16 +103,16 @@ class main_game(ShowBase):
     def load_game(self):
         print("Loading game")
         self.active_ui.destroy()
-        self.setBackgroundColor((0, 0, 0, 0))
+        self.setBackgroundColor((1, 1, 1, 1))
         self.player = player_entity()
         self.active_ui = game_hud(self.player.current_hp)
         self.entities.append(sample_enemy_entity(10,10))
         lock_mouse_in_window()
-        mapLoader = MapLoader()
-        map = mapLoader.mapGen()
-        print(map)
-        mapLoader.loadMap(map)
-        self.static_entities = map 
+        self.mapLoader = MapLoader()
+        self.map = self.mapLoader.mapGen()
+        
+        self.currentRoom = self.mapLoader.loadRoom(self.map[0])
+        self.static_entities = self.map 
         self.set_game_status(GAME_STATUS.RUNNING)
 
     def set_game_status(self, status):
@@ -151,14 +162,24 @@ class main_game(ShowBase):
             self.set_game_status(GAME_STATUS.MAIN_MENU)
      
     def setupLights(self):  
-        #ambientLight = AmbientLight("ambientLight")
-        #ambientLight.setColor((.8, .8, .8, 1))
+        ambientLight = AmbientLight("ambientLight")
+        ambientLight.setColor((.8, .8, .8, 1))
         directionalLight = DirectionalLight("directionalLight")
-        directionalLight.setDirection(LVector3(0, 45, -45))
+        directionalLight.setDirection(LVector3(0, -45, -45))
         directionalLight.setColor((0.6, 0.6, 0.6, 1))
         render.setLight(render.attachNewNode(directionalLight))
         #render.setLight(render.attachNewNode(ambientLight))
-           
+    
+    def loadNextRoom(self):
+        self.currentRoomNumber += 1
+        self.oldRoom = self.currentRoom
+        self.currentRoom = self.mapLoader.loadRoom(self.map[self.currentRoomNumber])
+    
+    def unloadPreviousRoom(self):
+        self.oldRoom.destroy()
+        
+        
+        
 def start_game():
     print("Starting game..")
     game = main_game()

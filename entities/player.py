@@ -44,13 +44,13 @@ class player_entity(enity_base):
        
     def update(self, dt):
         x_direction = ((self.movement_status["left"] * -1 ) + self.movement_status["right"]) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
-        z_direction = ((self.movement_status["down"] * -1 ) + self.movement_status["up"]) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
+        z_direction = ((self.movement_status["down"] ) + self.movement_status["up"]* -1 ) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
         
         self.model.setX(self.model.getX() + x_direction)
         self.model.setZ(self.model.getZ() + z_direction)
         
         base.cam.setX(self.model.getX())
-        base.cam.setZ(self.model.getZ())
+        base.cam.setZ(self.model.getZ()+20)
         
         # Rotate mouse to camera
         mouse_pos = base.mouseWatcherNode.getMouse()
@@ -66,7 +66,7 @@ class player_entity(enity_base):
 
         x = math.degrees(math.atan2(mouse_pos_norm.x, mouse_pos_norm.y))
         
-        self.model.setHpr(0,0,x)
+        self.model.setHpr(0,0,-x)
         
         if self.current_hp <= 0:
             print("Man im dead")

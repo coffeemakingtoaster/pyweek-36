@@ -17,6 +17,6 @@ class GAME_STATUS:
    SETTINGS = "settings"
    
 class MAP_CONSTANTS:
-   ROOM_SIZE = 40
+   ROOM_SIZE = 24
    MAP_LENGTH = 15
    ROOM_TYPES = 3
