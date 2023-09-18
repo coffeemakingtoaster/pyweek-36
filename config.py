@@ -13,3 +13,8 @@ class GAME_STATUS:
    RUNNING = "running"
    STARTING = "starting"
    SETTINGS = "settings"
+   
+class MAP_CONSTANTS:
+   ROOM_SIZE = 5
+   MAP_LENGTH = 15
+   ROOM_TYPES = 10

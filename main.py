@@ -13,6 +13,7 @@ from direct.task.Task import Task
 from direct.gui.OnscreenText import OnscreenText
 
 from os.path import join
+from mapGen import MapLoader
 
 # Load panda3d configfile that disables model caching
 loadPrcFile("./settings.prc")
@@ -52,6 +53,8 @@ class main_game(ShowBase):
         background_music.play()
         
     def game_loop(self, task):
+        
+        
 
         dt = self.clock.dt 
 
@@ -72,6 +75,13 @@ class main_game(ShowBase):
         self.active_ui.destroy()
         self.setBackgroundColor((0, 0, 0, 0))
         self.set_game_status(GAME_STATUS.RUNNING)
+        mapLoader = MapLoader()
+        map = mapLoader.mapGen()
+        print(map)
+        mapLoader.loadMap(map)
+        
+        
+        
 
     def set_game_status(self, status):
         self.status_display["text"] = status
