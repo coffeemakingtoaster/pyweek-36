@@ -10,7 +10,286 @@
         {"asset": "vase", "x": 0, "y": 0,"z":0, "collider": true},
         {"asset": "sword", "x": 5, "y": 0,"z":0, "collider": true},
         {"asset": "sword", "x": 5, "y": 0,"z":5, "collider": true},
-        {"asset": "rocks1", "x": 10, "y": 0,"z":5, "collider": true}
+        {"asset": "rocks1", "x": 10, "y": 0,"z":5, "collider": true},
+        {
+            "asset": "torch",
+            "x": -11.95,
+            "y": 0,
+            "z": 2.6750000000000007,
+            "collider": true,
+            "rotation": 90,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": -11.95,
+            "y": 0,
+            "z": -3.9250000000000007,
+            "collider": true,
+            "rotation": 90,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": -11.975,
+            "y": 0,
+            "z": -8.875,
+            "collider": true,
+            "rotation": 90,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel",
+            "x": -11.425,
+            "y": 0,
+            "z": -3.9749999999999996,
+            "collider": true,
+            "rotation": 90,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel",
+            "x": -11.15,
+            "y": 0,
+            "z": -3.0500000000000007,
+            "collider": true,
+            "rotation": 90,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel",
+            "x": -11.4,
+            "y": 0,
+            "z": -2.125,
+            "collider": true,
+            "rotation": 90,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": 11.925,
+            "y": 0,
+            "z": -9.1,
+            "collider": true,
+            "rotation": 270,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": 11.850000000000001,
+            "y": 0,
+            "z": -4.25,
+            "collider": true,
+            "rotation": 270,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": 11.925,
+            "y": 0,
+            "z": 2.6500000000000004,
+            "collider": true,
+            "rotation": 270,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": -6.025,
+            "y": 0,
+            "z": 11.925,
+            "collider": true,
+            "rotation": 180,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": 4.0,
+            "y": 0,
+            "z": 11.95,
+            "collider": true,
+            "rotation": 180,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": -4.0,
+            "y": 0,
+            "z": -11.875,
+            "collider": true,
+            "rotation": 0,
+            "type": "deko"
+        },
+        {
+            "asset": "torch",
+            "x": 2.1750000000000007,
+            "y": 0,
+            "z": -11.875,
+            "collider": true,
+            "rotation": 0,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel2",
+            "x": -10.35,
+            "y": 0,
+            "z": -2.3499999999999996,
+            "collider": true,
+            "rotation": 60,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel2",
+            "x": -10.725,
+            "y": 0,
+            "z": -4.775,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "rocks1",
+            "x": 10.45,
+            "y": 0,
+            "z": 1.125,
+            "collider": true,
+            "rotation": 470,
+            "type": "deko"
+        },
+        {
+            "asset": "rocks1",
+            "x": 10.2,
+            "y": 0,
+            "z": -0.3249999999999993,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "rocks1",
+            "x": 10.0,
+            "y": 0,
+            "z": 2.5500000000000007,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "rocks1",
+            "x": -4.125,
+            "y": 0,
+            "z": -5.8,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "rocks1",
+            "x": -2.625,
+            "y": 0,
+            "z": -6.8,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "rocks1",
+            "x": -1.5,
+            "y": 0,
+            "z": -5.85,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "rocks1",
+            "x": -2.3499999999999996,
+            "y": 0,
+            "z": -5.275,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel",
+            "x": -0.125,
+            "y": 0,
+            "z": -5.375,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel",
+            "x": -0.6500000000000004,
+            "y": 0,
+            "z": -4.575,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel",
+            "x": -1.4749999999999996,
+            "y": 0,
+            "z": -3.8499999999999996,
+            "collider": true,
+            "rotation": 310,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel2",
+            "x": -2.8499999999999996,
+            "y": 0,
+            "z": -3.8499999999999996,
+            "collider": true,
+            "rotation": 180,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel2",
+            "x": -0.5250000000000004,
+            "y": 0,
+            "z": -7.325,
+            "collider": true,
+            "rotation": 220,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel2",
+            "x": 0.4250000000000007,
+            "y": 0,
+            "z": -6.4,
+            "collider": true,
+            "rotation": 300,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel2",
+            "x": -0.125,
+            "y": 0,
+            "z": -3.625,
+            "collider": true,
+            "rotation": 210,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel2",
+            "x": 0.8249999999999993,
+            "y": 0,
+            "z": -4.775,
+            "collider": true,
+            "rotation": 210,
+            "type": "deko"
+        },
+        {
+            "asset": "barrel2",
+            "x": -3.9499999999999993,
+            "y": 0,
+            "z": -7.675,
+            "collider": true,
+            "rotation": 240,
+            "type": "deko"
+        }
 
 
         

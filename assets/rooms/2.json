@@ -12,6 +12,7 @@
         {"asset": "barrel", "x": 8, "y": 0,"z":3, "collider": true},
         {"asset": "barrel", "x": 8, "y": 0,"z":4, "collider": true},
         {"asset": "barrel", "x": 8, "y": 0,"z":5, "collider": true}
+        
 
         
     ]
