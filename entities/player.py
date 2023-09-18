@@ -50,7 +50,7 @@ class player_entity(enity_base):
         self.model.setZ(self.model.getZ() + z_direction)
         
         base.cam.setX(self.model.getX())
-        base.cam.setZ(self.model.getZ()+20)
+        base.cam.setZ(self.model.getZ())
         
         # Rotate mouse to camera
         mouse_pos = base.mouseWatcherNode.getMouse()
