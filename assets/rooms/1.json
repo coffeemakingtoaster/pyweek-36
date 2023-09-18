@@ -1,0 +1,7 @@
+{
+    "assets": [
+      
+        {"asset": "planes", "x": 0, "y": 0, "collider": true}
+      
+    ]
+  }
