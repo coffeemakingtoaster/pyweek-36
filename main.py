@@ -7,6 +7,7 @@ from ui.hud import game_hud
 from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
 from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
 from entities.player import player_entity
+from entities.sample_enemy import sample_enemy_entity
 
 from panda3d.core import WindowProperties
 
@@ -31,6 +32,8 @@ class main_game(ShowBase):
         load_config(join("user_config.json"))
 
         self.game_status = GAME_STATUS.MAIN_MENU 
+        
+        self.player = None
         
         self.entities = []
 
@@ -75,8 +78,10 @@ class main_game(ShowBase):
         if self.game_status != GAME_STATUS.RUNNING:
            return Task.cont 
        
+        self.player.update(dt)
+       
         for entity in self.entities:
-           entity.update(dt)
+           entity.update(dt, self.player.model.getPos())
 
         return Task.cont
     
@@ -85,14 +90,15 @@ class main_game(ShowBase):
         self.active_ui.destroy()
         self.setBackgroundColor((0, 0, 0, 0))
         self.player = player_entity()
-        self.entities.append(self.player)
         self.active_ui = game_hud(self.player.current_hp)
+        self.entities.append(sample_enemy_entity(10,10))
         lock_mouse_in_window()
-        self.set_game_status(GAME_STATUS.RUNNING)
         mapLoader = MapLoader()
         map = mapLoader.mapGen()
         print(map)
         mapLoader.loadMap(map)
+        self.set_game_status(GAME_STATUS.RUNNING)
+
         
         
         
@@ -122,6 +128,8 @@ class main_game(ShowBase):
         # delete all entities
         for entity in self.entities:
             entity.destroy()
+        if self.player is not None:
+            self.player.destroy()
         self.active_ui = main_menu()
         self.setBackgroundColor((1, 1, 1, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
