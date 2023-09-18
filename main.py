@@ -7,6 +7,7 @@ from ui.hud import game_hud
 from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
 from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
 from entities.player import player_entity
+from entities.sample_enemy import sample_enemy_entity
 
 from panda3d.core import WindowProperties
 from panda3d.core import AmbientLight, DirectionalLight, LightAttrib
@@ -36,7 +37,11 @@ class main_game(ShowBase):
 
         self.game_status = GAME_STATUS.MAIN_MENU 
         
+        self.player = None
+        
         self.entities = []
+        
+        self.static_entities = []
 
         self.status_display = OnscreenText(text=GAME_STATUS.MAIN_MENU, pos=(0.9,0.9 ), scale=0.07,fg=(255,0,0, 1))
 
@@ -65,8 +70,6 @@ class main_game(ShowBase):
         
     def game_loop(self, task):
         
-        
-
         dt = self.clock.dt 
 
         if self.game_status == GAME_STATUS.STARTING:
@@ -79,8 +82,10 @@ class main_game(ShowBase):
         if self.game_status != GAME_STATUS.RUNNING:
            return Task.cont 
        
+        self.player.update(dt)
+       
         for entity in self.entities:
-           entity.update(dt)
+           entity.update(dt, self.player.model.getPos())
 
         return Task.cont
     
@@ -89,18 +94,15 @@ class main_game(ShowBase):
         self.active_ui.destroy()
         self.setBackgroundColor((0, 0, 0, 0))
         self.player = player_entity()
-        
-        self.entities.append(self.player)
         self.active_ui = game_hud(self.player.current_hp)
+        self.entities.append(sample_enemy_entity(10,10))
         lock_mouse_in_window()
-        self.set_game_status(GAME_STATUS.RUNNING)
         mapLoader = MapLoader()
         map = mapLoader.mapGen()
         print(map)
         mapLoader.loadMap(map)
-        
-        
-        
+        self.static_entities = map 
+        self.set_game_status(GAME_STATUS.RUNNING)
 
     def set_game_status(self, status):
         self.status_display["text"] = status
@@ -127,6 +129,12 @@ class main_game(ShowBase):
         # delete all entities
         for entity in self.entities:
             entity.destroy()
+        self.entities = []
+        for static_entity in self.static_entities:
+            static_entity.destroy()
+        self.static_entities = []
+        if self.player is not None:
+            self.player.destroy()
         self.active_ui = main_menu()
         self.setBackgroundColor((1, 1, 1, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
