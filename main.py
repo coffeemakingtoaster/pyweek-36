@@ -118,7 +118,7 @@ class main_game(ShowBase):
         self.player = player_entity()
         
         self.pusher.addCollider(self.player.collision, self.player.model)
-        #self.cTrav.addCollider(self.player.collision,self.pusher)
+        self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
         
         
