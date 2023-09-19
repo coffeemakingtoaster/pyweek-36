@@ -1,3 +1,5 @@
+from panda3d.core import BitMask32
+
 class GAME_CONSTANTS:
    PLAYER_MOVEMENT_SPEED = 15 
    PLAYER_MAX_HP = 5
@@ -25,5 +27,8 @@ class MAP_CONSTANTS:
    
 class ENTITY_TEAMS:
    PLAYER = "player"
+   PLAYER_BITMASK = BitMask32(0x01)
    ENEMIES = "enemies"
+   ENEMIES_BITMASK = BitMask32(0x02)
    MAP = "map"
+   MAP_BITMASK = BitMask32(0x03)

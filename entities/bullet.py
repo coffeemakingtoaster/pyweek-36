@@ -4,7 +4,7 @@ from config import GAME_CONSTANTS, ENTITY_TEAMS
 
 from helpers.model_helpers import load_model
 
-from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionEntry, CollisionHandlerEvent, Point3
+from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionEntry, CollisionHandlerEvent, Point3, BitMask32, NodePath, CollideMask
     
 import uuid
 import math
@@ -35,13 +35,20 @@ class bullet_entity(enity_base):
         
         self.id = str(uuid.uuid4())
         
-        self.collision = self.model.attachNewNode(CollisionNode("bullet"))
+        self.collision: NodePath = self.model.attachNewNode(CollisionNode("bullet"))
         
         self.collision.setTag("team", self.team)
         
         self.collision.setTag("id", self.id)
         
         self.collision.node().addSolid(CollisionSphere(0,1,0,0.5))
+        
+        if self.team == ENTITY_TEAMS.PLAYER: 
+            print("setting enemy")
+            self.collision.node().setCollideMask(ENTITY_TEAMS.ENEMIES_BITMASK)
+        else:
+            print("Setting player")
+            self.collision.node().setCollideMask(ENTITY_TEAMS.PLAYER_BITMASK)
         
         self.is_dead = False
         
@@ -50,7 +57,7 @@ class bullet_entity(enity_base):
         self.collision.show()
         
         self.notifier = CollisionHandlerEvent()
-
+        
         self.notifier.addInPattern("%fn-into")
         
         self.accept("bullet-into", self.on_collision)
@@ -71,8 +78,12 @@ class bullet_entity(enity_base):
         self.model.setZ(self.model.getZ() + self.direction.z * GAME_CONSTANTS.BULLET_SPEED * dt)
         
     def on_collision(self, collision: CollisionEntry):
-        
-        print(collision)
+        print("into ", end="") 
+        print(collision.into_node.into_collide_mask)
+        print(collision.into_node.from_collide_mask)
+        print("from ", end="")
+        print(collision.from_node.from_collide_mask)
+        print(collision.from_node.into_collide_mask)
         # Is the bullet in the event the bullet from this entity class
         if collision.from_node.getTag("id") != self.id: 
             return

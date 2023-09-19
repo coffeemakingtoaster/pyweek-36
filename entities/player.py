@@ -5,7 +5,7 @@ from helpers.model_helpers import load_model
 from helpers.utilities import lock_mouse_in_window
 from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane 
 
-from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry
+from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry, BitMask32, CollideMask
 import math
 
 class player_entity(enity_base):
@@ -45,12 +45,17 @@ class player_entity(enity_base):
         
         self.collision.show()
         
+        self.collision.node().setCollideMask(ENTITY_TEAMS.PLAYER_BITMASK)
+        
+        print(ENTITY_TEAMS.PLAYER_BITMASK)
+        print(ENTITY_TEAMS.ENEMIES_BITMASK)
+        
+        print(CollideMask.allOff())
+        
         self.collision.setTag("team", self.team)
         
         self.notifier = CollisionHandlerEvent()
 
-        self.notifier.addInPattern("%fn-into-%in")
-        
         self.notifier.addInPattern("%fn-into-%in")
         
         self.accept("player-into-bullet", self.bullet_hit)
@@ -66,33 +71,35 @@ class player_entity(enity_base):
         
     def unset_movement_status(self, direction):
         self.movement_status[direction] = 0
+        
+    def on_collision(self, entry=None):
+        print(entry)
        
     def update(self, dt):
         x_direction = ((self.movement_status["left"] * -1 ) + self.movement_status["right"]) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
         z_direction = ((self.movement_status["down"] ) + self.movement_status["up"]* -1 ) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
         
-        self.model.setX(self.model.getX() + x_direction)
-        self.model.setZ(self.model.getZ() + z_direction)
-        self.model.setY(0.5)
+        self.model.setFluidPos(self.model.getX() + x_direction, 0.5, self.model.getZ() + z_direction)
         
         base.cam.setX(self.model.getX())
         base.cam.setZ(self.model.getZ())
         
         # Rotate mouse to camera
-        mouse_pos = base.mouseWatcherNode.getMouse()
-        nearPoint = Point3()
-        base.camLens.extrude(mouse_pos, nearPoint, Point3())
+        if base.mouseWatcherNode.hasMouse():
+            mouse_pos = base.mouseWatcherNode.getMouse()
+            nearPoint = Point3()
+            base.camLens.extrude(mouse_pos, nearPoint, Point3())
         
-        point = get_vector_intersection_with_y_coordinate_plane(nearPoint, base.cam.getPos())
+            point = get_vector_intersection_with_y_coordinate_plane(nearPoint, base.cam.getPos())
         
-        player_pos = self.model.getPos()
-        delta_to_player = Vec3(player_pos.x - point.x, 0 ,player_pos.z - point.z) 
+            player_pos = self.model.getPos()
+            delta_to_player = Vec3(player_pos.x - point.x, 0 ,player_pos.z - point.z) 
 
-        mouse_pos_norm = Point2(delta_to_player.x, delta_to_player.z).normalized()
+            mouse_pos_norm = Point2(delta_to_player.x, delta_to_player.z).normalized()
 
-        x = math.degrees(math.atan2(mouse_pos_norm.x, mouse_pos_norm.y))
+            x = math.degrees(math.atan2(mouse_pos_norm.x, mouse_pos_norm.y))
         
-        self.model.setHpr(0,0,-x)
+            self.model.setHpr(0,0,-x)
         
         if self.current_hp <= 0:
             print("Man im dead")
@@ -116,8 +123,6 @@ class player_entity(enity_base):
         player_pos = self.model.getPos()
         delta_to_player = Vec3(target_point.x - player_pos.x, 0 , target_point.z - player_pos.z).normalized()
         
-        print(delta_to_player)
-        
         self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, self.team)) 
 
         
@@ -130,6 +135,7 @@ class player_entity(enity_base):
         
     # collisionentry is not needed -> we ignore it 
     def bullet_hit(self, entry: CollisionEntry):
+        print("hit")
         # No damage taken by own bullets
         if entry.into_node.getTag("team") == self.team:
             return

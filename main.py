@@ -28,7 +28,7 @@ class main_game(ShowBase):
         
         ShowBase.__init__(self)
         
-        set_mouse_cursor("crosshair")
+        #set_mouse_cursor("crosshair")
         
         # Set camera position 
         base.cam.setPos(0, 70, 0) 
@@ -82,7 +82,6 @@ class main_game(ShowBase):
         background_music.play()
         
         base.disableMouse()
-        
         
     def game_loop(self, task):
         
