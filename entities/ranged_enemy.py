@@ -32,7 +32,7 @@ class ranged_enemy(base_enemy):
         
         current_time = time.time()
         if current_time - self.last_attack_time >= self.attackcooldown:
-            self.attack(delta_to_player)
+            self.attack(delta_to_player.normalized())
             self.last_attack_time = current_time
             
         bullets_to_delete = []

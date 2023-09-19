@@ -11,6 +11,9 @@ import math
 class player_entity(enity_base):
     
     def __init__(self):
+        
+        # TODO: remove the model as the parent of the hitbox. Instead make them siblings. This allows for the visual illusion of a rotating player without actually having to rotate the hitbox
+         
         super().__init__()
         
         self.team = ENTITY_TEAMS.PLAYER
@@ -66,6 +69,8 @@ class player_entity(enity_base):
         
         self.is_dead = False
         
+        self.last_position = Point3(0,0.5,0)
+        
     def set_movement_status(self, direction):
         self.movement_status[direction] = 1
         
@@ -76,10 +81,21 @@ class player_entity(enity_base):
         print(entry)
        
     def update(self, dt):
-        x_direction = ((self.movement_status["left"] * -1 ) + self.movement_status["right"]) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
-        z_direction = ((self.movement_status["down"] ) + self.movement_status["up"]* -1 ) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
         
-        self.model.setFluidPos(self.model.getX() + x_direction, 0.5, self.model.getZ() + z_direction)
+        push_direction = self.last_position - self.model.getPos()
+
+        movement_direction = Vec3(((self.movement_status["left"] * -1 ) + self.movement_status["right"]) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt , 0, ((self.movement_status["down"] ) + self.movement_status["up"]* -1 ) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt)
+        
+        # Last push did not only push back on movement but also did funky stuff
+        if push_direction.normalized() != movement_direction.normalized() * -1 and push_direction.length() != 0:
+            movement_direction = movement_direction + (movement_direction.normalized() * push_direction.length()) * -1
+            
+        #if movement_direction.length() > GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED:
+        #    movement_direction =  movement_direction.normalized() * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
+        
+        self.model.setFluidPos(self.model.getX() + movement_direction.x, 0.5, self.model.getZ() + movement_direction.z)
+        
+        self.last_position = self.model.getPos()
         
         base.cam.setX(self.model.getX())
         base.cam.setZ(self.model.getZ())
