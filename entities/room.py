@@ -55,21 +55,20 @@ class Room(DirectObject.DirectObject):
         
         #self.boundingBox = BoundingBox(LPoint3(-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE),LPoint3(MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE))
         return self
+    
     def buildModel(self,asset,position,rotation,collision):
         model: NodePath = load_model(asset)
         model.reparentTo(render)
         model.setPos(position[0]+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,position[1],position[2]+self.gridPos[1]*MAP_CONSTANTS.ROOM_SIZE)
-        model.setHpr(rotation[0],rotation[1],rotation[2])
         if collision:
             min_point, max_point = model.getTightBounds()
-                            # Extend hitboxes in Y direction
+            # Extend hitboxes in Y direction
             if min_point.y < max_point.y:
                min_point.y = -5 
                max_point.y = 20
             elif max_point.y > min_point.y:
                 max_point.y = -5
                 min_point.y = 20
-                
             model.show_tight_bounds()
             cp = CollisionBox(min_point - model.getPos(),max_point - model.getPos())
             csn = model.attach_new_node(CollisionNode("wall"))
@@ -77,6 +76,7 @@ class Room(DirectObject.DirectObject):
             csn.node().addSolid(cp)
             base.cTrav.addCollider(csn, CollisionHandlerEvent())
             self.models.append(csn)
+        model.setHpr(rotation[0],rotation[1],rotation[2])
         self.models.append(model)
         
     def destroy(self):

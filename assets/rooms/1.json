@@ -6,7 +6,7 @@
             "x": -2.062,
             "y": 0.659,
             "z": -4.106,
-            "collider": true,
+            "collider": false,
             "rotx": 66.1909561,
             "roty": 0.0,
             "rotz": 0.0,
