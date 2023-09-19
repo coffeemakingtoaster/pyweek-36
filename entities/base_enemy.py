@@ -32,6 +32,8 @@ class base_enemy(enity_base):
         
         self.collision.node().addSolid(CollisionSphere(0,0,0,0.9))
         
+        self.collision.node().setCollideMask(ENTITY_TEAMS.ENEMIES_BITMASK)
+        
         self.collision.show()
         
         self.collision.setTag("team", self.team)

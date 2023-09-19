@@ -78,12 +78,6 @@ class bullet_entity(enity_base):
         self.model.setZ(self.model.getZ() + self.direction.z * GAME_CONSTANTS.BULLET_SPEED * dt)
         
     def on_collision(self, collision: CollisionEntry):
-        print("into ", end="") 
-        print(collision.into_node.into_collide_mask)
-        print(collision.into_node.from_collide_mask)
-        print("from ", end="")
-        print(collision.from_node.from_collide_mask)
-        print(collision.from_node.into_collide_mask)
         # Is the bullet in the event the bullet from this entity class
         if collision.from_node.getTag("id") != self.id: 
             return
