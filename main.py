@@ -5,7 +5,7 @@ from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
 from ui.hud import game_hud 
 from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
-from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
+from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window, set_mouse_cursor
 from entities.player import player_entity
 from entities.sample_enemy import sample_enemy_entity
 
@@ -28,6 +28,8 @@ class main_game(ShowBase):
         
         ShowBase.__init__(self)
         
+        set_mouse_cursor("crosshair")
+        
         # Set camera position 
         base.cam.setPos(0, 70, 0) 
         base.cam.setHpr(0, 180, 0)
@@ -48,7 +50,6 @@ class main_game(ShowBase):
         
         self.cTrav = CollisionTraverser()
         self.pusher = CollisionHandlerPusher()
-        
 
         self.entities = []
         

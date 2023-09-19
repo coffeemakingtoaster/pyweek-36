@@ -33,10 +33,17 @@ class Room(DirectObject.DirectObject):
             model.setPos(asset["x"]+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,asset["y"],asset["z"]+self.gridPos[1]*MAP_CONSTANTS.ROOM_SIZE)
             if asset["asset"] != "ground":
                 min_point, max_point = model.getTightBounds()
-                print(min_point)
+                
+                # Extend hitboxes in Y direction
+                if min_point.y < max_point.y:
+                   min_point.y = -5 
+                   max_point.y = 20
+                elif max_point.y > min_point.y:
+                    max_point.y = -5
+                    min_point.y = 20
                 
                 model.show_tight_bounds()
-                cp = CollisionBox(min_point,max_point)
+                cp = CollisionBox(min_point - model.getPos(),max_point - model.getPos())
                 csn = model.attach_new_node(CollisionNode("wall"))
                 csn.show()
                 csn.node().addSolid(cp)

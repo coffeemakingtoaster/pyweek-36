@@ -5,7 +5,7 @@ from helpers.model_helpers import load_model
 from helpers.utilities import lock_mouse_in_window
 from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane 
 
-from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionSphere, CollisionEntry
+from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry
 import math
 
 class player_entity(enity_base):
@@ -41,7 +41,7 @@ class player_entity(enity_base):
         
         self.collision = self.model.attachNewNode(CollisionNode("player"))
         
-        self.collision.node().addSolid(CollisionSphere(0,0,0,0.9))
+        self.collision.node().addSolid(CollisionCapsule(Point3(0,0,0),(0,5,0),0.9))
         
         self.collision.show()
         

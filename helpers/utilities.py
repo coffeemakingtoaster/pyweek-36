@@ -84,3 +84,8 @@ def release_mouse_from_window():
     props = WindowProperties()
     props.setMouseMode(WindowProperties.M_absolute)
     base.win.requestProperties(props)
+    
+def set_mouse_cursor(name):
+    props = WindowProperties()
+    props.setCursorFilename(os.path.join("assets", "icons", "mouse", name + ".ico"))
+    base.win.requestProperties(props)
