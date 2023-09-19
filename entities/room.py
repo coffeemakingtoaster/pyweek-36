@@ -64,7 +64,7 @@ class Room(DirectObject.DirectObject):
             min_point, max_point = model.getTightBounds()
                             # Extend hitboxes in Y direction
             if min_point.y < max_point.y:
-               min_point.y = -5 
+               min_point.y = -5
                max_point.y = 20
             elif max_point.y > min_point.y:
                 max_point.y = -5
