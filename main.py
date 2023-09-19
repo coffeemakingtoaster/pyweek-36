@@ -5,7 +5,7 @@ from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
 from ui.hud import game_hud 
 from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
-from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window, set_mouse_cursor
+from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
 from entities.player import player_entity
 from entities.sample_enemy import sample_enemy_entity
 
@@ -31,7 +31,7 @@ class main_game(ShowBase):
         #set_mouse_cursor("crosshair")
         
         # Set camera position 
-        base.cam.setPos(0, 70, 0) 
+        base.cam.setPos(0, 50, 0) 
         base.cam.setHpr(0, 180, 0)
         
         self.setupLights()
@@ -50,6 +50,7 @@ class main_game(ShowBase):
         
         self.cTrav = CollisionTraverser()
         self.pusher = CollisionHandlerPusher()
+        
 
         self.entities = []
         
@@ -121,7 +122,7 @@ class main_game(ShowBase):
         
         
         self.active_ui = game_hud(self.player.current_hp)
-        #self.entities.append(sample_enemy_entity(10,10))
+        self.entities.append(sample_enemy_entity(10,10))
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
         self.map = self.mapLoader.mapGen()
@@ -191,7 +192,7 @@ class main_game(ShowBase):
         self.currentRoom = self.mapLoader.loadRoom(self.map[self.currentRoomNumber])
     
     def unloadPreviousRoom(self):
-        self.oldRoom.destroy()
+        self.mapLoader.unloadRoom(self.oldRoom,self.currentRoom)
         
         
         
