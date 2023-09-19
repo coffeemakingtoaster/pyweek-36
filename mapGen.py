@@ -40,14 +40,14 @@ class MapLoader:
             self.loadRoom(room)
     
     def loadRoom(self,room):
-        #roomModel=load_model(str(room.id))
-        #roomModel.reparentTo(render)
-        #roomModel.setPos(room.gridPos[0]*10,100,room.gridPos[1]*10)
         room.build()
         return room
-    
-    def loadFirstRoom(self,map):
-        map[0].build()
         
     def convert_entry(self,number):
         return 3 if number == 1 else 4 if number == 2 else 1 if number == 3 else 2 if number == 4 else number
+    
+    
+    
+    def unloadRoom(self,oldRoom,newRoom):
+        oldRoom.destroy()
+        newRoom.addEntryWall()

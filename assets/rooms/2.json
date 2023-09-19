@@ -1,18 +1,95 @@
 {
     "assets": [
       
-        {"asset": "ground", "x": 0, "y": 0, "z":0, "collider": true},
-        
-        {"asset": "vertWall", "x": -12, "y": 2.5,"z":0, "collider": true},
-        {"asset": "vertWall", "x": 12, "y": 2.5,"z":0, "collider": true},
-        {"asset": "horWall", "x": 0, "y": 2.5,"z":12, "collider": true},
-        {"asset": "horWall", "x": 0, "y": 2.5,"z":-12, "collider": true},
-        {"asset": "vase", "x": 10, "y": 0,"z":0, "collider": true},
-        {"asset": "barrel", "x": 8, "y": 0,"z":2, "collider": true},
-        {"asset": "barrel", "x": 8, "y": 0,"z":3, "collider": true},
-        {"asset": "barrel", "x": 8, "y": 0,"z":4, "collider": true},
-        {"asset": "barrel", "x": 8, "y": 0,"z":5, "collider": true}
-        
+        {
+            "asset": "sword",
+            "x": -2.062,
+            "y": 0.659,
+            "z": -4.106,
+            "collider": true,
+            "rotx": 66.1909561,
+            "roty": 0.0,
+            "rotz": 0.0,
+            "type": "deko"
+          },
+          {
+            "asset": "rocks1",
+            "x": -2.57649136,
+            "y": 0.155777,
+            "z": -5.050868,
+            "collider": true,
+            "rotx": 0.0,
+            "roty": 0.0,
+            "rotz": 0.0,
+            "type": "deko"
+          },
+          {
+            "asset": "rocks1",
+            "x": 6.43248129,
+            "y": 0.155777,
+            "z": 9.593074,
+            "collider": true,
+            "rotx": 0.0,
+            "roty": 0.0,
+            "rotz": 0.0,
+            "type": "deko"
+          },
+          {
+            "asset": "vase",
+            "x": 0.978533745,
+            "y": 0.0,
+            "z": 10.7405062,
+            "collider": true,
+            "rotx": 0.0,
+            "roty": 0.0,
+            "rotz": 0.0,
+            "type": "deko"
+          },
+          {
+            "asset": "vase",
+            "x": 2.50030136,
+            "y": 0.0,
+            "z": 10.7092514,
+            "collider": true,
+            "rotx": 0.0,
+            "roty": 0.0,
+            "rotz": 0.0,
+            "type": "deko"
+          },
+          {
+            "asset": "vase",
+            "x": 4.18419361,
+            "y": 0.0,
+            "z": 10.670043,
+            "collider": true,
+            "rotx": 0.0,
+            "roty": 0.0,
+            "rotz": 0.0,
+            "type": "deko"
+          },
+          {
+            "asset": "vase",
+            "x": 5.83,
+            "y": 0.0,
+            "z": -10.5,
+            "collider": true,
+            "rotx": 0.0,
+            "roty": 0.0,
+            "rotz": 0.0,
+            "type": "deko"
+          },
+          {
+            "asset": "ground",
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "collider": false,
+            "rotx": 0.0,
+            "roty": 0.0,
+            "rotz": 0.0,
+            "type": "deko"
+          }
+
 
         
     ]

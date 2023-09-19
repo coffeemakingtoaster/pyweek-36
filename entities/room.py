@@ -16,7 +16,9 @@ class Room(DirectObject.DirectObject):
         self.roomAssets = self.loadRoomAssets(id)
         self.boundingBox = None
         
+        
         self.models = []
+        self.walls = []
         
         #messenger.toggleVerbose()
         
@@ -28,31 +30,66 @@ class Room(DirectObject.DirectObject):
     
     def build(self):
         for asset in self.roomAssets:
-            model: NodePath =load_model(asset["asset"])
-            model.reparentTo(render)
-            model.setPos(asset["x"]+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,asset["y"],asset["z"]+self.gridPos[1]*MAP_CONSTANTS.ROOM_SIZE)
-            if asset["asset"] != "ground":
-                min_point, max_point = model.getTightBounds()
-                
-                # Extend hitboxes in Y direction
-                if min_point.y < max_point.y:
-                   min_point.y = -5 
-                   max_point.y = 20
-                elif max_point.y > min_point.y:
-                    max_point.y = -5
-                    min_point.y = 20
-                
-                model.show_tight_bounds()
-                cp = CollisionBox(min_point - model.getPos(),max_point - model.getPos())
-                csn = model.attach_new_node(CollisionNode("wall"))
-                csn.show()
-                csn.node().addSolid(cp)
-                base.cTrav.addCollider(csn, CollisionHandlerEvent())
-                self.models.append(csn)
-            self.models.append(model)
+            self.buildModel(asset["asset"],(asset["x"],asset["y"],asset["z"]),(asset["rotx"],asset["roty"],asset["rotz"]),asset["collider"])
+        
+        for x in range(1,5):
+            if x != self.entry:
+                if x != self.exit:
+                    if x == 1:
+                        self.buildModel("vertWall",(0,0,12),(0,0,90),True)
+                    elif x == 2:
+                        self.buildModel("vertWall",(-12,0,0),(0,0,0),True)
+                    elif x == 3:
+                        self.buildModel("vertWall",(0,0,-12),(0,0,90),True)
+                    elif x == 4:
+                        self.buildModel("vertWall",(12,0,0),(0,0,0),True)
+                else:
+                    if x == 1:
+                        self.buildModel("doorWall",(0,0,12),(0,0,90),True)
+                    elif x == 2:
+                        self.buildModel("doorWall",(-12,0,0),(0,0,0),True)
+                    elif x == 3:
+                        self.buildModel("doorWall",(0,0,-12),(0,0,90),True)
+                    elif x == 4:
+                        self.buildModel("doorWall",(12,0,0),(0,0,0),True)
+        
         #self.boundingBox = BoundingBox(LPoint3(-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,-MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE),LPoint3(MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,MAP_CONSTANTS.ROOM_SIZE/2+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE))
         return self
-            
+    def buildModel(self,asset,position,rotation,collision):
+        model: NodePath = load_model(asset)
+        model.reparentTo(render)
+        model.setPos(position[0]+self.gridPos[0]*MAP_CONSTANTS.ROOM_SIZE,position[1],position[2]+self.gridPos[1]*MAP_CONSTANTS.ROOM_SIZE)
+        model.setHpr(rotation[0],rotation[1],rotation[2])
+        if collision:
+            min_point, max_point = model.getTightBounds()
+                            # Extend hitboxes in Y direction
+            if min_point.y < max_point.y:
+               min_point.y = -5 
+               max_point.y = 20
+            elif max_point.y > min_point.y:
+                max_point.y = -5
+                min_point.y = 20
+                
+            #model.show_tight_bounds()
+            cp = CollisionBox(min_point - model.getPos(),max_point - model.getPos())
+            csn = model.attach_new_node(CollisionNode("wall"))
+            #csn.show()
+            csn.node().addSolid(cp)
+            base.cTrav.addCollider(csn, CollisionHandlerEvent())
+            self.models.append(csn)
+        self.models.append(model)
+        
     def destroy(self):
         for model in self.models:
             model.removeNode()
+    def addEntryWall(self):
+        for x in range(1,5):
+            if x == self.entry:
+                if x == 1:
+                    self.buildModel("doorWall",(0,0,12),(0,0,90),True)
+                elif x == 2:
+                    self.buildModel("doorWall",(-12,0,0),(0,0,0),True)
+                elif x == 3:
+                    self.buildModel("doorWall",(0,0,-12),(0,0,90),True)
+                elif x == 4:
+                    self.buildModel("doorWall",(12,0,0),(0,0,0),True)
