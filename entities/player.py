@@ -98,7 +98,7 @@ class player_entity(enity_base):
             print("Man im dead")
             messenger.send("goto_main_menu")
         
-        bullets_to_delete = []
+        
         for i, bullet in enumerate(self.bullets):
             bullet.update(dt)
             if bullet.is_dead:
@@ -116,7 +116,7 @@ class player_entity(enity_base):
         player_pos = self.model.getPos()
         delta_to_player = Vec3(target_point.x - player_pos.x, 0 , target_point.z - player_pos.z).normalized()
         
-        print(delta_to_player)
+        
         
         self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, self.team)) 
 

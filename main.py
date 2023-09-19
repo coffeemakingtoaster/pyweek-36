@@ -8,6 +8,8 @@ from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
 from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
 from entities.player import player_entity
 from entities.sample_enemy import sample_enemy_entity
+from entities.melee_enemy import melee_enemy
+from entities.ranged_enemy import ranged_enemy
 
 from panda3d.core import WindowProperties
 from panda3d.core import AmbientLight, DirectionalLight, LightAttrib
@@ -115,13 +117,14 @@ class main_game(ShowBase):
         self.player = player_entity()
         
         self.pusher.addCollider(self.player.collision, self.player.model)
-        self.cTrav.addCollider(self.player.collision,self.pusher)
+        #self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
         
         
         
         self.active_ui = game_hud(self.player.current_hp)
-        self.entities.append(sample_enemy_entity(10,10))
+        #self.entities.append(sample_enemy_entity(10,10))
+        self.entities.append(ranged_enemy(10,10))
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
         self.map = self.mapLoader.mapGen()

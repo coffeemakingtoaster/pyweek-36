@@ -8,6 +8,7 @@ import uuid
 from helpers.model_helpers import load_model
 
 from config import GAME_CONSTANTS, ENTITY_TEAMS
+import time
 
 class base_enemy(enity_base):
     
@@ -16,7 +17,10 @@ class base_enemy(enity_base):
         
         self.team = ENTITY_TEAMS.ENEMIES 
         
-        self.speed = 5
+        self.speed = 6
+        
+        self.attackcooldown = 3
+        self.last_attack_time = time.time()
 
         self.model = load_model("player")
         
@@ -54,8 +58,9 @@ class base_enemy(enity_base):
         
         delta_to_player = Vec3(entity_pos.x - player_pos.x, 0 , entity_pos.z - player_pos.z) 
 
-        diff_to_player_normalized = Point2(delta_to_player.x, delta_to_player.z)
+        diff_to_player_normalized = Point2(delta_to_player.x, delta_to_player.z).normalized()
 
+        
         x = math.degrees(math.atan2(diff_to_player_normalized.x, diff_to_player_normalized.y))
         
         x_direction = diff_to_player_normalized[0] * self.speed * dt
@@ -66,6 +71,11 @@ class base_enemy(enity_base):
         self.model.setZ(self.model.getZ() - z_direction)
 
         self.model.setR(x)
+        
+        current_time = time.time()
+        if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<2:
+            self.attack()
+            self.last_attack_time = current_time
         
     def destroy(self):
         self.model.removeNode()
@@ -88,3 +98,6 @@ class base_enemy(enity_base):
         print("Taking damage")
         if self.current_hp <= 0:
             self.is_dead = True
+            
+    def attack(self):
+        print("attack")
