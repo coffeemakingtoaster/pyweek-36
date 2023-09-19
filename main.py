@@ -126,11 +126,11 @@ class main_game(ShowBase):
         self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
         
-        tempActor = Actor("assets/anims/testanim3.bam",{"idle"})
-        tempActor.reparentTo(render)
-        tempActor.setPos(0,10,0)
-        tempActor.getChild(0).setH(180)
-        actor.loop('Animation Name')
+        #tempActor = Actor("assets/anims/testanim3.bam",{"idle",})
+        #tempActor.reparentTo(render)
+        #tempActor.setPos(0,10,0)
+        #tempActor.getChild(0).setH(180)
+        #tempactor.loop('Animation Name')
         
         
         
