@@ -1,7 +1,7 @@
 from entities.entity_base import enity_base
 from entities.bullet import bullet_entity
 from config import GAME_CONSTANTS, ENTITY_TEAMS, PLAYER_ABILITIES
-from helpers.model_helpers import load_model
+from helpers.model_helpers import load_particles 
 from helpers.utilities import lock_mouse_in_window
 from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane, get_first_intersection
 
@@ -76,6 +76,8 @@ class player_entity(enity_base):
         
         self.ignore_push = False
         
+        self.dash_particles = load_particles("smoke")
+        
     def set_movement_status(self, direction):
         self.movement_status[direction] = 1
         
@@ -97,6 +99,7 @@ class player_entity(enity_base):
         if self.is_dashing:
             if self.time_since_last_dash > GAME_CONSTANTS.PLAYER_DASH_DURATION:
                 self.is_dashing = False
+                self.dash_particles.cleanup()
                 # Ignore remaining push of dash for movement correction of next frame
                 self.ignore_push = True
             else:
@@ -203,12 +206,13 @@ class player_entity(enity_base):
                # Shorten slightly to stop BEFORE hitting the object
                dash_range = min((collision.getSurfacePoint(render) - self.model.getPos()).length() - 0.5, dash_range)
                
-               print(dash_range)
-               
            self.dash_vector = dash_direction.normalized() * dash_range 
             
            # Display cd in HUD 
            messenger.send("set_ability_on_cooldown", [PLAYER_ABILITIES.DASH, current_time + GAME_CONSTANTS.PLAYER_DASH_COOLDOWN])
+            
+           self.dash_particles = load_particles("smoke") 
+           self.dash_particles.start(self.model, renderParent=render)
           
            self.is_dashing = True
            self.time_since_last_dash = 0
