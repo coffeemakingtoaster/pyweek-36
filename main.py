@@ -60,6 +60,8 @@ class main_game(ShowBase):
         self.entities = []
         self.enemies  = 0
         
+        self.current_hud = None
+        
         self.static_entities = []
 
         self.status_display = OnscreenText(text=GAME_STATUS.MAIN_MENU, pos=(0.9,0.9 ), scale=0.07,fg=(255,0,0, 1))
@@ -91,6 +93,7 @@ class main_game(ShowBase):
         base.disableMouse()
         
         base.cTrav.setRespectPrevTransform(True)
+        
         
     def game_loop(self, task):
         
@@ -125,12 +128,7 @@ class main_game(ShowBase):
                         self.enemies -= 1
                         print(self.enemies)
                     del self.entities[i]
-                
-        
         return Task.cont
-    
-    
-    
     
     def load_game(self):
         print("Loading game")
@@ -141,9 +139,8 @@ class main_game(ShowBase):
         self.pusher.addCollider(self.player.collision, self.player.model)
         self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
-        
     
-        self.active_ui = game_hud(self.player.current_hp)
+        self.active_ui = game_hud()
         self.entities.append(ranged_enemy(10,10))
         self.enemies += 1
         
@@ -163,12 +160,14 @@ class main_game(ShowBase):
         if self.game_status == GAME_STATUS.RUNNING:
             self.set_game_status(GAME_STATUS.PAUSED)
             # Not needed as of now as gui does not exist 
-            self.active_ui.destroy()
+            self.current_hud = self.active_ui
+            self.current_hud.pause()
             release_mouse_from_window()
             self.active_ui = pause_menu()
         elif self.game_status == GAME_STATUS.PAUSED:
             self.active_ui.destroy()
-            self.active_ui = game_hud(self.player.current_hp)
+            self.current_hud.resume()
+            self.active_ui = self.current_hud 
             lock_mouse_in_window() 
             self.set_game_status(GAME_STATUS.RUNNING)
 
@@ -178,6 +177,9 @@ class main_game(ShowBase):
         # no hud yet
         if self.active_ui is not None:
             self.active_ui.destroy()
+        if self.current_hud is not None:
+            self.current_hud.destroy()
+            self.current_hud = None
         # delete all entities
         for entity in self.entities:
             entity.destroy()
@@ -187,6 +189,7 @@ class main_game(ShowBase):
         self.static_entities = []
         if self.player is not None:
             self.player.destroy()
+            self.player = None
         self.active_ui = main_menu()
         self.setBackgroundColor((1, 1, 1, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
