@@ -18,6 +18,9 @@ from panda3d.core import LPoint3, LVector3, BitMask32
 from direct.showbase.ShowBase import ShowBase
 from direct.task.Task import Task
 from direct.gui.OnscreenText import OnscreenText
+from entities.enemy_actor import enemy_actor
+
+from direct.actor.Actor import Actor
 
 from os.path import join
 from mapGen import MapLoader
@@ -122,6 +125,16 @@ class main_game(ShowBase):
         self.pusher.addCollider(self.player.collision, self.player.model)
         self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
+        
+        #tempActor = Actor("assets/anims/testanim3.bam",{"idle",})
+        #tempActor.reparentTo(render)
+        #tempActor.setPos(0,10,0)
+        #tempActor.getChild(0).setH(180)
+        #tempactor.loop('Animation Name')
+        
+        
+        
+        
         
         self.active_ui = game_hud(self.player.current_hp)
         #self.entities.append(sample_enemy_entity(10,10))
