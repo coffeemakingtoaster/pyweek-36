@@ -15,10 +15,18 @@ class Spawner(enity_base):
         self.model.reparentTo(render)
         self.model.setPos(pos[0],pos[1],pos[2])
         self.wave = wave
+        self.type = type
         
         
     def spawn(self,entities):
-        entities.append(ranged_enemy(self.pos[0],self.pos[2]))
+        if self.type == "ranged_enemy":
+            entities.append(ranged_enemy(self.pos[0], self.pos[2]))
+        elif self.type == "melee_enemy":
+            entities.append(melee_enemy(self.pos[0], self.pos[2]))
+        elif self.type == "tank_enemy":
+            entities.append(tank_enemy(self.pos[0], self.pos[2]))
+        else:
+            pass
         
     
 

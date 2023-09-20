@@ -9,6 +9,7 @@ from helpers.model_helpers import load_model
 
 from config import GAME_CONSTANTS, ENTITY_TEAMS
 import time
+from direct.actor.Actor import Actor
 
 class base_enemy(enity_base):
     
@@ -22,11 +23,15 @@ class base_enemy(enity_base):
         self.attackcooldown = 3
         self.last_attack_time = time.time()
 
-        self.model = load_model("player")
+        self.model = Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Bite":"assets/anims/Enemy-Bite.egg"})
+        self.model.loop('Bite')
+        self.model.getChild(0).setR(90)
+        self.model.getChild(0).setH(90)
+        self.model.getChild(0).setP(90)
         
         self.model.reparentTo(render)
         
-        self.model.setPos(spawn_x,0,spawn_z)
+        self.model.setPos(spawn_x,1,spawn_z)
         
         self.current_hp = GAME_CONSTANTS.SAMPLE_ENEMY_MAX_HP
         
@@ -38,7 +43,7 @@ class base_enemy(enity_base):
         
         self.collision.node().setCollideMask(ENTITY_TEAMS.ENEMIES_BITMASK)
         
-        self.collision.show()
+        #self.collision.show()
         
         self.collision.setTag("team", self.team)
         self.collision.setTag("id", self.id)

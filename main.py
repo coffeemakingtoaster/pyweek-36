@@ -37,7 +37,7 @@ class main_game(ShowBase):
         
         # Set camera position 
         base.cam.setPos(0, 50, 0) 
-        base.cam.setHpr(0, 180, 0)
+        base.cam.setHpr(0, 180+40, 0)
         
         self.setupLights()
         
@@ -203,13 +203,13 @@ class main_game(ShowBase):
             self.set_game_status(GAME_STATUS.MAIN_MENU)
      
     def setupLights(self):  
-        #ambientLight = AmbientLight("ambientLight")
-        #ambientLight.setColor((.8, .8, .8, 1))
+        ambientLight = AmbientLight("ambientLight")
+        ambientLight.setColor((.1, .1, .1, 1))
         directionalLight = DirectionalLight("directionalLight")
         directionalLight.setDirection(LVector3(0, -45, -45))
-        directionalLight.setColor((2, 2, 2, 3))
+        directionalLight.setColor((0.3, 0.3, 0.3, 1))
         render.setLight(render.attachNewNode(directionalLight))
-        #render.setLight(render.attachNewNode(ambientLight))
+        render.setLight(render.attachNewNode(ambientLight))
     
     def loadNextRoom(self):
         self.currentRoomNumber += 1
