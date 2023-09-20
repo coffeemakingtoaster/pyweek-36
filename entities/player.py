@@ -7,6 +7,7 @@ from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane
 
 from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry, BitMask32, CollideMask
 import math
+from direct.actor.Actor import Actor
 
 class player_entity(enity_base):
     
@@ -32,11 +33,14 @@ class player_entity(enity_base):
         
         self.accept("mouse1", self.shoot_bullet)
         
-        self.model = load_model("player")
+        #self.model = load_model("player")
+        self.model = Actor("assets/anims/Playertest.egg",{"Dance":"assets/anims/Playertest-Dance.egg"})
         
-        self.model.reparentTo(render)
+        self.model.reparentTo(render) 
         
         self.model.setPos(0,0.5,0)
+        self.model.loop('Dance')
+        self.model.getChild(0).setP(90)
         
         self.current_hp = GAME_CONSTANTS.PLAYER_MAX_HP
         

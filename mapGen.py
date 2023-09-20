@@ -7,6 +7,7 @@ class MapLoader:
     
     def __init__(self):
         self.mapLength = MAP_CONSTANTS.MAP_LENGTH
+       
         
     def mapGen(self):
         map = []

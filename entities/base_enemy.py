@@ -52,6 +52,7 @@ class base_enemy(enity_base):
         base.cTrav.addCollider(self.collision, self.notifier)
         
         self.is_dead = False
+        self.enemy = True
         
         
     def update(self, dt, player_pos):

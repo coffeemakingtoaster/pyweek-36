@@ -14,7 +14,7 @@ class ranged_enemy(base_enemy):
         entity_pos = self.model.getPos()
         
         delta_to_player = Vec3(entity_pos.x - player_pos.x, 0 , entity_pos.z - player_pos.z) 
-
+        delta_x_reversed = Vec3(entity_pos.x - player_pos.x, 0 , entity_pos.z - player_pos.z) 
         diff_to_player_normalized = Point2(delta_to_player.x, delta_to_player.z).normalized()
         x = math.degrees(math.atan2(diff_to_player_normalized.x, diff_to_player_normalized.y))
         
@@ -32,7 +32,7 @@ class ranged_enemy(base_enemy):
         
         current_time = time.time()
         if current_time - self.last_attack_time >= self.attackcooldown:
-            self.attack(delta_to_player.normalized())
+            self.attack(delta_x_reversed.normalized())
             self.last_attack_time = current_time
             
         bullets_to_delete = []
@@ -42,5 +42,5 @@ class ranged_enemy(base_enemy):
                 bullet.destroy()
                 del self.bullets[i]
             
-    def attack(self,delta_to_player):
-        self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, self.team))
+    def attack(self,delta_x_reversed):
+        self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))

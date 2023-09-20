@@ -46,7 +46,7 @@ class main_game(ShowBase):
         self.game_status = GAME_STATUS.MAIN_MENU 
         
         self.player = None
-        
+        self.currentWave = 0
         self.mapLoader = None
         self.map = []
         self.currentRoomNumber = 0
@@ -56,8 +56,9 @@ class main_game(ShowBase):
         self.cTrav = CollisionTraverser()
         self.pusher = CollisionHandlerPusher()
         
-
+        self.tempActor = None
         self.entities = []
+        self.enemies  = 0
         
         self.static_entities = []
 
@@ -107,14 +108,29 @@ class main_game(ShowBase):
        
         self.player.update(dt)
        
+        if self.enemies == 0:
+            if self.currentWave != 4:
+                self.currentWave += 1
+                self.spawnWave()
+            else:
+                self.currentWave = 0
+                self.loadNextRoom()
+       
         for i, entity in enumerate(self.entities):
-           entity.update(dt, self.player.model.getPos())
-           if hasattr(entity, "is_dead"):
+            entity.update(dt, self.player.model.getPos())
+            if hasattr(entity, "is_dead"):
                 if entity.is_dead:
                     entity.destroy()
+                    if hasattr(entity, "enemy"):
+                        self.enemies -= 1
+                        print(self.enemies)
                     del self.entities[i]
-
+                
+        
         return Task.cont
+    
+    
+    
     
     def load_game(self):
         print("Loading game")
@@ -126,19 +142,11 @@ class main_game(ShowBase):
         self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
         
-        #tempActor = Actor("assets/anims/testanim3.bam",{"idle",})
-        #tempActor.reparentTo(render)
-        #tempActor.setPos(0,10,0)
-        #tempActor.getChild(0).setH(180)
-        #tempactor.loop('Animation Name')
-        
-        
-        
-        
-        
+    
         self.active_ui = game_hud(self.player.current_hp)
-        #self.entities.append(sample_enemy_entity(10,10))
         self.entities.append(ranged_enemy(10,10))
+        self.enemies += 1
+        
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
         self.map = self.mapLoader.mapGen()
@@ -166,6 +174,7 @@ class main_game(ShowBase):
 
     def goto_to_main_menu(self):
         print("Return to main menu")
+        self.enemies = 0
         # no hud yet
         if self.active_ui is not None:
             self.active_ui.destroy()
@@ -206,7 +215,20 @@ class main_game(ShowBase):
         self.currentRoomNumber += 1
         self.oldRoom = self.currentRoom
         self.currentRoom = self.mapLoader.loadRoom(self.map[self.currentRoomNumber])
+        self.enterRoom()
+        
+    def enterRoom(self):
+        self.spawnWave()
+        self.unloadPreviousRoom()
+        
     
+    def spawnWave(self):
+        for spawner in self.currentRoom.spawners:
+            if spawner.wave == self.currentWave:
+                spawner.spawn(self.entities)
+                self.enemies += 1
+                
+            
     def unloadPreviousRoom(self):
         self.mapLoader.unloadRoom(self.oldRoom,self.currentRoom)
         
