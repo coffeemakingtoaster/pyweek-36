@@ -92,6 +92,8 @@ class main_game(ShowBase):
         
         base.cTrav.setRespectPrevTransform(True)
         
+        self.current_hud = None
+        
     def game_loop(self, task):
         
         dt = self.clock.dt 
@@ -136,9 +138,8 @@ class main_game(ShowBase):
         self.pusher.addCollider(self.player.collision, self.player.model)
         self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
-        
     
-        self.active_ui = game_hud(self.player.current_hp)
+        self.active_ui = game_hud()
         self.entities.append(ranged_enemy(10,10))
         self.enemies += 1
         
@@ -158,12 +159,14 @@ class main_game(ShowBase):
         if self.game_status == GAME_STATUS.RUNNING:
             self.set_game_status(GAME_STATUS.PAUSED)
             # Not needed as of now as gui does not exist 
-            self.active_ui.destroy()
+            self.current_hud = self.active_ui
+            self.current_hud.pause()
             release_mouse_from_window()
             self.active_ui = pause_menu()
         elif self.game_status == GAME_STATUS.PAUSED:
             self.active_ui.destroy()
-            self.active_ui = game_hud(self.player.current_hp)
+            self.current_hud.resume()
+            self.active_ui = self.current_hud 
             lock_mouse_in_window() 
             self.set_game_status(GAME_STATUS.RUNNING)
 

@@ -72,7 +72,7 @@ class player_entity(enity_base):
         
         self.last_position = Point3(0,0.5,0)
         
-        self.last_dash_time = base.clock.getLongTime()
+        self.time_since_last_dash = GAME_CONSTANTS.PLAYER_DASH_COOLDOWN
         
         self.ignore_push = False
         
@@ -91,10 +91,12 @@ class player_entity(enity_base):
         
         push_direction = self.last_position - self.model.getPos()
         
+        if self.time_since_last_dash < GAME_CONSTANTS.PLAYER_DASH_COOLDOWN:
+            self.time_since_last_dash += dt
+        
         if self.is_dashing:
-            
-            current_time = base.clock.getLongTime() 
-            if current_time > ( self.last_dash_time + GAME_CONSTANTS.PLAYER_DASH_DURATION):
+            print(self.time_since_last_dash)
+            if self.time_since_last_dash > GAME_CONSTANTS.PLAYER_DASH_DURATION:
                 self.is_dashing = False
                 # Ignore remaining push of dash for movement correction of next frame
                 self.ignore_push = True
@@ -106,7 +108,6 @@ class player_entity(enity_base):
             # Last push did not only push back on movement but also did funky stuff
             if not self.ignore_push:
                 if push_direction.normalized() != movement_direction.normalized() * -1 and push_direction.length() != 0:
-                    print("Movement correction")
                     movement_direction = movement_direction + (movement_direction.normalized() * push_direction.length()) * -1
         
             self.model.setFluidPos(self.model.getX() + movement_direction.x, 0.5, self.model.getZ() + movement_direction.z)
@@ -116,7 +117,7 @@ class player_entity(enity_base):
             # Reset ignore push after one normal movement frame
             if self.ignore_push:
                 self.ignore_push = False
-        
+            
         base.cam.setX(self.model.getX())
         base.cam.setZ(self.model.getZ())
         
@@ -135,9 +136,7 @@ class player_entity(enity_base):
             self.model.setHpr(0,0,-x)
         
         if self.current_hp <= 0:
-            print("Man im dead")
             messenger.send("goto_main_menu")
-        
         
         for i, bullet in enumerate(self.bullets):
             bullet.update(dt)
@@ -183,10 +182,9 @@ class player_entity(enity_base):
         messenger.send("display_hp", [self.current_hp])
         
     def dash(self):
-       current_time = base.clock.getLongTime() 
+       current_time = base.clock.getLongTime()
        # Respect the cooldown
-       if current_time - self.last_dash_time > GAME_CONSTANTS.PLAYER_DASH_COOLDOWN:
-           self.last_dash_time = current_time
+       if self.time_since_last_dash >= GAME_CONSTANTS.PLAYER_DASH_COOLDOWN:
            mouse_pos = base.mouseWatcherNode.getMouse()
            nearPoint = Point3()
            base.camLens.extrude(mouse_pos, nearPoint, Point3())
@@ -217,6 +215,7 @@ class player_entity(enity_base):
            messenger.send("set_ability_on_cooldown", [PLAYER_ABILITIES.DASH, current_time + GAME_CONSTANTS.PLAYER_DASH_COOLDOWN])
           
            self.is_dashing = True
+           self.time_since_last_dash = 0
            
     def on_wall_collision(self, entry: CollisionEntry):
         print("collide with wall")
