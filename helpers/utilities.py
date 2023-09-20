@@ -89,3 +89,6 @@ def set_mouse_cursor(name):
     props = WindowProperties()
     props.setCursorFilename(os.path.join("assets", "icons", "mouse", name + ".ico"))
     base.win.requestProperties(props)
+    
+def format_float(f):
+    return "%.2f" % f

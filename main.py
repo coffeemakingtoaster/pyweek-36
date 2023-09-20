@@ -125,12 +125,7 @@ class main_game(ShowBase):
                         self.enemies -= 1
                         print(self.enemies)
                     del self.entities[i]
-                
-        
         return Task.cont
-    
-    
-    
     
     def load_game(self):
         print("Loading game")

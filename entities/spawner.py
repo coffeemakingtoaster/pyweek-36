@@ -19,6 +19,5 @@ class Spawner(enity_base):
         
     def spawn(self,entities):
         entities.append(ranged_enemy(self.pos[0],self.pos[2]))
-        
     
 
