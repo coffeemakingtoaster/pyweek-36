@@ -1,11 +1,11 @@
 from entities.entity_base import enity_base
 from entities.bullet import bullet_entity
 from config import GAME_CONSTANTS, ENTITY_TEAMS, PLAYER_ABILITIES
-from helpers.model_helpers import load_model
+from helpers.model_helpers import load_particles 
 from helpers.utilities import lock_mouse_in_window
 from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane, get_first_intersection
 
-from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry, BitMask32, CollideMask, LVector3f, CollisionSphere
+from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry, BitMask32, CollideMask, LVector3f, CollisionSphere, Quat
 import math
 from direct.actor.Actor import Actor
 
@@ -76,6 +76,7 @@ class player_entity(enity_base):
         
         self.ignore_push = False
         
+        self.dash_particles = load_particles("smoke")
         
     def set_movement_status(self, direction):
         self.movement_status[direction] = 1
@@ -96,9 +97,9 @@ class player_entity(enity_base):
             self.time_since_last_dash += dt
         
         if self.is_dashing:
-            print(self.time_since_last_dash)
             if self.time_since_last_dash > GAME_CONSTANTS.PLAYER_DASH_DURATION:
                 self.is_dashing = False
+                self.dash_particles.cleanup()
                 # Ignore remaining push of dash for movement correction of next frame
                 self.ignore_push = True
             else:
@@ -134,7 +135,7 @@ class player_entity(enity_base):
 
             x = math.degrees(math.atan2(mouse_pos_norm.x, mouse_pos_norm.y))
         
-            self.model.setHpr(0,0,-x)
+            self.model.setHpr(0,0,x)
         
         if self.current_hp <= 0:
             messenger.send("goto_main_menu")
@@ -155,9 +156,17 @@ class player_entity(enity_base):
     def _get_mouse_position(self):
         mouse_pos = base.mouseWatcherNode.getMouse()
         nearPoint = Point3()
-        base.camLens.extrude(mouse_pos, nearPoint, Point3())
+        farPoint = Point3()
+        base.camLens.extrude(mouse_pos, nearPoint, farPoint)
+       
+        # Rotate the extruded vector based on the rotation of the camera 
+        quat = Quat()
         
-        point = get_vector_intersection_with_y_coordinate_plane(nearPoint, self.model.getPos())
+        quat.setHpr(base.cam.getHpr())
+        
+        nearPoint = quat.xform(nearPoint)
+        
+        point = get_vector_intersection_with_y_coordinate_plane(nearPoint, base.cam.getPos())
         return point 
         
     def destroy(self):
@@ -187,8 +196,6 @@ class player_entity(enity_base):
            
            dash_direction = Vec3(target_point.x - player_pos.x, 0 , target_point.z - player_pos.z)
            
-           dash_direction.x = dash_direction.x * -1
-           
            dash_range = GAME_CONSTANTS.PLAYER_DASH_DURATION * GAME_CONSTANTS.PLAYER_DASH_SPEED
            
            if (collision := get_first_intersection(self.model.getPos(), dash_direction)) is not None:
@@ -197,14 +204,15 @@ class player_entity(enity_base):
                print((collision.getSurfacePoint(render)- self.model.getPos()).length())
                # If collision is within dash range -> Stop dash at collision
                # Shorten slightly to stop BEFORE hitting the object
-               dash_range = min((collision.getSurfacePoint(render) - self.model.getPos()).length() - 0.25, dash_range)
-               
-               print(dash_range)
+               dash_range = min((collision.getSurfacePoint(render) - self.model.getPos()).length() - 0.5, dash_range)
                
            self.dash_vector = dash_direction.normalized() * dash_range 
             
            # Display cd in HUD 
            messenger.send("set_ability_on_cooldown", [PLAYER_ABILITIES.DASH, current_time + GAME_CONSTANTS.PLAYER_DASH_COOLDOWN])
+            
+           self.dash_particles = load_particles("smoke") 
+           self.dash_particles.start(self.model, renderParent=render)
           
            self.is_dashing = True
            self.time_since_last_dash = 0
