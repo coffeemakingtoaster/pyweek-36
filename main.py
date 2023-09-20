@@ -90,7 +90,7 @@ class main_game(ShowBase):
         
         base.disableMouse()
         
-        
+        base.cTrav.setRespectPrevTransform(True)
         
     def game_loop(self, task):
         
