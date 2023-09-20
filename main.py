@@ -60,6 +60,8 @@ class main_game(ShowBase):
         self.entities = []
         self.enemies  = 0
         
+        self.current_hud = None
+        
         self.static_entities = []
 
         self.status_display = OnscreenText(text=GAME_STATUS.MAIN_MENU, pos=(0.9,0.9 ), scale=0.07,fg=(255,0,0, 1))
@@ -92,7 +94,6 @@ class main_game(ShowBase):
         
         base.cTrav.setRespectPrevTransform(True)
         
-        self.current_hud = None
         
     def game_loop(self, task):
         
@@ -176,6 +177,9 @@ class main_game(ShowBase):
         # no hud yet
         if self.active_ui is not None:
             self.active_ui.destroy()
+        if self.current_hud is not None:
+            self.current_hud.destroy()
+            self.current_hud = None
         # delete all entities
         for entity in self.entities:
             entity.destroy()
@@ -185,6 +189,7 @@ class main_game(ShowBase):
         self.static_entities = []
         if self.player is not None:
             self.player.destroy()
+            self.player = None
         self.active_ui = main_menu()
         self.setBackgroundColor((1, 1, 1, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
