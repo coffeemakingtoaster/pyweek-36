@@ -20,11 +20,11 @@ class base_enemy(enity_base):
         
         self.speed = 6
         
-        self.attackcooldown = 3
+        self.attackcooldown = 2
         self.last_attack_time = time.time()
 
-        self.model = Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Bite":"assets/anims/Enemy-Bite.egg"})
-        self.model.loop('Bite')
+        self.model = self.loadModel()
+        self.model.loop('Idle')
         self.model.getChild(0).setR(90)
         self.model.getChild(0).setH(90)
         self.model.getChild(0).setP(90)
@@ -59,7 +59,9 @@ class base_enemy(enity_base):
         self.is_dead = False
         self.enemy = True
         
-        
+    def loadModel(self):
+        return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Bite":"assets/anims/Enemy-Bite.egg"})
+    
     def update(self, dt, player_pos):
         
         entity_pos = self.model.getPos()
