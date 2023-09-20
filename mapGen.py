@@ -11,28 +11,18 @@ class MapLoader:
         
     def mapGen(self):
         map = []
-        gridPos = (0,0)
+        mapLength = 0.5
+        prevRoomLength = 0
         for i in range(self.mapLength):
-            if i == 0:
-                entry = 1
-                exit = entry + random.randint(1,3)
-            else:
-                entry = self.convert_entry(map[i-1].exit)
-                if entry == 1:
-                    gridPos = (gridPos[0],gridPos[1]-1)
-                    exit = entry + random.randint(1,3)
-                elif entry == 2:
-                    gridPos = (gridPos[0]+1,gridPos[1])
-                    exit = entry + random.randint(1,2)
-                else:
-                    gridPos = (gridPos[0]-1,gridPos[1])
-                    exit = entry - random.randint(1,2)
-                
-            
-            
             
             id = random.randint(1,MAP_CONSTANTS.ROOM_TYPES)
-            map.append(Room(entry,exit,id,gridPos))
+            
+            room = Room(1,3,id,mapLength,prevRoomLength)
+            mapLength = mapLength - (prevRoomLength/2 + room.size/2)
+            prevRoomLength = room.size
+            
+            map.append(room)
+            
             
         return map
     

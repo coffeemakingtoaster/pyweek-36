@@ -6,6 +6,7 @@ from helpers.model_helpers import load_model
 from direct.actor.Actor import Actor
 from entities.ranged_enemy import ranged_enemy
 from entities.melee_enemy import melee_enemy
+from entities.tank_enemy import tank_enemy
 
 class Spawner(enity_base):
     def __init__(self,pos,wave,type):

@@ -39,5 +39,6 @@
       "wave": 0,
       "enemy_type": "ranged_enemy"
     }
-  ]
+  ],
+  "size":1
 }

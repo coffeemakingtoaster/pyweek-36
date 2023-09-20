@@ -37,7 +37,7 @@ class main_game(ShowBase):
         
         # Set camera position 
         base.cam.setPos(0, 50, 0) 
-        base.cam.setHpr(0, 180, 0)
+        base.cam.setHpr(0, 180+40, 0)
         
         self.setupLights()
         
@@ -222,7 +222,7 @@ class main_game(ShowBase):
         
     def enterRoom(self):
         self.spawnWave()
-        self.unloadPreviousRoom()
+        #self.unloadPreviousRoom()
         
     
     def spawnWave(self):

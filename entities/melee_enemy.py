@@ -19,7 +19,7 @@ class melee_enemy(base_enemy):
         super().__init__(spawn_x,spawn_z)
         
     def loadModel(self):
-        return Actor("assets/anims/TankEnemy.egg",{"Attack":"assets/anims/TankEnemy-Attack.egg","Idle":"assets/anims/TankEnemy-Bite.egg"})
+        return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
     
     def update(self, dt, player_pos):
         

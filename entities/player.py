@@ -120,7 +120,7 @@ class player_entity(enity_base):
                 self.ignore_push = False
             
         base.cam.setX(self.model.getX())
-        base.cam.setZ(self.model.getZ())
+        base.cam.setZ(self.model.getZ()+40)
         
         # Rotate mouse to camera
         if base.mouseWatcherNode.hasMouse():
