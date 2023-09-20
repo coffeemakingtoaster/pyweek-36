@@ -3,9 +3,9 @@ from entities.bullet import bullet_entity
 from config import GAME_CONSTANTS, ENTITY_TEAMS
 from helpers.model_helpers import load_model
 from helpers.utilities import lock_mouse_in_window
-from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane 
+from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane, get_first_intersection
 
-from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry, BitMask32, CollideMask
+from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry, BitMask32, CollideMask, LVector3f
 import math
 
 class player_entity(enity_base):
@@ -13,7 +13,6 @@ class player_entity(enity_base):
     def __init__(self):
         
         # TODO: remove the model as the parent of the hitbox. Instead make them siblings. This allows for the visual illusion of a rotating player without actually having to rotate the hitbox
-         
         super().__init__()
         
         self.team = ENTITY_TEAMS.PLAYER
@@ -31,6 +30,7 @@ class player_entity(enity_base):
         self.accept("s-up", self.unset_movement_status, ["down"])
         
         self.accept("mouse1", self.shoot_bullet)
+        self.accept("mouse3", self.dash)
         
         self.model = load_model("player")
         
@@ -39,6 +39,10 @@ class player_entity(enity_base):
         self.model.setPos(0,0.5,0)
         
         self.current_hp = GAME_CONSTANTS.PLAYER_MAX_HP
+        
+        self.is_dashing = False 
+        
+        self.dash_vector = None
         
         self.bullets = []
         
@@ -50,11 +54,6 @@ class player_entity(enity_base):
         
         self.collision.node().setCollideMask(ENTITY_TEAMS.PLAYER_BITMASK)
         
-        print(ENTITY_TEAMS.PLAYER_BITMASK)
-        print(ENTITY_TEAMS.ENEMIES_BITMASK)
-        
-        print(CollideMask.allOff())
-        
         self.collision.setTag("team", self.team)
         
         self.notifier = CollisionHandlerEvent()
@@ -63,13 +62,13 @@ class player_entity(enity_base):
         
         self.accept("player-into-bullet", self.bullet_hit)
         
-        self.accept("player-into-wall", self.on_movement_collision)
-        
         base.cTrav.addCollider(self.collision, self.notifier)
         
         self.is_dead = False
         
         self.last_position = Point3(0,0.5,0)
+        
+        self.last_dash_time = base.clock.getLongTime()
         
     def set_movement_status(self, direction):
         self.movement_status[direction] = 1
@@ -82,33 +81,37 @@ class player_entity(enity_base):
        
     def update(self, dt):
         
+        self.model.node().resetAllPrevTransform()
+        
         push_direction = self.last_position - self.model.getPos()
-
-        movement_direction = Vec3(((self.movement_status["left"] * -1 ) + self.movement_status["right"]) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt , 0, ((self.movement_status["down"] ) + self.movement_status["up"]* -1 ) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt)
         
-        # Last push did not only push back on movement but also did funky stuff
-        if push_direction.normalized() != movement_direction.normalized() * -1 and push_direction.length() != 0:
-            movement_direction = movement_direction + (movement_direction.normalized() * push_direction.length()) * -1
+        if self.is_dashing:
             
-        #if movement_direction.length() > GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED:
-        #    movement_direction =  movement_direction.normalized() * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt
+            current_time = base.clock.getLongTime() 
+            if current_time > ( self.last_dash_time + GAME_CONSTANTS.PLAYER_DASH_DURATION):
+                self.is_dashing = False
+            else:
+                self.model.setFluidPos(self.model.getPos() + (self.dash_vector * ( dt / GAME_CONSTANTS.PLAYER_DASH_DURATION)))
+        else:
+            movement_direction = Vec3(((self.movement_status["left"] * -1 ) + self.movement_status["right"]) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt , 0, ((self.movement_status["down"] ) + self.movement_status["up"]* -1 ) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt)
         
-        self.model.setFluidPos(self.model.getX() + movement_direction.x, 0.5, self.model.getZ() + movement_direction.z)
+            # Last push did not only push back on movement but also did funky stuff
+            if push_direction.normalized() != movement_direction.normalized() * -1 and push_direction.length() != 0:
+                movement_direction = movement_direction + (movement_direction.normalized() * push_direction.length()) * -1
         
-        self.last_position = self.model.getPos()
+            self.model.setFluidPos(self.model.getX() + movement_direction.x, 0.5, self.model.getZ() + movement_direction.z)
+        
+            self.last_position = self.model.getPos()
         
         base.cam.setX(self.model.getX())
         base.cam.setZ(self.model.getZ())
         
         # Rotate mouse to camera
         if base.mouseWatcherNode.hasMouse():
-            mouse_pos = base.mouseWatcherNode.getMouse()
-            nearPoint = Point3()
-            base.camLens.extrude(mouse_pos, nearPoint, Point3())
-        
-            point = get_vector_intersection_with_y_coordinate_plane(nearPoint, base.cam.getPos())
+            point = self._get_mouse_position() 
         
             player_pos = self.model.getPos()
+            
             delta_to_player = Vec3(player_pos.x - point.x, 0 ,player_pos.z - point.z) 
 
             mouse_pos_norm = Point2(delta_to_player.x, delta_to_player.z).normalized()
@@ -129,7 +132,6 @@ class player_entity(enity_base):
                 del self.bullets[i]
         
     def shoot_bullet(self):
-        
         mouse_pos = base.mouseWatcherNode.getMouse()
         nearPoint = Point3()
         base.camLens.extrude(mouse_pos, nearPoint, Point3())
@@ -139,10 +141,15 @@ class player_entity(enity_base):
         player_pos = self.model.getPos()
         delta_to_player = Vec3(target_point.x - player_pos.x, 0 , target_point.z - player_pos.z).normalized()
         
-        
-        
         self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, self.team)) 
-
+    
+    def _get_mouse_position(self):
+        mouse_pos = base.mouseWatcherNode.getMouse()
+        nearPoint = Point3()
+        base.camLens.extrude(mouse_pos, nearPoint, Point3())
+        
+        point = get_vector_intersection_with_y_coordinate_plane(nearPoint, base.cam.getPos())
+        return point 
         
     def destroy(self):
         self.model.removeNode()
@@ -151,17 +158,51 @@ class player_entity(enity_base):
         self.is_dead = True
         self.ignore_all()
         
-    # collisionentry is not needed -> we ignore it 
     def bullet_hit(self, entry: CollisionEntry):
-        print("hit")
         # No damage taken by own bullets
         if entry.into_node.getTag("team") == self.team:
+            return
+        # Dashing player does not receive damage 
+        if self.is_dashing:
             return
         self.current_hp -= 1
         messenger.send("display_hp", [self.current_hp])
         
-    
-    def on_movement_collision(self, entry: CollisionEntry):
-        print(entry.getIntoNodePath())
-        print(entry)
+    def dash(self):
+       print("Dashing")
+       current_time = base.clock.getLongTime() 
+       if current_time - self.last_dash_time > GAME_CONSTANTS.PLAYER_DASH_COOLDOWN:
+           self.last_dash_time = current_time
+           mouse_pos = base.mouseWatcherNode.getMouse()
+           nearPoint = Point3()
+           base.camLens.extrude(mouse_pos, nearPoint, Point3())
+           
+           player_pos = self.model.getPos()
         
+           target_point = get_vector_intersection_with_y_coordinate_plane(nearPoint, base.cam.getPos())
+           
+           dash_direction = Vec3(target_point.x - player_pos.x, 0 , target_point.z - player_pos.z)
+           
+           dash_direction.x = dash_direction.x * -1
+           
+           dash_range = GAME_CONSTANTS.PLAYER_DASH_DURATION * GAME_CONSTANTS.PLAYER_DASH_SPEED
+           
+           if (collision := get_first_intersection(self.model.getPos(), dash_direction)) is not None:
+               print(collision.getSurfacePoint(render))
+               print((collision.getSurfacePoint(render)- self.model.getPos()))
+               print((collision.getSurfacePoint(render)- self.model.getPos()).length())
+               # If collision is within dash range -> Stop dash at collision
+               # Shorten slightly to stop BEFORE hitting the object
+               dash_range = min((collision.getSurfacePoint(render) - self.model.getPos()).length() - 0.25, dash_range)
+               
+               print(dash_range)
+               
+           self.dash_vector = dash_direction.normalized() * dash_range 
+          
+           self.is_dashing = True
+           
+    def on_wall_collision(self, entry: CollisionEntry):
+        print("collide with wall")
+        # Stop dash when colliding with an object
+        if entry.into_node.getTag("team") == ENTITY_TEAMS.MAP:
+            self.is_dashing = False

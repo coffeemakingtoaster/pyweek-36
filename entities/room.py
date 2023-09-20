@@ -1,5 +1,5 @@
 from direct.showbase import DirectObject
-from config import MAP_CONSTANTS
+from config import MAP_CONSTANTS, ENTITY_TEAMS
 import json
 from helpers.model_helpers import load_model
 from panda3d.core import BoundingBox, NodePath, PandaNode, ShowBoundsEffect, CollisionBox, CollisionNode, LVector3f, CollisionHandlerEvent, CollisionSphere
@@ -16,11 +16,8 @@ class Room(DirectObject.DirectObject):
         self.roomAssets = self.loadRoomAssets(id)
         self.boundingBox = None
         
-        
         self.models = []
         self.walls = []
-        
-        #messenger.toggleVerbose()
         
     def loadRoomAssets(self, id):
         file_path = f'assets/rooms/{id}.json'
@@ -74,6 +71,7 @@ class Room(DirectObject.DirectObject):
             csn = model.attach_new_node(CollisionNode("wall"))
             csn.show()
             csn.node().addSolid(cp)
+            csn.setTag("team", ENTITY_TEAMS.MAP)
             base.cTrav.addCollider(csn, CollisionHandlerEvent())
             self.models.append(csn)
         model.setHpr(rotation[0],rotation[1],rotation[2])

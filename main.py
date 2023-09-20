@@ -86,6 +86,8 @@ class main_game(ShowBase):
         
         base.disableMouse()
         
+        base.cTrav.setRespectPrevTransform(True)
+        
     def game_loop(self, task):
         
         dt = self.clock.dt 
@@ -120,8 +122,6 @@ class main_game(ShowBase):
         self.pusher.addCollider(self.player.collision, self.player.model)
         self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
-        
-        
         
         self.active_ui = game_hud(self.player.current_hp)
         #self.entities.append(sample_enemy_entity(10,10))
