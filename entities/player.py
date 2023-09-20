@@ -54,7 +54,7 @@ class player_entity(enity_base):
         
         self.collision.node().addSolid(CollisionCapsule(Point3(0,0,0),(0,5,0),0.9))
         
-        self.collision.show()
+        #self.collision.show()
         
         self.collision.node().setCollideMask(ENTITY_TEAMS.PLAYER_BITMASK)
         
@@ -119,7 +119,7 @@ class player_entity(enity_base):
                 self.ignore_push = False
             
         base.cam.setX(self.model.getX())
-        base.cam.setZ(self.model.getZ()+40)
+        base.cam.setZ(self.model.getZ())
         
         # Rotate mouse to camera
         if base.mouseWatcherNode.hasMouse():

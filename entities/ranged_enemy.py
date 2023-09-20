@@ -3,12 +3,16 @@ from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, Collision
 import math
 import time
 from entities.bullet import bullet_entity
+from direct.actor.Actor import Actor
 
 class ranged_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z):
         super().__init__(spawn_x,spawn_z)
         self.bullets = []
+    
+    def loadModel(self):
+        return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
     
     def update(self, dt, player_pos):
         entity_pos = self.model.getPos()
@@ -44,3 +48,4 @@ class ranged_enemy(base_enemy):
             
     def attack(self,delta_x_reversed):
         self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
+        self.model.play('Attack')

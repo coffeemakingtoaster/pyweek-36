@@ -17,6 +17,9 @@ class melee_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z):
         super().__init__(spawn_x,spawn_z)
+        
+    def loadModel(self):
+        return Actor("assets/anims/TankEnemy.egg",{"Attack":"assets/anims/TankEnemy-Attack.egg","Idle":"assets/anims/TankEnemy-Bite.egg"})
     
     def update(self, dt, player_pos):
         
@@ -34,14 +37,14 @@ class melee_enemy(base_enemy):
         
         
         
-        if delta_to_player.length() > 1:
+        if delta_to_player.length() > 2:
             self.model.setX(self.model.getX() - x_direction)
             self.model.setZ(self.model.getZ() - z_direction)
         
         self.model.setR(x)
         
         current_time = time.time()
-        if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<2:
+        if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<4:
             self.attack()
             self.last_attack_time = current_time
     
