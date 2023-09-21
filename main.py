@@ -150,7 +150,7 @@ class main_game(ShowBase):
         print("Loading game")
         self.current_run_duration = 0
         self.active_ui.destroy()
-        self.setBackgroundColor((1, 1, 1, 1))
+        self.setBackgroundColor((0, 0, 0, 1))
         self.player = player_entity()
         
         self.pusher.addCollider(self.player.collision, self.player.model)
@@ -169,6 +169,7 @@ class main_game(ShowBase):
         self.map = self.mapLoader.mapGen()
         
         self.currentRoom = self.mapLoader.loadRoom(self.map[0])
+        
         self.static_entities = self.map 
         self.set_game_status(GAME_STATUS.RUNNING)
 
@@ -212,7 +213,7 @@ class main_game(ShowBase):
             self.player = None
         self.current_run_duration = 0
         self.active_ui = main_menu()
-        self.setBackgroundColor((1, 1, 1, 1))
+        self.setBackgroundColor((0, 0, 0, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
         
         
