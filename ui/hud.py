@@ -69,7 +69,10 @@ class game_hud(ui_base):
     def destroy(self):
         self.ignoreAll()
         base.taskMgr.removeTasksMatching("hud_update*")
-        super().destroy()
+        try:
+            super().destroy()
+        except:
+            print("Nodes were already cleaned up")
             
     def _update_abilities_cooldown_display(self, spell_name, cd_text: DirectLabel, image: OnscreenImage):
         if self.is_paused:
