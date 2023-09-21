@@ -32,7 +32,7 @@ class base_enemy(enity_base):
         
         self.model.reparentTo(render)
         
-        self.model.setPos(spawn_x,1,spawn_z)
+        self.model.setPos(spawn_x,2,spawn_z)
         
         self.current_hp = GAME_CONSTANTS.SAMPLE_ENEMY_MAX_HP
         

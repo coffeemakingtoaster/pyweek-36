@@ -14,6 +14,8 @@ class settings_menu(ui_base):
     def __init__(self):
         ui_base.__init__(self)
         
+        self.load_background_image()
+        
         # Temporary layout
         fullscreen_checkbox = DirectCheckButton(text="Fullscreen", pos=(0,0,0),scale=0.2, indicatorValue=get_fullscreen_value(), command=self.toggle_fullscreen, text_font=self.font)
         self.ui_elements.append(fullscreen_checkbox)

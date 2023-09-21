@@ -1,7 +1,8 @@
 from entities.base_enemy import base_enemy
 from entities.entity_base import enity_base
 
-from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionHandlerEvent, CollisionEntry
+from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionHandlerEvent, CollisionEntry, CollisionBox, Point3
+from direct.task.Task import Task
 
 import math
 import uuid
@@ -52,8 +53,8 @@ class melee_enemy(base_enemy):
         self.model.setZ(self.model.getZ() - z_direction)
        
         # Safeguard 
-        if self.model.getY() > 1: 
-            self.model.setY(1)
+        if self.model.getY() > 2: 
+            self.model.setY(2)
         
         self.model.setR(x)
         
@@ -64,3 +65,23 @@ class melee_enemy(base_enemy):
       
     def attack(self):
         self.model.play('Attack')
+        
+    def _spawn_attack_hitbox(self, _):
+        self.attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
+        self.attack_hitbox.show()
+        self.attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,0),2,0.5,1.5))
+        self.attack_hitbox.setTag("team", ENTITY_TEAMS.PLAYER)
+        self.attack_hitbox.setPos(0,0,-1)
+        # Set player team as player is the target
+        self.attack_hitbox.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
+        base.cTrav.addCollider(self.attack_hitbox, self.notifier)
+        return Task.done
+        
+    def _destroy_attack_hitbox(self, _):
+        self.attack_hitbox.removeNode()
+        return Task.done
+      
+    def attack(self):
+        self.model.play('Attack')
+        base.taskMgr.doMethodLater(0.7, self._spawn_attack_hitbox, "spawn_melee_attack_hitbox")
+        base.taskMgr.doMethodLater(1.5, self._destroy_attack_hitbox, "destroy_melee_attack_hitbox")

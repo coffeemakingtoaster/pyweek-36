@@ -40,7 +40,7 @@ class player_entity(enity_base):
         
         self.model.reparentTo(render) 
         
-        self.model.setPos(0,0.5,0)
+        self.model.setPos(0,2,0)
         self.model.loop('Dance')
         self.model.getChild(0).setP(90)
         
@@ -61,6 +61,14 @@ class player_entity(enity_base):
         self.collision.node().setCollideMask(ENTITY_TEAMS.PLAYER_BITMASK)
         
         self.collision.setTag("team", self.team)
+              
+        self.ability_collision = self.model.attachNewNode(CollisionNode("player_melee_attack_hitbox"))
+        
+        self.ability_collision.node().addSolid(CollisionSphere(0,0,0,0.9))
+        
+        self.ability_collision.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
+        
+        self.ability_collision.setTag("team", self.team)
         
         self.notifier = CollisionHandlerEvent()
 
@@ -68,11 +76,14 @@ class player_entity(enity_base):
         
         self.accept("bullet-into", self.bullet_hit)
         
+        self.accept("attack-into-player_melee_attack_hitbox", self.bullet_hit)
+        
+        base.cTrav.addCollider(self.ability_collision, self.notifier) 
         base.cTrav.addCollider(self.collision, self.notifier)
         
         self.is_dead = False
         
-        self.last_position = Point3(0,0.5,0)
+        self.last_position = Point3(0,2,0)
         
         self.time_since_last_dash = GAME_CONSTANTS.PLAYER_DASH_COOLDOWN
         self.time_since_last_black_hole = GAME_CONSTANTS.BLACK_HOLE_COOLDOWN
@@ -115,7 +126,7 @@ class player_entity(enity_base):
                 if push_direction.normalized() != movement_direction.normalized() * -1 and push_direction.length() != 0:
                     movement_direction = movement_direction + (movement_direction.normalized() * push_direction.length()) * -1
         
-            self.model.setFluidPos(self.model.getX() + movement_direction.x, 0.5, self.model.getZ() + movement_direction.z)
+            self.model.setFluidPos(self.model.getX() + movement_direction.x, 2, self.model.getZ() + movement_direction.z)
         
             self.last_position = self.model.getPos()
            
@@ -180,12 +191,15 @@ class player_entity(enity_base):
         self.ignore_all()
         
     def bullet_hit(self, entry: CollisionEntry):
+        print(entry)
         # Dashing player does not receive damage 
         if self.is_dashing:
             return
-        
+       
+        print(entry.into_node.getTag("team")) 
         # Only take damage from bullets meant for my own team
         if entry.into_node.getTag("team") != self.team:
+            print("wrong team")
             return
 
         self.current_hp -= 1
