@@ -83,9 +83,6 @@ class player_entity(enity_base):
         
     def unset_movement_status(self, direction):
         self.movement_status[direction] = 0
-        
-    def on_collision(self, entry=None):
-        print(entry)
        
     def update(self, dt):
         
