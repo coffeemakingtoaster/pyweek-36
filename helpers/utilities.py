@@ -89,3 +89,21 @@ def release_mouse_from_window():
     
 def format_float(f):
     return "%.1f" % f
+
+
+def format_seconds(seconds):
+    ms = round(seconds % 1, 2) * 100
+    print(seconds)
+    print(ms)
+    seconds = seconds % (24 * 3600)
+    hour = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
+    
+    time_string = "" 
+    
+    if hour > 0:
+        return "%d:%02d:%02d:%02d" % (hour, minutes, seconds, ms) 
+    else:
+        return "%02d:%02d:%02d" % (minutes, seconds, ms)  

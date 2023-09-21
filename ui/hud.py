@@ -30,7 +30,8 @@ class game_hud(ui_base):
         self.ui_elements.append(self.black_hole_ability_icon)
         
         self.current_cooldowns = {
-            PLAYER_ABILITIES.DASH: 0
+            PLAYER_ABILITIES.DASH: 0,
+            PLAYER_ABILITIES.BLACK_HOLE: 0
         }
         
         self.is_paused = False

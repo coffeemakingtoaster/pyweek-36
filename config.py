@@ -30,6 +30,7 @@ class GAME_STATUS:
    RUNNING = "running"
    STARTING = "starting"
    SETTINGS = "settings"
+   GAME_FINISH = "game_finish'"
    
 class MAP_CONSTANTS:
    ROOM_SIZE = 24

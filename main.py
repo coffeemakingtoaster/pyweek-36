@@ -3,6 +3,7 @@ from panda3d.core import CollisionSphere, CollisionNode, CollisionTube
 from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
+from ui.victory_screen import victory_screen
 from ui.hud import game_hud 
 from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG, ENTITY_TEAMS
 from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
@@ -101,6 +102,8 @@ class main_game(ShowBase):
         
         base.cTrav.setRespectPrevTransform(True)
         
+        self.current_run_duration = 0
+        
         
     def game_loop(self, task):
         
@@ -116,7 +119,13 @@ class main_game(ShowBase):
         if self.game_status != GAME_STATUS.RUNNING:
            return Task.cont 
        
+        self.current_run_duration += dt
+       
         self.player.update(dt)
+        
+        if self.player.is_dead:
+            self.finish_game(False)
+            return Task.cont
        
         if self.enemies == 0:
             if self.currentWave != 4:
@@ -139,6 +148,7 @@ class main_game(ShowBase):
     
     def load_game(self):
         print("Loading game")
+        self.current_run_duration = 0
         self.active_ui.destroy()
         self.setBackgroundColor((1, 1, 1, 1))
         self.player = player_entity()
@@ -200,6 +210,7 @@ class main_game(ShowBase):
         if self.player is not None:
             self.player.destroy()
             self.player = None
+        self.current_run_duration = 0
         self.active_ui = main_menu()
         self.setBackgroundColor((1, 1, 1, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
@@ -250,6 +261,13 @@ class main_game(ShowBase):
             
     def unloadPreviousRoom(self):
         self.mapLoader.unloadRoom(self.oldRoom,self.currentRoom)
+        
+        
+    def finish_game(self, success: bool):
+        self.set_game_status(GAME_STATUS.GAME_FINISH)
+        self.active_ui.destroy()
+        self.current_hud = None
+        self.active_ui = victory_screen(self.current_run_duration, success) 
         
 def start_game():
     print("Starting game..")
