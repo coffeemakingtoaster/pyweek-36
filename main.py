@@ -12,6 +12,8 @@ from entities.sample_enemy import sample_enemy_entity
 from entities.melee_enemy import melee_enemy
 from entities.ranged_enemy import ranged_enemy
 
+from entities.tank_enemy import tank_enemy
+
 from panda3d.core import WindowProperties
 from panda3d.core import AmbientLight, DirectionalLight, LightAttrib, PointLight
 from panda3d.core import LPoint3, LVector3, BitMask32
@@ -161,7 +163,7 @@ class main_game(ShowBase):
     
         self.active_ui = game_hud()
         
-        self.entities.append(ranged_enemy(10,10))
+        self.entities.append(melee_enemy(10,10))
         self.pusher.addCollider(self.entities[0].collision, self.entities[0].model)
         self.cTrav.addCollider(self.entities[0].collision, self.pusher)
         self.enemies += 1

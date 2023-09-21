@@ -47,3 +47,4 @@ class ENTITY_TEAMS:
    MAP_BITMASK = BitMask32(0x03)
    ABILITY = "ability"
    ABILITY_BITMASK = BitMask32(0x04)
+   MELEE_ATTACK_BITMASK = BitMask32(0x08)

@@ -23,7 +23,7 @@ class bullet_entity(enity_base):
         
         self.model.reparentTo(render)
         
-        self.model.setPos(spawn_x, 0.5 ,spawn_z) 
+        self.model.setPos(spawn_x, 2 ,spawn_z) 
         
         # This is slightly bugged -> Will be removed anyway for final model 
         bullet_rotation = math.degrees(math.atan2(direction.z, direction.x))

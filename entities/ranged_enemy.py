@@ -42,8 +42,8 @@ class ranged_enemy(base_enemy):
         self.model.setR(x)
         
         # Safeguard 
-        if self.model.getY() > 1: 
-            self.model.setY(1)
+        if self.model.getY() > 2: 
+            self.model.setY(2)
         
         current_time = time.time()
         if current_time - self.last_attack_time >= self.attackcooldown:
