@@ -12,7 +12,7 @@ from entities.melee_enemy import melee_enemy
 from entities.ranged_enemy import ranged_enemy
 
 from panda3d.core import WindowProperties
-from panda3d.core import AmbientLight, DirectionalLight, LightAttrib
+from panda3d.core import AmbientLight, DirectionalLight, LightAttrib, PointLight
 from panda3d.core import LPoint3, LVector3, BitMask32
 
 from direct.showbase.ShowBase import ShowBase
@@ -219,6 +219,12 @@ class main_game(ShowBase):
         directionalLight.setColor((0.3, 0.3, 0.3, 1))
         render.setLight(render.attachNewNode(directionalLight))
         render.setLight(render.attachNewNode(ambientLight))
+        plight = PointLight('plight')
+        plight.setColor((2, 1, 1, 1))
+        plight.attenuation = (1, 0, 0.1)
+        plnp = render.attachNewNode(plight)
+        plnp.setPos(0, 2, 0)
+        render.setLight(plnp)
     
     def loadNextRoom(self):
         self.currentRoomNumber += 1
