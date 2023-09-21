@@ -17,10 +17,10 @@ class pause_menu(ui_base):
         img.setAlphaScale(0.5) 
         self.ui_elements.append(img)
 
-        continue_button = DirectButton(text=("Continue"),pos=(0,0,0), scale=0.2, command=self.unpause_game)
+        continue_button = DirectButton(text=("Continue"),pos=(0,0,0), scale=0.2, command=self.unpause_game, text_font=self.font)
         self.ui_elements.append(continue_button)
         
-        main_menu_button = DirectButton(text=("Return to main menu"), pos=(0,0,-0.6), scale=0.2, command=self.goto_main_menu)
+        main_menu_button = DirectButton(text=("Return to main menu"), pos=(0,0,-0.6), scale=0.2, command=self.goto_main_menu, text_font=self.font)
         self.ui_elements.append(main_menu_button)
 
     def unpause_game(self):
