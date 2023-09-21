@@ -45,5 +45,4 @@ class ENTITY_TEAMS:
    MAP = "map"
    MAP_BITMASK = BitMask32(0x03)
    ABILITY = "ability"
-   # These are equal to ensure that enemies collide with abilities 
-   ABILITY_BITMASK = ENEMIES_BITMASK
+   ABILITY_BITMASK = BitMask32(0x04)

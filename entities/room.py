@@ -83,7 +83,7 @@ class Room(DirectObject.DirectObject):
                 #model.show_tight_bounds()
                 cp = CollisionBox(min_point - model.getPos(),max_point - model.getPos())
                 csn = model.attach_new_node(CollisionNode("wall"))
-                #csn.show()
+                csn.show()
                 csn.setTag("team", ENTITY_TEAMS.MAP)
                 csn.node().addSolid(cp)
                 base.cTrav.addCollider(csn, CollisionHandlerEvent())

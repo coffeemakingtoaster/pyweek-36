@@ -4,7 +4,7 @@ from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
 from ui.hud import game_hud 
-from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
+from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG, ENTITY_TEAMS
 from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
 from entities.player import player_entity
 from entities.sample_enemy import sample_enemy_entity
@@ -34,7 +34,11 @@ class main_game(ShowBase):
     def __init__(self):
         
         ShowBase.__init__(self)
-
+        
+        print(ENTITY_TEAMS.MAP_BITMASK)
+        print(ENTITY_TEAMS.ENEMIES_BITMASK)
+        print(ENTITY_TEAMS.PLAYER_BITMASK)
+        
         # Set camera position 
         base.cam.setPos(0, 50, 0) 
         base.cam.setHpr(0, 180+40, 0)
@@ -144,7 +148,10 @@ class main_game(ShowBase):
         self.pusher.setHorizontal(True)
     
         self.active_ui = game_hud()
+        
         self.entities.append(ranged_enemy(10,10))
+        self.pusher.addCollider(self.entities[0].collision, self.entities[0].model)
+        self.cTrav.addCollider(self.entities[0].collision, self.pusher)
         self.enemies += 1
         
         lock_mouse_in_window()
@@ -237,6 +244,8 @@ class main_game(ShowBase):
         for spawner in self.currentRoom.spawners:
             if spawner.wave == self.currentWave:
                 spawner.spawn(self.entities)
+                self.pusher.addCollider(self.entities[-1].collision, self.entities[-1].model)
+                self.cTrav.addCollider(self.entities[-1].collision, self.pusher)
                 self.enemies += 1
             
     def unloadPreviousRoom(self):

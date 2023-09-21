@@ -44,23 +44,32 @@ class base_enemy(enity_base):
         
         self.collision.node().setCollideMask(ENTITY_TEAMS.ENEMIES_BITMASK)
         
+        self.ability_collision = self.model.attachNewNode(CollisionNode("enemy_ability_hitbox"))
+        
+        self.ability_collision.node().addSolid(CollisionSphere(0,0,0,0.9))
+        
+        self.ability_collision.node().setCollideMask(ENTITY_TEAMS.ABILITY_BITMASK)
+        
         #self.collision.show()
         
         self.collision.setTag("team", self.team)
+        self.ability_collision.setTag("team", self.team)
         self.collision.setTag("id", self.id)
+        self.ability_collision.setTag("id", self.id)
         
         self.notifier = CollisionHandlerEvent()
 
         self.notifier.addInPattern("%fn-into-%in")
         self.notifier.addOutPattern("%fn-out-%in")
         
-        self.accept("enemy-into-bullet", self.bullet_hit)
+        self.accept("bullet-into", self.bullet_hit)
         
-        self.accept("enemy-into-black_hole", self.enter_black_hole)
+        self.accept("enemy_ability_hitbox-into-black_hole", self.enter_black_hole)
         
-        self.accept("enemy-out-black_hole", self.leave_black_hole)
+        self.accept("enemy_ability_hitbox-out-black_hole", self.leave_black_hole)
         
         base.cTrav.addCollider(self.collision, self.notifier)
+        base.cTrav.addCollider(self.ability_collision, self.notifier)
         
         self.is_dead = False
         self.enemy = True
@@ -78,10 +87,12 @@ class base_enemy(enity_base):
     # collisionentry is not needed -> we ignore it 
     def bullet_hit(self, entry: CollisionEntry):
         # Ignore collisions triggered by other enemies
-        if entry.from_node.getTag("id") != self.id:
+        if entry.into_node.getTag("id") != self.id:
             return
-        # No damage take by allied or own bullets
-        if entry.into_node.getTag("team") == self.team:
+        
+        # Only take damage from bullets targeted at own team 
+        if entry.into_node.getTag("team") != self.team:
+            print("nope")
             return
         
         self.takeDamage(1)

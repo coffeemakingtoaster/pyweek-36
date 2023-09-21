@@ -66,7 +66,7 @@ class player_entity(enity_base):
 
         self.notifier.addInPattern("%fn-into-%in")
         
-        self.accept("player-into-bullet", self.bullet_hit)
+        self.accept("bullet-into", self.bullet_hit)
         
         base.cTrav.addCollider(self.collision, self.notifier)
         
@@ -180,12 +180,14 @@ class player_entity(enity_base):
         self.ignore_all()
         
     def bullet_hit(self, entry: CollisionEntry):
-        # No damage taken by own bullets
-        if entry.into_node.getTag("team") == self.team:
-            return
         # Dashing player does not receive damage 
         if self.is_dashing:
             return
+        
+        # Only take damage from bullets meant for my own team
+        if entry.into_node.getTag("team") != self.team:
+            return
+
         self.current_hp -= 1
         messenger.send("display_hp", [self.current_hp])
         
@@ -221,7 +223,6 @@ class player_entity(enity_base):
            self.time_since_last_dash = 0
            
     def on_wall_collision(self, entry: CollisionEntry):
-        print("collide with wall")
         # Stop dash when colliding with an object
         if entry.into_node.getTag("team") == ENTITY_TEAMS.MAP:
             self.is_dashing = False
