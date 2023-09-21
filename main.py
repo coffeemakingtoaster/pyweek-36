@@ -92,7 +92,7 @@ class main_game(ShowBase):
 
         self.gameTask = base.taskMgr.add(self.game_loop, "gameLoop")
         
-        self.accept("l", self.loadNextRoom)
+        self.accept("l", self.enterRoom)
         self.accept("u", self.unloadOldestRoom)
         
         # Load music
@@ -130,10 +130,10 @@ class main_game(ShowBase):
             return Task.cont
        
         if self.enemies == 0:
-            if self.currentWave != 4:
-                self.currentWave += 1
+            if self.currentWave != 4 and self.currentWave != 0:
                 self.spawnWave()
-            else:
+                self.currentWave += 1
+            elif self.currentWave == 4:
                 self.currentWave = 0
                 self.loadNextRoom()
        
@@ -146,6 +146,8 @@ class main_game(ShowBase):
                         self.enemies -= 1
                         print(self.enemies)
                     del self.entities[i]
+                    
+        
         return Task.cont
     
     def load_game(self):
@@ -251,7 +253,7 @@ class main_game(ShowBase):
         self.newestRoomNumber += 1
         self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
         self.currentRoom = self.loadedRooms[self.currentRoomNumber]
-        self.currentRoomNumber += 1
+        self.enterRoom()
         print("loadingFirstRoom")
         
     def loadNextRoom(self):
@@ -267,17 +269,21 @@ class main_game(ShowBase):
             
         else:
             self.currentRoom = self.loadedRooms[self.currentRoomNumber]
-            self.currentRoomNumber += 1
-               
             
         
-        self.enterRoom()
+        self.currentRoom.openDoor()
+            
+        
+        
         
     def enterRoom(self):
         self.spawnWave()
-        self.closeDoor()
+        self.currentWave = 1
+        self.currentRoom.closeDoor()
+        self.currentRoomNumber += 1
         
         
+    
     
     def spawnWave(self):
         for spawner in self.currentRoom.spawners:
@@ -287,13 +293,13 @@ class main_game(ShowBase):
                 self.cTrav.addCollider(self.entities[-1].collision, self.pusher)
                 self.enemies += 1
                 
-    def closeDoor(self):
-        print("closing doors")
+
               
     def unloadOldestRoom(self):
         self.mapLoader.unloadRoom(self.loadedRooms[0])
         self.loadedRooms.pop(0)
-        
+    
+    
         
     def finish_game(self, success: bool):
         self.set_game_status(GAME_STATUS.GAME_FINISH)

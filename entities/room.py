@@ -7,6 +7,7 @@ from panda3d.core import LPoint3
 from panda3d.core import PointLight
 from entities.spawner import Spawner
 import math
+from direct.actor.Actor import Actor
 
 class Room(DirectObject.DirectObject):
       
@@ -22,6 +23,7 @@ class Room(DirectObject.DirectObject):
         self.spawners = []
         self.models = []
         self.walls = []
+        self.door = None
         
         
     def loadRoomAssets(self, id):
@@ -111,3 +113,22 @@ class Room(DirectObject.DirectObject):
             self.buildModel("midDoorWall",(0,0,12*self.size),(0,0,90),True)
         elif max(self.size,self.prevRoomLength) == 2:
             self.buildModel("bigDoorWall",(0,0,12*self.size),(0,0,90),True)
+        
+        self.door = Actor("assets/anims/Door.egg",{"Open":"assets/anims/Door-DoorOpen.egg","Close":"assets/anims/Door-DoorClose.egg"})
+        
+        
+        self.door.play('Close')
+        self.door.getChild(0).setR(90)
+        self.door.getChild(0).setH(90)
+        self.door.getChild(0).setP(0)
+        
+        self.door.reparentTo(render)
+        
+        self.door.setPos(0.9,-1,12*self.size+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
+        self.models.append(self.door)
+            
+    def openDoor(self):
+        self.door.play('Open')
+    def closeDoor(self):
+        self.door.play('Close')
+        

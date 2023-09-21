@@ -5,8 +5,10 @@ import random
 
 class MapLoader:
     
+    
     def __init__(self):
         self.mapLength = MAP_CONSTANTS.MAP_LENGTH
+        
        
         
     def mapGen(self):
@@ -23,7 +25,7 @@ class MapLoader:
             
             map.append(room)
             
-            
+        
         return map
     
     def loadMap(self,map):
@@ -41,4 +43,5 @@ class MapLoader:
     
     def unloadRoom(self,oldRoom):
         oldRoom.destroy()
-        #newRoom.addEntryWall()
+    
+    
