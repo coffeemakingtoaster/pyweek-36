@@ -4,6 +4,7 @@ import json
 from helpers.model_helpers import load_model
 from panda3d.core import BoundingBox, NodePath, PandaNode, ShowBoundsEffect, CollisionBox, CollisionNode, LVector3f, CollisionHandlerEvent, CollisionSphere
 from panda3d.core import LPoint3
+from panda3d.core import PointLight
 from entities.spawner import Spawner
 
 class Room(DirectObject.DirectObject):
@@ -37,13 +38,13 @@ class Room(DirectObject.DirectObject):
             self.buildModel("vertWall",(-12,0,0),(0,0,0),True,"colliding")
             self.buildModel("vertWall",(12,0,0),(0,0,0),True,"colliding")
         elif self.size ==1.5:
-            self.buildModel("doorWall",(0,0,-18),(0,0,90),True)
-            self.buildModel("vertWall",(-18,0,0),(0,0,0),True,"colliding")
-            self.buildModel("vertWall",(18,0,0),(0,0,0),True,"colliding")
+            self.buildModel("midDoorWall",(0,0,-18),(0,0,90),True)
+            self.buildModel("midWall",(-18,0,0),(0,0,0),True,"colliding")
+            self.buildModel("midWall",(18,0,0),(0,0,0),True,"colliding")
         elif self.size == 2:
-            self.buildModel("doorWall",(0,0,-24),(0,0,90),True)
-            self.buildModel("vertWall",(-24,0,0),(0,0,0),True,"colliding")
-            self.buildModel("vertWall",(24,0,0),(0,0,0),True,"colliding")
+            self.buildModel("bigDoorWall",(0,0,-24),(0,0,90),True)
+            self.buildModel("bigWall",(-24,0,0),(0,0,0),True,"colliding")
+            self.buildModel("bigWall",(24,0,0),(0,0,0),True,"colliding")
         
         return self
     
@@ -54,6 +55,13 @@ class Room(DirectObject.DirectObject):
             print(self.gridPos-(self.prevRoomLength/2+self.size/2))
             model: NodePath = load_model(asset)
             model.reparentTo(render)
+            if assetType == "lightsource":
+                plight = PointLight('plight')
+                plight.setColor((2, 1.2, 0.6, 1))
+                plight.attenuation = (1, 0, 0.1)
+                plnp = render.attachNewNode(plight)
+                plnp.setPos(position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
+                render.setLight(plnp)
         
             model.setPos(position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
             if assetType == "colliding" or assetType == "halfColliding":
@@ -86,6 +94,7 @@ class Room(DirectObject.DirectObject):
         elif assetType == "spawner":
             self.spawners.append(Spawner((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)),wave,enemyType))
         
+            
     def destroy(self):
         for model in self.models:
             model.removeNode()
@@ -96,6 +105,6 @@ class Room(DirectObject.DirectObject):
         if self.size == 1:
             self.buildModel("doorWall",(0,0,12),(0,0,90),True)
         elif self.size ==1.5:
-            self.buildModel("doorWall",(0,0,18),(0,0,90),True)
+            self.buildModel("midDoorWall",(0,0,18),(0,0,90),True)
         elif self.size == 2:
-            self.buildModel("doorWall",(0,0,24),(0,0,90),True)
+            self.buildModel("bigDoorWall",(0,0,24),(0,0,90),True)

@@ -15,9 +15,9 @@
     },
     {
       "asset": "vase",
-      "x": -4.72,
+      "x": -5.069621,
       "y": 0.0,
-      "z": -8.89,
+      "z": -6.03173161,
       "collider": true,
       "rotx": 0.0,
       "roty": 0.0,
@@ -54,9 +54,9 @@
     },
     {
       "asset": "vase",
-      "x": -5.069621,
+      "x": -4.72,
       "y": 0.0,
-      "z": -6.03173161,
+      "z": -8.89,
       "collider": true,
       "rotx": 0.0,
       "roty": 0.0,
@@ -93,19 +93,6 @@
     },
     {
       "asset": "rocks1",
-      "x": 3.38,
-      "y": 0.155777,
-      "z": 6.63,
-      "collider": true,
-      "rotx": 0.0,
-      "roty": 0.0,
-      "rotz": 0.0,
-      "type": "halfColliding",
-      "wave": 0,
-      "enemy_type": ""
-    },
-    {
-      "asset": "rocks1",
       "x": -7.29283333,
       "y": 0.155777,
       "z": 1.54204416,
@@ -118,30 +105,69 @@
       "enemy_type": ""
     },
     {
-      "asset": "Spawner",
-      "x": 5.43,
+      "asset": "rocks1",
+      "x": 3.38,
+      "y": 0.155777,
+      "z": 6.63,
+      "collider": true,
+      "rotx": 0.0,
+      "roty": 0.0,
+      "rotz": 0.0,
+      "type": "halfColliding",
+      "wave": 0,
+      "enemy_type": ""
+    },
+    {
+      "asset": "torch",
+      "x": 12.2,
       "y": 0.0,
-      "z": 7.09,
+      "z": -17.783,
       "collider": false,
       "rotx": 0.0,
       "roty": 0.0,
       "rotz": 0.0,
-      "type": "spawner",
-      "wave": 1,
-      "enemy_type": "melee_enemy"
+      "type": "lightsource",
+      "wave": 0,
+      "enemy_type": ""
+    },
+    {
+      "asset": "torch",
+      "x": -1.544,
+      "y": 0.0,
+      "z": -17.783,
+      "collider": false,
+      "rotx": 0.0,
+      "roty": 0.0,
+      "rotz": 0.0,
+      "type": "lightsource",
+      "wave": 0,
+      "enemy_type": ""
+    },
+    {
+      "asset": "torch",
+      "x": -11.65,
+      "y": 0.0,
+      "z": -17.783,
+      "collider": false,
+      "rotx": 0.0,
+      "roty": 0.0,
+      "rotz": 0.0,
+      "type": "lightsource",
+      "wave": 0,
+      "enemy_type": ""
     },
     {
       "asset": "Spawner",
-      "x": -5.46,
-      "y": 0.0,
-      "z": 1.45,
+      "x": -5.27,
+      "y": 1.0,
+      "z": 4.76,
       "collider": false,
       "rotx": 0.0,
       "roty": 0.0,
       "rotz": 0.0,
       "type": "spawner",
-      "wave": 2,
-      "enemy_type": "melee_enemy"
+      "wave": 0,
+      "enemy_type": "ranged_enemy"
     },
     {
       "asset": "Spawner",
@@ -155,6 +181,19 @@
       "type": "spawner",
       "wave": 0,
       "enemy_type": "tank_enemy"
+    },
+    {
+      "asset": "Spawner",
+      "x": 5.43,
+      "y": 0.0,
+      "z": 7.09,
+      "collider": false,
+      "rotx": 0.0,
+      "roty": 0.0,
+      "rotz": 0.0,
+      "type": "spawner",
+      "wave": 1,
+      "enemy_type": "melee_enemy"
     },
     {
       "asset": "Spawner",
@@ -184,16 +223,16 @@
     },
     {
       "asset": "Spawner",
-      "x": -5.27,
-      "y": 1.0,
-      "z": 4.76,
+      "x": -5.46,
+      "y": 0.0,
+      "z": 1.45,
       "collider": false,
       "rotx": 0.0,
       "roty": 0.0,
       "rotz": 0.0,
       "type": "spawner",
-      "wave": 0,
-      "enemy_type": "ranged_enemy"
+      "wave": 2,
+      "enemy_type": "melee_enemy"
     }
   ],
   "size":1.5

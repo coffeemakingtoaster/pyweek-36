@@ -217,7 +217,7 @@ class main_game(ShowBase):
         render.setLight(render.attachNewNode(directionalLight))
         render.setLight(render.attachNewNode(ambientLight))
         plight = PointLight('plight')
-        plight.setColor((2, 1, 1, 1))
+        plight.setColor((2, 1.2, 0.6, 1))
         plight.attenuation = (1, 0, 0.1)
         plnp = render.attachNewNode(plight)
         plnp.setPos(0, 2, 0)
@@ -231,7 +231,7 @@ class main_game(ShowBase):
         
     def enterRoom(self):
         self.spawnWave()
-        #self.unloadPreviousRoom()
+        self.unloadPreviousRoom()
         
     
     def spawnWave(self):
