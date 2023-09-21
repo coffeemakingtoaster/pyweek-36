@@ -5,7 +5,7 @@ from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
 from ui.hud import game_hud 
 from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
-from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
+from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window, set_mouse_cursor
 from entities.player import player_entity
 from entities.sample_enemy import sample_enemy_entity
 from entities.melee_enemy import melee_enemy
@@ -33,7 +33,7 @@ class main_game(ShowBase):
         
         ShowBase.__init__(self)
         
-        #set_mouse_cursor("crosshair")
+        set_mouse_cursor("cursor")
         
         # Set camera position 
         base.cam.setPos(0, 50, 0) 
@@ -135,6 +135,7 @@ class main_game(ShowBase):
     
     def load_game(self):
         print("Loading game")
+        set_mouse_cursor("crosshair")
         self.active_ui.destroy()
         self.setBackgroundColor((1, 1, 1, 1))
         self.player = player_entity()
@@ -162,12 +163,14 @@ class main_game(ShowBase):
     def toggle_pause(self):
         if self.game_status == GAME_STATUS.RUNNING:
             self.set_game_status(GAME_STATUS.PAUSED)
+            set_mouse_cursor("cursor")
             # Not needed as of now as gui does not exist 
             self.current_hud = self.active_ui
             self.current_hud.pause()
             release_mouse_from_window()
             self.active_ui = pause_menu()
         elif self.game_status == GAME_STATUS.PAUSED:
+            set_mouse_cursor("crosshair")
             self.active_ui.destroy()
             self.current_hud.resume()
             self.active_ui = self.current_hud 
