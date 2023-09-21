@@ -60,6 +60,7 @@ class game_hud(ui_base):
         ability_icon.setAlphaScale(0.5)
         self.current_cooldowns[ability_name] = ready_time - self._get_current_time()
         cooldownText = DirectLabel(text=format_float(self.current_cooldowns[ability_name]), pos=ability_icon.getPos(), scale=ability_icon.getScale(), text_font=self.font)
+        self.ui_elements.append(cooldownText)
         base.taskMgr.add(self._update_abilities_cooldown_display, "hud_update_{}".format(ability_name), extraArgs=[ability_name, cooldownText, ability_icon])
             
     def _get_current_time(self):
