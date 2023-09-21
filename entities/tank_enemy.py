@@ -34,8 +34,9 @@ class tank_enemy(base_enemy):
         
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
-        
-        black_hole_pull_vector = self.get_black_hole_pull_vector()
+       
+        # Reduce Pull for tank
+        black_hole_pull_vector = self.get_black_hole_pull_vector() * GAME_CONSTANTS.BLACK_HOLE_TANK_PULL_FACTOR 
         
         if delta_to_player.length() <= 2:
             x_direction = 0
