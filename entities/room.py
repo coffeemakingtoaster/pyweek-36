@@ -6,6 +6,7 @@ from panda3d.core import BoundingBox, NodePath, PandaNode, ShowBoundsEffect, Col
 from panda3d.core import LPoint3
 from panda3d.core import PointLight
 from entities.spawner import Spawner
+import math
 
 class Room(DirectObject.DirectObject):
       
@@ -45,6 +46,8 @@ class Room(DirectObject.DirectObject):
             self.buildModel("bigDoorWall",(0,0,-24),(0,0,90),True)
             self.buildModel("bigWall",(-24,0,0),(0,0,0),True,"colliding")
             self.buildModel("bigWall",(24,0,0),(0,0,0),True,"colliding")
+        
+        self.addEntryWall()
         
         return self
     
@@ -102,9 +105,9 @@ class Room(DirectObject.DirectObject):
             spawner.model.removeNode()
             
     def addEntryWall(self):
-        if self.size == 1:
-            self.buildModel("doorWall",(0,0,12),(0,0,90),True)
-        elif self.size ==1.5:
-            self.buildModel("midDoorWall",(0,0,18),(0,0,90),True)
-        elif self.size == 2:
-            self.buildModel("bigDoorWall",(0,0,24),(0,0,90),True)
+        if max(self.size,self.prevRoomLength) == 1:
+            self.buildModel("doorWall",(0,0,12*self.size),(0,0,90),True)
+        elif max(self.size,self.prevRoomLength) ==1.5:
+            self.buildModel("midDoorWall",(0,0,12*self.size),(0,0,90),True)
+        elif max(self.size,self.prevRoomLength) == 2:
+            self.buildModel("bigDoorWall",(0,0,12*self.size),(0,0,90),True)

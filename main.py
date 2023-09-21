@@ -58,8 +58,10 @@ class main_game(ShowBase):
         self.mapLoader = None
         self.map = []
         self.currentRoomNumber = 0
+        self.newestRoomNumber = 0
         self.currentRoom = None
         self.oldRoom = None
+        self.loadedRooms = []
         
         self.cTrav = CollisionTraverser()
         self.pusher = CollisionHandlerPusher()
@@ -91,7 +93,7 @@ class main_game(ShowBase):
         self.gameTask = base.taskMgr.add(self.game_loop, "gameLoop")
         
         self.accept("l", self.loadNextRoom)
-        self.accept("u", self.unloadPreviousRoom)
+        self.accept("u", self.unloadOldestRoom)
         
         # Load music
         background_music = base.loader.loadMusic(join("assets", "music", "music.mp3")) 
@@ -167,8 +169,8 @@ class main_game(ShowBase):
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
         self.map = self.mapLoader.mapGen()
+        self.loadFirstRoom()
         
-        self.currentRoom = self.mapLoader.loadRoom(self.map[0])
         
         self.static_entities = self.map 
         self.set_game_status(GAME_STATUS.RUNNING)
@@ -242,15 +244,40 @@ class main_game(ShowBase):
         plnp.setPos(0, 2, 0)
         render.setLight(plnp)
     
-    def loadNextRoom(self):
+    
+    def loadFirstRoom(self):
+        
+        self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
+        self.newestRoomNumber += 1
+        self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
+        self.currentRoom = self.loadedRooms[self.currentRoomNumber]
         self.currentRoomNumber += 1
-        self.oldRoom = self.currentRoom
-        self.currentRoom = self.mapLoader.loadRoom(self.map[self.currentRoomNumber])
+        print("loadingFirstRoom")
+        
+    def loadNextRoom(self):
+        #self.currentRoomNumber += 1
+        self.newestRoomNumber += 1
+        #self.oldRoom = self.currentRoom
+        self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
+        
+        
+        if len(self.loadedRooms) >4:
+            self.unloadOldestRoom()
+            self.currentRoom = self.loadedRooms[2]
+            
+        else:
+            self.currentRoom = self.loadedRooms[self.currentRoomNumber]
+            self.currentRoomNumber += 1
+               
+            
+        
         self.enterRoom()
         
     def enterRoom(self):
         self.spawnWave()
-        self.unloadPreviousRoom()
+        self.closeDoor()
+        
+        
     
     def spawnWave(self):
         for spawner in self.currentRoom.spawners:
@@ -259,9 +286,13 @@ class main_game(ShowBase):
                 self.pusher.addCollider(self.entities[-1].collision, self.entities[-1].model)
                 self.cTrav.addCollider(self.entities[-1].collision, self.pusher)
                 self.enemies += 1
-            
-    def unloadPreviousRoom(self):
-        self.mapLoader.unloadRoom(self.oldRoom,self.currentRoom)
+                
+    def closeDoor(self):
+        print("closing doors")
+              
+    def unloadOldestRoom(self):
+        self.mapLoader.unloadRoom(self.loadedRooms[0])
+        self.loadedRooms.pop(0)
         
         
     def finish_game(self, success: bool):
