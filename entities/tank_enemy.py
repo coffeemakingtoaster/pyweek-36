@@ -52,6 +52,10 @@ class tank_enemy(base_enemy):
        
         self.model.setR(x) 
         
+        # Safeguard 
+        if self.model.getY() > 1: 
+            self.model.setY(1)
+        
         current_time = time.time()
         if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<4:
             self.attack()

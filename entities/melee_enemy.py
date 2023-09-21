@@ -50,6 +50,10 @@ class melee_enemy(base_enemy):
             
         self.model.setX(self.model.getX() - x_direction)
         self.model.setZ(self.model.getZ() - z_direction)
+       
+        # Safeguard 
+        if self.model.getY() > 1: 
+            self.model.setY(1)
         
         self.model.setR(x)
         

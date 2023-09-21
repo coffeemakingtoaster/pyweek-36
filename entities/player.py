@@ -141,7 +141,7 @@ class player_entity(enity_base):
             self.model.setHpr(0,0,x)
         
         if self.current_hp <= 0:
-            messenger.send("goto_main_menu")
+            self.is_dead = True
         
         for i, bullet in enumerate(self.bullets):
             bullet.update(dt)
