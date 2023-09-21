@@ -78,16 +78,12 @@ class bullet_entity(enity_base):
         # Is the bullet in the event the bullet from this entity class
         if collision.from_node.getTag("id") != self.id: 
             return
-       
-        # Ignore object that are on the same team 
-        if collision.into_node.getTag("team") == self.team:
+        # Ignore object that are on the same team or is an ability
+        if collision.into_node.getTag("team") == self.team or collision.into_node.getTag("team") == ENTITY_TEAMS.ABILITY:
             return
-        
         self.is_dead =  True
         
     def destroy(self):
         self.model.removeNode()
         self.collision.removeNode()
         self.ignore_all()
-        
-        

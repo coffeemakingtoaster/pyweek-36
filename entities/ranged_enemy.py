@@ -18,21 +18,32 @@ class ranged_enemy(base_enemy):
         entity_pos = self.model.getPos()
         
         delta_to_player = Vec3(entity_pos.x - player_pos.x, 0 , entity_pos.z - player_pos.z) 
-        delta_x_reversed = Vec3(entity_pos.x - player_pos.x, 0 , entity_pos.z - player_pos.z) 
+        delta_x_reversed = Vec3(entity_pos.x - player_pos.x, 0 , entity_pos.z - player_pos.z) * -1
         diff_to_player_normalized = Point2(delta_to_player.x, delta_to_player.z).normalized()
         x = math.degrees(math.atan2(diff_to_player_normalized.x, diff_to_player_normalized.y))
         
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
         
-        if delta_to_player.length() > 12:
-            self.model.setX(self.model.getX() - x_direction)
-            self.model.setZ(self.model.getZ() - z_direction)
-        elif delta_to_player.length() < 10:
-            self.model.setX(self.model.getX() + x_direction)
-            self.model.setZ(self.model.getZ() + z_direction)
+        if delta_to_player.length() < 10:
+            x_direction = -x_direction  
+            z_direction = -z_direction
+    
+        black_hole_pull_vector = self.get_black_hole_pull_vector()    
+                    
+        if self.in_black_hole:
+            
+            x_direction += black_hole_pull_vector.x * dt
+            z_direction += black_hole_pull_vector.z * dt
+            
+        self.model.setX(self.model.getX() - x_direction)
+        self.model.setZ(self.model.getZ() - z_direction)
 
         self.model.setR(x)
+        
+        # Safeguard 
+        if self.model.getY() > 1: 
+            self.model.setY(1)
         
         current_time = time.time()
         if current_time - self.last_attack_time >= self.attackcooldown:
@@ -49,3 +60,9 @@ class ranged_enemy(base_enemy):
     def attack(self,delta_x_reversed):
         self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
         self.model.play('Attack')
+        
+        
+    def destroy(self):
+        for bullet in self.bullets:
+            bullet.destroy()
+        super().destroy()

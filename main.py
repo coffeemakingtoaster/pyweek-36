@@ -3,9 +3,10 @@ from panda3d.core import CollisionSphere, CollisionNode, CollisionTube
 from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
+from ui.victory_screen import victory_screen
 from ui.hud import game_hud 
-from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG
-from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window, set_mouse_cursor
+from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG, ENTITY_TEAMS
+from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
 from entities.player import player_entity
 from entities.sample_enemy import sample_enemy_entity
 from entities.melee_enemy import melee_enemy
@@ -14,6 +15,8 @@ from entities.ranged_enemy import ranged_enemy
 from panda3d.core import WindowProperties
 from panda3d.core import AmbientLight, DirectionalLight, LightAttrib, PointLight
 from panda3d.core import LPoint3, LVector3, BitMask32
+
+from direct.gui.DirectGui import OnscreenImage
 
 from direct.showbase.ShowBase import ShowBase
 from direct.task.Task import Task
@@ -33,14 +36,16 @@ class main_game(ShowBase):
         
         ShowBase.__init__(self)
         
-        set_mouse_cursor("cursor")
+        print(ENTITY_TEAMS.MAP_BITMASK)
+        print(ENTITY_TEAMS.ENEMIES_BITMASK)
+        print(ENTITY_TEAMS.PLAYER_BITMASK)
         
         # Set camera position 
         base.cam.setPos(0, 50, 0) 
         base.cam.setHpr(0, 180+40, 0)
         
         self.setupLights()
-        
+       
         load_config(join("user_config.json"))
 
         self.game_status = GAME_STATUS.MAIN_MENU 
@@ -99,6 +104,8 @@ class main_game(ShowBase):
         
         base.cTrav.setRespectPrevTransform(True)
         
+        self.current_run_duration = 0
+        
         
     def game_loop(self, task):
         
@@ -114,7 +121,13 @@ class main_game(ShowBase):
         if self.game_status != GAME_STATUS.RUNNING:
            return Task.cont 
        
+        self.current_run_duration += dt
+       
         self.player.update(dt)
+        
+        if self.player.is_dead:
+            self.finish_game(False)
+            return Task.cont
        
         if self.enemies == 0:
             if self.currentWave != 4:
@@ -137,10 +150,9 @@ class main_game(ShowBase):
     
     def load_game(self):
         print("Loading game")
-        
-        set_mouse_cursor("crosshair")
+        self.current_run_duration = 0
         self.active_ui.destroy()
-        self.setBackgroundColor((1, 1, 1, 1))
+        self.setBackgroundColor((0, 0, 0, 1))
         self.player = player_entity()
         
         self.pusher.addCollider(self.player.collision, self.player.model)
@@ -148,7 +160,10 @@ class main_game(ShowBase):
         self.pusher.setHorizontal(True)
     
         self.active_ui = game_hud()
+        
         self.entities.append(ranged_enemy(10,10))
+        self.pusher.addCollider(self.entities[0].collision, self.entities[0].model)
+        self.cTrav.addCollider(self.entities[0].collision, self.pusher)
         self.enemies += 1
         
         lock_mouse_in_window()
@@ -167,14 +182,12 @@ class main_game(ShowBase):
     def toggle_pause(self):
         if self.game_status == GAME_STATUS.RUNNING:
             self.set_game_status(GAME_STATUS.PAUSED)
-            set_mouse_cursor("cursor")
             # Not needed as of now as gui does not exist 
             self.current_hud = self.active_ui
             self.current_hud.pause()
             release_mouse_from_window()
             self.active_ui = pause_menu()
         elif self.game_status == GAME_STATUS.PAUSED:
-            set_mouse_cursor("crosshair")
             self.active_ui.destroy()
             self.current_hud.resume()
             self.active_ui = self.current_hud 
@@ -200,8 +213,9 @@ class main_game(ShowBase):
         if self.player is not None:
             self.player.destroy()
             self.player = None
+        self.current_run_duration = 0
         self.active_ui = main_menu()
-        self.setBackgroundColor((1, 1, 1, 1))
+        self.setBackgroundColor((0, 0, 0, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
         
         
@@ -269,6 +283,8 @@ class main_game(ShowBase):
         for spawner in self.currentRoom.spawners:
             if spawner.wave == self.currentWave:
                 spawner.spawn(self.entities)
+                self.pusher.addCollider(self.entities[-1].collision, self.entities[-1].model)
+                self.cTrav.addCollider(self.entities[-1].collision, self.pusher)
                 self.enemies += 1
                 
     def closeDoor(self):
@@ -279,6 +295,11 @@ class main_game(ShowBase):
         self.loadedRooms.pop(0)
         
         
+    def finish_game(self, success: bool):
+        self.set_game_status(GAME_STATUS.GAME_FINISH)
+        self.active_ui.destroy()
+        self.current_hud = None
+        self.active_ui = victory_screen(self.current_run_duration, success) 
         
 def start_game():
     print("Starting game..")

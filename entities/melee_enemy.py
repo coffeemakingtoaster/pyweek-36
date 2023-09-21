@@ -18,6 +18,8 @@ class melee_enemy(base_enemy):
     def __init__(self, spawn_x, spawn_z):
         super().__init__(spawn_x,spawn_z)
         
+        print("Melee enemy")
+        
     def loadModel(self):
         return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
     
@@ -35,11 +37,23 @@ class melee_enemy(base_enemy):
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
         
+        black_hole_pull_vector = self.get_black_hole_pull_vector()
         
-        
-        if delta_to_player.length() > 2:
-            self.model.setX(self.model.getX() - x_direction)
-            self.model.setZ(self.model.getZ() - z_direction)
+        if delta_to_player.length() <= 2:
+            x_direction = 0
+            z_direction = 0
+                    
+        if self.in_black_hole:
+            
+            x_direction += black_hole_pull_vector.x * dt
+            z_direction += black_hole_pull_vector.z * dt
+            
+        self.model.setX(self.model.getX() - x_direction)
+        self.model.setZ(self.model.getZ() - z_direction)
+       
+        # Safeguard 
+        if self.model.getY() > 1: 
+            self.model.setY(1)
         
         self.model.setR(x)
         
@@ -47,7 +61,6 @@ class melee_enemy(base_enemy):
         if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<4:
             self.attack()
             self.last_attack_time = current_time
-    
       
     def attack(self):
         self.model.play('Attack')

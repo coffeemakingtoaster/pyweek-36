@@ -1,5 +1,6 @@
 from entities.entity_base import enity_base
 from entities.bullet import bullet_entity
+from entities.black_hole import black_hole_entity
 from config import GAME_CONSTANTS, ENTITY_TEAMS, PLAYER_ABILITIES
 from helpers.model_helpers import load_particles 
 from helpers.utilities import lock_mouse_in_window
@@ -32,6 +33,7 @@ class player_entity(enity_base):
         
         self.accept("mouse1", self.shoot_bullet)
         self.accept("mouse3", self.dash)
+        self.accept("q", self.cast_black_hole) 
         
         #self.model = load_model("player")
         self.model = Actor("assets/anims/Playertest.egg",{"Dance":"assets/anims/Playertest-Dance.egg"})
@@ -64,7 +66,7 @@ class player_entity(enity_base):
 
         self.notifier.addInPattern("%fn-into-%in")
         
-        self.accept("player-into-bullet", self.bullet_hit)
+        self.accept("bullet-into", self.bullet_hit)
         
         base.cTrav.addCollider(self.collision, self.notifier)
         
@@ -73,6 +75,7 @@ class player_entity(enity_base):
         self.last_position = Point3(0,0.5,0)
         
         self.time_since_last_dash = GAME_CONSTANTS.PLAYER_DASH_COOLDOWN
+        self.time_since_last_black_hole = GAME_CONSTANTS.BLACK_HOLE_COOLDOWN
         
         self.ignore_push = False
         
@@ -83,9 +86,6 @@ class player_entity(enity_base):
         
     def unset_movement_status(self, direction):
         self.movement_status[direction] = 0
-        
-    def on_collision(self, entry=None):
-        print(entry)
        
     def update(self, dt):
         
@@ -95,6 +95,9 @@ class player_entity(enity_base):
         
         if self.time_since_last_dash < GAME_CONSTANTS.PLAYER_DASH_COOLDOWN:
             self.time_since_last_dash += dt
+            
+        if self.time_since_last_black_hole < GAME_CONSTANTS.BLACK_HOLE_COOLDOWN:
+            self.time_since_last_black_hole += dt
         
         if self.is_dashing:
             if self.time_since_last_dash > GAME_CONSTANTS.PLAYER_DASH_DURATION:
@@ -138,7 +141,7 @@ class player_entity(enity_base):
             self.model.setHpr(0,0,x)
         
         if self.current_hp <= 0:
-            messenger.send("goto_main_menu")
+            self.is_dead = True
         
         for i, bullet in enumerate(self.bullets):
             bullet.update(dt)
@@ -177,12 +180,14 @@ class player_entity(enity_base):
         self.ignore_all()
         
     def bullet_hit(self, entry: CollisionEntry):
-        # No damage taken by own bullets
-        if entry.into_node.getTag("team") == self.team:
-            return
         # Dashing player does not receive damage 
         if self.is_dashing:
             return
+        
+        # Only take damage from bullets meant for my own team
+        if entry.into_node.getTag("team") != self.team:
+            return
+
         self.current_hp -= 1
         messenger.send("display_hp", [self.current_hp])
         
@@ -218,7 +223,23 @@ class player_entity(enity_base):
            self.time_since_last_dash = 0
            
     def on_wall_collision(self, entry: CollisionEntry):
-        print("collide with wall")
         # Stop dash when colliding with an object
         if entry.into_node.getTag("team") == ENTITY_TEAMS.MAP:
             self.is_dashing = False
+            
+    def cast_black_hole(self):
+        current_time = base.clock.getLongTime()
+        
+        if self.time_since_last_black_hole >= GAME_CONSTANTS.BLACK_HOLE_COOLDOWN:
+            mouse_pos = self._get_mouse_position()
+            print("Spawning black hole")
+            
+            messenger.send("spawn_black_hole", [mouse_pos])
+            
+            messenger.send("set_ability_on_cooldown", [PLAYER_ABILITIES.BLACK_HOLE, current_time + GAME_CONSTANTS.BLACK_HOLE_COOLDOWN]) 
+            
+            black_hole_entity(mouse_pos)
+           
+            self.time_since_last_black_hole = 0
+            
+            

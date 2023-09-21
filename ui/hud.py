@@ -20,14 +20,18 @@ class game_hud(ui_base):
         
         self.accept("set_ability_on_cooldown", self.set_ability_cooldown)
         
-        self.hp_display = DirectLabel(text="{}/{}".format(GAME_CONSTANTS.PLAYER_MAX_HP, GAME_CONSTANTS.PLAYER_MAX_HP), scale=0.2, pos=(-0.6, 0, -0.8), color=(255,0,0,1))
+        self.hp_display = DirectLabel(text="{}/{}".format(GAME_CONSTANTS.PLAYER_MAX_HP, GAME_CONSTANTS.PLAYER_MAX_HP), scale=0.2, pos=(-0.6, 0, -0.8), color=(255,0,0,1), text_font=self.font)
         self.ui_elements.append(self.hp_display)
         
-        self.dash_ability_icon = self._create_ability_icon(PLAYER_ABILITIES.DASH, (0.6,0,-0.8))
+        self.dash_ability_icon = self._create_ability_icon(PLAYER_ABILITIES.DASH, (0.4,0,-0.8))
         self.ui_elements.append(self.dash_ability_icon)
         
+        self.black_hole_ability_icon = self._create_ability_icon(PLAYER_ABILITIES.BLACK_HOLE, (1, 0, -0.8))
+        self.ui_elements.append(self.black_hole_ability_icon)
+        
         self.current_cooldowns = {
-            PLAYER_ABILITIES.DASH: 0
+            PLAYER_ABILITIES.DASH: 0,
+            PLAYER_ABILITIES.BLACK_HOLE: 0
         }
         
         self.is_paused = False
@@ -42,12 +46,22 @@ class game_hud(ui_base):
         
     def set_ability_cooldown(self, ability_name, ready_time):
         print(ability_name)
+        ability_icon = None
         if ability_name == PLAYER_ABILITIES.DASH:
-            self.dash_ability_icon.setTransparency(1, 0)
-            self.dash_ability_icon.setAlphaScale(0.5)
-            self.current_cooldowns[PLAYER_ABILITIES.DASH] = ready_time - self._get_current_time()
-            cooldownText = DirectLabel(text=format_float(self.current_cooldowns[PLAYER_ABILITIES.DASH]), pos=self.dash_ability_icon.getPos(), scale=self.dash_ability_icon.getScale())
-            base.taskMgr.add(self._update_abilities_cooldown_display, "hud_update_dash", extraArgs=[PLAYER_ABILITIES.DASH, cooldownText, self.dash_ability_icon])
+            ability_icon = self.dash_ability_icon
+        elif ability_name == PLAYER_ABILITIES.BLACK_HOLE:
+            ability_icon = self.black_hole_ability_icon
+       
+        # Protect from invalid input 
+        if ability_icon is None:
+            return
+    
+        ability_icon.setTransparency(1, 0)
+        ability_icon.setAlphaScale(0.5)
+        self.current_cooldowns[ability_name] = ready_time - self._get_current_time()
+        cooldownText = DirectLabel(text=format_float(self.current_cooldowns[ability_name]), pos=ability_icon.getPos(), scale=ability_icon.getScale(), text_font=self.font)
+        self.ui_elements.append(cooldownText)
+        base.taskMgr.add(self._update_abilities_cooldown_display, "hud_update_{}".format(ability_name), extraArgs=[ability_name, cooldownText, ability_icon])
             
     def _get_current_time(self):
         return base.clock.getLongTime() 
@@ -55,7 +69,10 @@ class game_hud(ui_base):
     def destroy(self):
         self.ignoreAll()
         base.taskMgr.removeTasksMatching("hud_update*")
-        super().destroy()
+        try:
+            super().destroy()
+        except:
+            print("Nodes were already cleaned up")
             
     def _update_abilities_cooldown_display(self, spell_name, cd_text: DirectLabel, image: OnscreenImage):
         if self.is_paused:

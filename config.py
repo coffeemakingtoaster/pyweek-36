@@ -9,9 +9,15 @@ class GAME_CONSTANTS:
    PLAYER_DASH_COOLDOWN = 1
    PLAYER_DASH_SPEED = 100 
    PLAYER_DASH_DURATION = 0.2
+   BLACK_HOLE_RANGE = 10
+   BLACK_HOLE_DURATION = 2
+   BLACK_HOLE_PULL_SPEED_MODIFIER = 5
+   BLACK_HOLE_COOLDOWN = 5
+   BLACK_HOLE_TANK_PULL_FACTOR = 0.5
    
 class PLAYER_ABILITIES:
    DASH = "dash"
+   BLACK_HOLE = "black_hole"
    
 class GAME_CONFIG:
    DEFAULT_WINDOW_HEIGHT = 720 
@@ -24,6 +30,7 @@ class GAME_STATUS:
    RUNNING = "running"
    STARTING = "starting"
    SETTINGS = "settings"
+   GAME_FINISH = "game_finish'"
    
 class MAP_CONSTANTS:
    ROOM_SIZE = 24
@@ -38,3 +45,5 @@ class ENTITY_TEAMS:
    ENEMIES_BITMASK = BitMask32(0x02)
    MAP = "map"
    MAP_BITMASK = BitMask32(0x03)
+   ABILITY = "ability"
+   ABILITY_BITMASK = BitMask32(0x04)
