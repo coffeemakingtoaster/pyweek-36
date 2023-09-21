@@ -70,11 +70,9 @@ def set_fullscreen_value(fullscreen):
     if fullscreen and not is_currently_in_fullscreen:
         wp.set_fullscreen(True)
         wp.set_size(1920, 1080)
-        set_mouse_cursor("cursor")
         wp.clearCursorHidden()
         base.win.requestProperties(wp)
     elif not fullscreen and is_currently_in_fullscreen:
-       set_mouse_cursor("cursor")
        setup_windowed() 
        
 def lock_mouse_in_window():
