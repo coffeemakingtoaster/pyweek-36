@@ -1,5 +1,6 @@
 from entities.entity_base import enity_base
 from entities.bullet import bullet_entity
+from entities.black_hole import black_hole_entity
 from config import GAME_CONSTANTS, ENTITY_TEAMS, PLAYER_ABILITIES
 from helpers.model_helpers import load_particles 
 from helpers.utilities import lock_mouse_in_window
@@ -32,6 +33,7 @@ class player_entity(enity_base):
         
         self.accept("mouse1", self.shoot_bullet)
         self.accept("mouse3", self.dash)
+        self.accept("q", self.cast_black_hole) 
         
         #self.model = load_model("player")
         self.model = Actor("assets/anims/Playertest.egg",{"Dance":"assets/anims/Playertest-Dance.egg"})
@@ -73,6 +75,7 @@ class player_entity(enity_base):
         self.last_position = Point3(0,0.5,0)
         
         self.time_since_last_dash = GAME_CONSTANTS.PLAYER_DASH_COOLDOWN
+        self.time_since_last_black_hole = GAME_CONSTANTS.BLACK_HOLE_COOLDOWN
         
         self.ignore_push = False
         
@@ -92,6 +95,9 @@ class player_entity(enity_base):
         
         if self.time_since_last_dash < GAME_CONSTANTS.PLAYER_DASH_COOLDOWN:
             self.time_since_last_dash += dt
+            
+        if self.time_since_last_black_hole < GAME_CONSTANTS.BLACK_HOLE_COOLDOWN:
+            self.time_since_last_black_hole += dt
         
         if self.is_dashing:
             if self.time_since_last_dash > GAME_CONSTANTS.PLAYER_DASH_DURATION:
@@ -219,3 +225,20 @@ class player_entity(enity_base):
         # Stop dash when colliding with an object
         if entry.into_node.getTag("team") == ENTITY_TEAMS.MAP:
             self.is_dashing = False
+            
+    def cast_black_hole(self):
+        current_time = base.clock.getLongTime()
+        
+        if self.time_since_last_black_hole >= GAME_CONSTANTS.BLACK_HOLE_COOLDOWN:
+            mouse_pos = self._get_mouse_position()
+            print("Spawning black hole")
+            
+            messenger.send("spawn_black_hole", [mouse_pos])
+            
+            messenger.send("set_ability_on_cooldown", [PLAYER_ABILITIES.BLACK_HOLE, current_time + GAME_CONSTANTS.BLACK_HOLE_COOLDOWN]) 
+            
+            black_hole_entity(mouse_pos)
+           
+            self.time_since_last_black_hole = 0
+            
+            

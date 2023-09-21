@@ -33,7 +33,6 @@ def load_config(path):
     if "show_fps" in config:
         base.setFrameRateMeter(config["show_fps"])
         
-        
 def setup_windowed():
     wp = WindowProperties(base.win.getProperties()) 
     wp.set_fullscreen(False)
@@ -89,4 +88,4 @@ def release_mouse_from_window():
     base.win.requestProperties(props)
     
 def format_float(f):
-    return "%.2f" % f
+    return "%.1f" % f

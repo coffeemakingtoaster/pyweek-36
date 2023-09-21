@@ -25,12 +25,19 @@ class ranged_enemy(base_enemy):
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
         
-        if delta_to_player.length() > 12:
-            self.model.setX(self.model.getX() - x_direction)
-            self.model.setZ(self.model.getZ() - z_direction)
-        elif delta_to_player.length() < 10:
-            self.model.setX(self.model.getX() + x_direction)
-            self.model.setZ(self.model.getZ() + z_direction)
+        if delta_to_player.length() < 10:
+            x_direction = -x_direction  
+            z_direction = -z_direction
+    
+        black_hole_pull_vector = self.get_black_hole_pull_vector()    
+                    
+        if self.in_black_hole:
+            
+            x_direction += black_hole_pull_vector.x * dt
+            z_direction += black_hole_pull_vector.z * dt
+            
+        self.model.setX(self.model.getX() - x_direction)
+        self.model.setZ(self.model.getZ() - z_direction)
 
         self.model.setR(x)
         
