@@ -39,6 +39,6 @@ class MapLoader:
     
     
     
-    def unloadRoom(self,oldRoom,newRoom):
+    def unloadRoom(self,oldRoom):
         oldRoom.destroy()
-        newRoom.addEntryWall()
+        #newRoom.addEntryWall()
