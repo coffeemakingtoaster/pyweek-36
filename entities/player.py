@@ -6,7 +6,7 @@ from helpers.model_helpers import load_particles
 from helpers.utilities import lock_mouse_in_window
 from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane, get_first_intersection
 
-from panda3d.core import lookAt, Quat, Point3, Vec3, Lens, Plane, Point2, CollisionHandlerEvent, CollisionNode, CollisionCapsule, CollisionEntry, BitMask32, CollideMask, LVector3f, CollisionSphere, Quat
+from panda3d.core import *
 import math
 from direct.actor.Actor import Actor
 
@@ -38,7 +38,13 @@ class player_entity(enity_base):
         #self.model = load_model("player")
         self.model = Actor("assets/anims/Playertest.egg",{"Dance":"assets/anims/Playertest-Dance.egg"})
         
-        self.model.reparentTo(render) 
+        self.model.reparentTo(render)
+        
+        plight = PointLight('plight')
+        plight.setColor((-0.3, -0.3, -0.3, 1))
+        plnp = self.model.attachNewNode(plight)
+        plnp.setPos(0, 0, 0)
+        render.setLight(plnp)
         
         self.model.setPos(0,2,0)
         self.model.loop('Dance')
@@ -54,9 +60,9 @@ class player_entity(enity_base):
         
         self.collision = self.model.attachNewNode(CollisionNode("player"))
         
-        self.collision.node().addSolid(CollisionCapsule(Point3(0,0,0),(0,5,0),0.9))
+        self.collision.node().addSolid(CollisionCapsule(Point3(0,-5,0),(0,5,0),0.9))
         
-        #self.collision.show()
+        self.collision.show()
         
         self.collision.node().setCollideMask(ENTITY_TEAMS.PLAYER_BITMASK)
         

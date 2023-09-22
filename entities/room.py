@@ -24,6 +24,8 @@ class Room(DirectObject.DirectObject):
         self.models = []
         self.walls = []
         self.door = None
+        self.doorCollider = None
+        self.Altar = None
         
         
     def loadRoomAssets(self, id):
@@ -37,15 +39,15 @@ class Room(DirectObject.DirectObject):
             self.buildModel(asset["asset"],(asset["x"],asset["y"],asset["z"]),(asset["rotx"],asset["roty"],asset["rotz"]),asset["collider"],asset["type"],asset["wave"],asset["enemy_type"])
         
         if self.size == 1:
-            self.buildModel("doorWall",(0,0,-12),(0,0,90),True)
+            
             self.buildModel("vertWall",(-12,0,0),(0,0,0),True,"colliding")
             self.buildModel("vertWall",(12,0,0),(0,0,0),True,"colliding")
         elif self.size ==1.5:
-            self.buildModel("midDoorWall",(0,0,-18),(0,0,90),True)
+            
             self.buildModel("midWall",(-18,0,0),(0,0,0),True,"colliding")
             self.buildModel("midWall",(18,0,0),(0,0,0),True,"colliding")
         elif self.size == 2:
-            self.buildModel("bigDoorWall",(0,0,-24),(0,0,90),True)
+            
             self.buildModel("bigWall",(-24,0,0),(0,0,0),True,"colliding")
             self.buildModel("bigWall",(24,0,0),(0,0,0),True,"colliding")
         
@@ -96,9 +98,11 @@ class Room(DirectObject.DirectObject):
             
             model.setHpr(rotation[0],rotation[1],rotation[2])
             self.models.append(model)
+            return model
         elif assetType == "spawner":
             self.spawners.append(Spawner((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)),wave,enemyType))
-        
+        elif assetType == "Altar":
+            self.Altar = None
             
     def destroy(self):
         for model in self.models:
@@ -107,12 +111,37 @@ class Room(DirectObject.DirectObject):
             spawner.model.removeNode()
             
     def addEntryWall(self):
+        wall = None
         if max(self.size,self.prevRoomLength) == 1:
-            self.buildModel("doorWall",(0,0,12*self.size),(0,0,90),True)
+           wall= self.buildModel("doorWall",(0,0,12*self.size),(0,0,90),True)
         elif max(self.size,self.prevRoomLength) ==1.5:
-            self.buildModel("midDoorWall",(0,0,12*self.size),(0,0,90),True)
+           wall= self.buildModel("midDoorWall",(0,0,12*self.size),(0,0,90),True)
         elif max(self.size,self.prevRoomLength) == 2:
-            self.buildModel("bigDoorWall",(0,0,12*self.size),(0,0,90),True)
+           wall= self.buildModel("bigDoorWall",(0,0,12*self.size),(0,0,90),True)
+        
+        wall.setHpr(0,0,0)
+        min_point, max_point = wall.getTightBounds()
+        wall.show_tight_bounds()
+        min_point.y = -10
+        max_point.y = 10
+        max_point.z = wall.getPos().z -1
+        
+        cp = CollisionBox(min_point - wall.getPos(),max_point - wall.getPos())
+        
+        min_point, max_point = wall.getTightBounds()
+        min_point.y = -10
+        max_point.y = 10
+        min_point.z = wall.getPos().z +1
+        
+        cp2 = CollisionBox(min_point - wall.getPos(),max_point - wall.getPos())
+        
+        csn = wall.attach_new_node(CollisionNode("wall"))
+        csn.show()
+        csn.setTag("team", ENTITY_TEAMS.MAP)
+        csn.node().addSolid(cp)
+        csn.node().addSolid(cp2)
+        base.cTrav.addCollider(csn, CollisionHandlerEvent())
+        wall.setHpr(0,0,90)
         
         self.door = Actor("assets/anims/Door.egg",{"Open":"assets/anims/Door-DoorOpen.egg","Close":"assets/anims/Door-DoorClose.egg"})
         
@@ -126,9 +155,39 @@ class Room(DirectObject.DirectObject):
         
         self.door.setPos(0.9,-1,12*self.size+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
         self.models.append(self.door)
+        
+        min_point, max_point = self.door.getTightBounds()
+        min_point.y = -10
+        max_point.y = 10
+        min_point.x = self.door.getPos().x -2
+        min_point.z = self.door.getPos().z -1
+        max_point.z = self.door.getPos().z +1
+        cpDoor = CollisionBox(min_point - self.door.getPos(),max_point - self.door.getPos())
+        self.doorCollider = self.door.attach_new_node(CollisionNode("wall"))
+        self.doorCollider.show()
+        self.doorCollider.node().addSolid(cpDoor)
+        self.doorCollider.setTag("team", ENTITY_TEAMS.MAP)
+        base.cTrav.addCollider(self.doorCollider, CollisionHandlerEvent())
+        
+        
+        
             
     def openDoor(self):
         self.door.play('Open')
+        self.doorCollider.removeNode()
+        
     def closeDoor(self):
         self.door.play('Close')
+        min_point, max_point = self.door.getTightBounds()
+        min_point.y = -10
+        max_point.y = 10
+        min_point.x = self.door.getPos().x -2
+        min_point.z = self.door.getPos().z -1
+        max_point.z = self.door.getPos().z +1
+        cpDoor = CollisionBox(min_point - self.door.getPos(),max_point - self.door.getPos())
+        self.doorCollider = self.door.attach_new_node(CollisionNode("wall"))
+        self.doorCollider.show()
+        self.doorCollider.node().addSolid(cpDoor)
+        self.doorCollider.setTag("team", ENTITY_TEAMS.MAP)
+        base.cTrav.addCollider(self.doorCollider, CollisionHandlerEvent())
         

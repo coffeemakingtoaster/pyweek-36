@@ -1,5 +1,4 @@
-from panda3d.core import loadPrcFile, CollisionHandlerEvent, CollisionTraverser, CollisionHandlerPusher
-from panda3d.core import CollisionSphere, CollisionNode, CollisionTube
+from panda3d.core import *
 from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
 from ui.settings_menu import settings_menu
@@ -13,10 +12,6 @@ from entities.melee_enemy import melee_enemy
 from entities.ranged_enemy import ranged_enemy
 
 from entities.tank_enemy import tank_enemy
-
-from panda3d.core import WindowProperties
-from panda3d.core import AmbientLight, DirectionalLight, LightAttrib, PointLight
-from panda3d.core import LPoint3, LVector3, BitMask32
 
 from direct.gui.DirectGui import OnscreenImage
 
@@ -46,7 +41,7 @@ class main_game(ShowBase):
         base.cam.setPos(0, 50, 0) 
         base.cam.setHpr(0, 180+40, 0)
         
-        self.setupLights()
+        
        
         load_config(join("user_config.json"))
 
@@ -80,6 +75,7 @@ class main_game(ShowBase):
 
         self.active_ui = None 
         self.goto_to_main_menu()
+        
 
         # Create event handlers for events fired by UI
         self.accept("start_game", self.set_game_status, [GAME_STATUS.STARTING])
@@ -175,9 +171,11 @@ class main_game(ShowBase):
         self.map = self.mapLoader.mapGen()
         self.loadFirstRoom()
         
+        self.setupLights()
         
         self.static_entities = self.map 
         self.set_game_status(GAME_STATUS.RUNNING)
+        
 
     def set_game_status(self, status):
         self.status_display["text"] = status
@@ -221,6 +219,16 @@ class main_game(ShowBase):
         self.active_ui = main_menu()
         self.setBackgroundColor((0, 0, 0, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
+        self.currentWave = 0
+        self.mapLoader = None
+        self.map = []
+        self.currentRoomNumber = 0
+        self.newestRoomNumber = 0
+        self.currentRoom = None
+        self.oldRoom = None
+        self.loadedRooms = []
+        self.entities = []
+        self.enemies  = 0
         
         
     def toggle_settings(self):
@@ -241,12 +249,7 @@ class main_game(ShowBase):
         directionalLight.setColor((0.3, 0.3, 0.3, 1))
         render.setLight(render.attachNewNode(directionalLight))
         render.setLight(render.attachNewNode(ambientLight))
-        plight = PointLight('plight')
-        plight.setColor((2, 1.2, 0.6, 1))
-        plight.attenuation = (1, 0, 0.1)
-        plnp = render.attachNewNode(plight)
-        plnp.setPos(0, 2, 0)
-        render.setLight(plnp)
+        
     
     
     def loadFirstRoom(self):
