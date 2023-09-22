@@ -18,6 +18,7 @@ class player_entity(enity_base):
         super().__init__()
         
         self.team = ENTITY_TEAMS.PLAYER
+        self.moveSpeed = GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED
         
         self.movement_status = {"up":0, "down":0, "left": 0, "right": 0}
         
@@ -41,8 +42,9 @@ class player_entity(enity_base):
         self.model.reparentTo(render)
         
         plight = PointLight('plight')
-        plight.setColor((-0.3, -0.3, -0.3, 1))
+        plight.setColor((-1, -1, -1, 1))
         plnp = self.model.attachNewNode(plight)
+        plight.attenuation = (1, 0, 0.1)
         plnp.setPos(0, 0, 0)
         render.setLight(plnp)
         
@@ -60,7 +62,7 @@ class player_entity(enity_base):
         
         self.collision = self.model.attachNewNode(CollisionNode("player"))
         
-        self.collision.node().addSolid(CollisionCapsule(Point3(0,-5,0),(0,5,0),0.9))
+        self.collision.node().addSolid(CollisionCapsule(Point3(0,-2,0),(0,2,0),0.9))
         
         self.collision.show()
         
@@ -84,6 +86,8 @@ class player_entity(enity_base):
         
         self.accept("attack-into-player_melee_attack_hitbox", self.bullet_hit)
         
+        
+        
         base.cTrav.addCollider(self.ability_collision, self.notifier) 
         base.cTrav.addCollider(self.collision, self.notifier)
         
@@ -103,7 +107,7 @@ class player_entity(enity_base):
         
     def unset_movement_status(self, direction):
         self.movement_status[direction] = 0
-       
+    
     def update(self, dt):
         
         self.model.node().resetAllPrevTransform()
@@ -125,7 +129,7 @@ class player_entity(enity_base):
             else:
                 self.model.setFluidPos(self.model.getPos() + (self.dash_vector * ( dt / GAME_CONSTANTS.PLAYER_DASH_DURATION)))
         else:
-            movement_direction = Vec3(((self.movement_status["left"] * -1 ) + self.movement_status["right"]) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt , 0, ((self.movement_status["down"] ) + self.movement_status["up"]* -1 ) * GAME_CONSTANTS.PLAYER_MOVEMENT_SPEED * dt)
+            movement_direction = Vec3(((self.movement_status["left"] * -1 ) + self.movement_status["right"]) * self.moveSpeed * dt , 0, ((self.movement_status["down"] ) + self.movement_status["up"]* -1 ) * self.moveSpeed * dt)
         
             # Last push did not only push back on movement but also did funky stuff
             if not self.ignore_push:
@@ -197,15 +201,15 @@ class player_entity(enity_base):
         self.ignore_all()
         
     def bullet_hit(self, entry: CollisionEntry):
-        print(entry)
+        #print(entry)
         # Dashing player does not receive damage 
         if self.is_dashing:
             return
        
-        print(entry.into_node.getTag("team")) 
+        #print(entry.into_node.getTag("team")) 
         # Only take damage from bullets meant for my own team
         if entry.into_node.getTag("team") != self.team:
-            print("wrong team")
+            #print("wrong team")
             return
 
         self.current_hp -= 1
@@ -224,9 +228,9 @@ class player_entity(enity_base):
            dash_range = GAME_CONSTANTS.PLAYER_DASH_DURATION * GAME_CONSTANTS.PLAYER_DASH_SPEED
            
            if (collision := get_first_intersection(self.model.getPos(), dash_direction)) is not None:
-               print(collision.getSurfacePoint(render))
-               print((collision.getSurfacePoint(render)- self.model.getPos()))
-               print((collision.getSurfacePoint(render)- self.model.getPos()).length())
+               #print(collision.getSurfacePoint(render))
+               #print((collision.getSurfacePoint(render)- self.model.getPos()))
+               #print((collision.getSurfacePoint(render)- self.model.getPos()).length())
                # If collision is within dash range -> Stop dash at collision
                # Shorten slightly to stop BEFORE hitting the object
                dash_range = min((collision.getSurfacePoint(render) - self.model.getPos()).length() - 0.5, dash_range)
@@ -252,7 +256,7 @@ class player_entity(enity_base):
         
         if self.time_since_last_black_hole >= GAME_CONSTANTS.BLACK_HOLE_COOLDOWN:
             mouse_pos = self._get_mouse_position()
-            print("Spawning black hole")
+            #print("Spawning black hole")
             
             messenger.send("spawn_black_hole", [mouse_pos])
             
@@ -262,4 +266,9 @@ class player_entity(enity_base):
            
             self.time_since_last_black_hole = 0
             
+    def heal(self):
+        if self.current_hp < GAME_CONSTANTS.PLAYER_MAX_HP:
+            self.current_hp +=1
+    def upGradeSpeed(self):
+        self.moveSpeed += 5
             

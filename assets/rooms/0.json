@@ -12,19 +12,6 @@
       "type": "ground",
       "wave": 0,
       "enemy_type": ""
-    },
-    {
-      "asset": "Spawner",
-      "x": 0.4415493,
-      "y": 1.0,
-      "z": -5.934955,
-      "collider": false,
-      "rotx": 0.0,
-      "roty": 0.0,
-      "rotz": 0.0,
-      "type": "spawner",
-      "wave": 1,
-      "enemy_type": "melee_enemy"
     }
   ],
   "size":1

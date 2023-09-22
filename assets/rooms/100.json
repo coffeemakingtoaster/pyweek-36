@@ -14,7 +14,7 @@
       "enemy_type": ""
     },
     {
-      "asset": "Altar",
+      "asset": "vase",
       "x": 0,
       "y": 1.0,
       "z": 0,
@@ -22,7 +22,7 @@
       "rotx": 0.0,
       "roty": 0.0,
       "rotz": 0.0,
-      "type": "altar",
+      "type": "boss",
       "wave": 0,
       "enemy_type": "ranged_enemy"
     }

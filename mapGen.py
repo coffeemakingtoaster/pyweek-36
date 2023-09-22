@@ -16,8 +16,12 @@ class MapLoader:
         mapLength = 0.5
         prevRoomLength = 0
         for i in range(self.mapLength):
-            
-            id = random.randint(1,MAP_CONSTANTS.ROOM_TYPES)
+            if i == 0:
+                id = 0
+            elif i == self.mapLength-1:
+                id = 100
+            else:
+                id = random.randint(1,MAP_CONSTANTS.ROOM_TYPES)
             
             room = Room(1,3,id,mapLength,prevRoomLength)
             mapLength = mapLength - (prevRoomLength/2 + room.size/2)

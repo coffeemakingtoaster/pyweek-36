@@ -1,0 +1,47 @@
+<CoordinateSystem> { Z-up } 
+<Table> {
+  <Bundle> Armature {
+    <Table> "<skeleton>" {
+      <Table> Bone {
+        <Xfm$Anim> xform {
+          <Scalar> order { sprht }
+          <Scalar> fps { 24 }
+          <Scalar> contents { ijkprhxyz }
+          <V> {
+            1.000000 1.000000 1.000000 90.000003 -0.000000 0.000000 0.000000 0.000000 0.000000
+          }
+        }
+        <Table> Bone.001 {
+          <Xfm$Anim> xform {
+            <Scalar> order { sprht }
+            <Scalar> fps { 24 }
+            <Scalar> contents { ijkprhxyz }
+            <V> {
+              1.000000 1.000000 1.000000 -88.587977 -0.000000 0.000000 0.000000 0.735337 0.000000
+            }
+          }
+          <Table> Bone.002 {
+            <Xfm$Anim> xform {
+              <Scalar> order { sprht }
+              <Scalar> fps { 24 }
+              <Scalar> contents { ijkprhxyz }
+              <V> {
+                1.000000 1.000000 1.000000 98.987609 -0.000000 0.000000 0.000000 0.624151 0.000000
+              }
+            }
+          }
+        }
+      }
+      <Table> Bone.005 {
+        <Xfm$Anim> xform {
+          <Scalar> order { sprht }
+          <Scalar> fps { 24 }
+          <Scalar> contents { ijkprhxyz }
+          <V> {
+            1.000000 1.000000 1.000000 -0.000011 -38.409350 -179.999991 -0.591959 0.729740 0.023518
+          }
+        }
+      }
+    }
+  }
+}

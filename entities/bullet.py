@@ -41,10 +41,10 @@ class bullet_entity(enity_base):
         self.collision.node().addSolid(CollisionSphere(0,1,0,0.5))
         
         if self.team == ENTITY_TEAMS.PLAYER: 
-            print("setting enemy")
+            #print("setting enemy")
             self.collision.node().setCollideMask(ENTITY_TEAMS.ENEMIES_BITMASK)
         else:
-            print("Setting player")
+            #print("Setting player")
             self.collision.node().setCollideMask(ENTITY_TEAMS.PLAYER_BITMASK)
         
         self.is_dead = False

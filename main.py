@@ -1,6 +1,7 @@
 from panda3d.core import *
 from ui.main_menu import main_menu
 from ui.pause_menu import pause_menu
+from ui.upgrade_menu import upgrade_menu
 from ui.settings_menu import settings_menu
 from ui.victory_screen import victory_screen
 from ui.hud import game_hud 
@@ -33,9 +34,10 @@ class main_game(ShowBase):
         
         ShowBase.__init__(self)
         
-        print(ENTITY_TEAMS.MAP_BITMASK)
-        print(ENTITY_TEAMS.ENEMIES_BITMASK)
-        print(ENTITY_TEAMS.PLAYER_BITMASK)
+        #print(ENTITY_TEAMS.MAP_BITMASK)
+        #print(ENTITY_TEAMS.ENEMIES_BITMASK)
+        #print(ENTITY_TEAMS.PLAYER_BITMASK)
+        #print(ENTITY_TEAMS.ROOM_BITMASK)
         
         # Set camera position 
         base.cam.setPos(0, 50, 0) 
@@ -84,6 +86,8 @@ class main_game(ShowBase):
         self.accept("escape", self.toggle_pause)
         
         self.accept("pause_game", self.toggle_pause)
+        self.accept("upgradeSpeed",self.upgradeSpeed)
+        self.accept("upgradeHealth",self.upgradeHealth)
 
         self.accept("goto_main_menu", self.goto_to_main_menu)
         self.accept("toggle_settings", self.toggle_settings)
@@ -92,6 +96,11 @@ class main_game(ShowBase):
         
         self.accept("l", self.enterRoom)
         self.accept("u", self.unloadOldestRoom)
+        
+        self.notifier = CollisionHandlerEvent()
+        self.notifier.addInPattern("%fn-into-%in")
+        self.accept("player_melee_attack_hitbox-into-room", self.enterRoom)
+        self.accept("player_melee_attack_hitbox-into-altar-sphere",self.activateAltar)
         
         # Load music
         background_music = base.loader.loadMusic(join("assets", "music", "music.mp3")) 
@@ -127,14 +136,17 @@ class main_game(ShowBase):
             self.finish_game(False)
             return Task.cont
        
-        if self.enemies == 0:
+        if self.enemies == 0 and not self.currentRoom.Altar:
             if self.currentWave != 4 and self.currentWave != 0:
                 self.spawnWave()
                 self.currentWave += 1
             elif self.currentWave == 4:
                 self.currentWave = 0
                 self.loadNextRoom()
-       
+        elif self.currentRoom.Altar and self.currentRoom.Altar.active:
+            self.currentWave = 0
+            self.loadNextRoom()
+            
         for i, entity in enumerate(self.entities):
             entity.update(dt, self.player.model.getPos())
             if hasattr(entity, "is_dead"):
@@ -142,7 +154,7 @@ class main_game(ShowBase):
                     entity.destroy()
                     if hasattr(entity, "enemy"):
                         self.enemies -= 1
-                        print(self.enemies)
+                        
                     del self.entities[i]
                     
         
@@ -161,10 +173,8 @@ class main_game(ShowBase):
     
         self.active_ui = game_hud()
         
-        self.entities.append(melee_enemy(10,10))
-        self.pusher.addCollider(self.entities[0].collision, self.entities[0].model)
-        self.cTrav.addCollider(self.entities[0].collision, self.pusher)
-        self.enemies += 1
+        #self.entities.append(melee_enemy(10,10))
+        
         
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
@@ -198,6 +208,7 @@ class main_game(ShowBase):
 
     def goto_to_main_menu(self):
         print("Return to main menu")
+        render.clearLight()
         self.enemies = 0
         # no hud yet
         if self.active_ui is not None:
@@ -259,21 +270,23 @@ class main_game(ShowBase):
         self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
         self.currentRoom = self.loadedRooms[self.currentRoomNumber]
         self.enterRoom()
-        print("loadingFirstRoom")
+        
         
     def loadNextRoom(self):
         #self.currentRoomNumber += 1
         self.newestRoomNumber += 1
         #self.oldRoom = self.currentRoom
-        self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
+        if self.newestRoomNumber < len(self.map):
+            self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
         
         
-        if len(self.loadedRooms) >4:
+        if len(self.loadedRooms) >4 and self.newestRoomNumber < len(self.map):
             self.unloadOldestRoom()
             self.currentRoom = self.loadedRooms[2]
-            
+        elif self.newestRoomNumber == len(self.map):
+            self.currentRoom = self.loadedRooms[len(self.loadedRooms)-1]
         else:
-            self.currentRoom = self.loadedRooms[self.currentRoomNumber]
+            self.currentRoom = self.loadedRooms[len(self.loadedRooms)-2]
             
         
         self.currentRoom.openDoor()
@@ -281,12 +294,29 @@ class main_game(ShowBase):
         
         
         
-    def enterRoom(self):
-        self.spawnWave()
-        self.currentWave = 1
-        self.currentRoom.closeDoor()
-        self.currentRoomNumber += 1
-        
+    def enterRoom(self,entry = None):
+        if self.currentRoom.entered == False:
+            self.spawnWave()
+            self.currentWave = 1
+            self.currentRoom.enter()
+            self.currentRoomNumber += 1
+            
+    def activateAltar(self,entry = None):
+        self.currentRoom.Altar.activate()
+        if self.game_status == GAME_STATUS.RUNNING:
+            self.set_game_status(GAME_STATUS.PAUSED)
+            # Not needed as of now as gui does not exist 
+            self.current_hud = self.active_ui
+            self.current_hud.pause()
+            release_mouse_from_window()
+            self.active_ui = upgrade_menu()
+       
+    def upgradeSpeed(self):
+        self.player.upGradeSpeed()
+    def upgradeHealth(self):
+        self.player.heal()
+    def upgradeDamage(self):
+        print("Test Upgrade")
         
     
     

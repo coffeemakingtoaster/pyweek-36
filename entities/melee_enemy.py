@@ -77,12 +77,14 @@ class melee_enemy(base_enemy):
             self.attack_hitbox.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
             base.cTrav.addCollider(self.attack_hitbox, self.notifier)
             base.taskMgr.doMethodLater(1.5, self._destroy_attack_hitbox, "destroy_melee_attack_hitbox")
+            
         
         return Task.done
         
     def _destroy_attack_hitbox(self, _):
         if self.model:
             self.attack_hitbox.removeNode()
+        self.model.play('Idle')
         return Task.done
       
     def attack(self):

@@ -35,7 +35,7 @@ class GAME_STATUS:
 class MAP_CONSTANTS:
    ROOM_SIZE = 24
    ROOM_HEIGHT = 5
-   MAP_LENGTH = 15
+   MAP_LENGTH = 5
    ROOM_TYPES = 3
    
 class ENTITY_TEAMS:
@@ -48,3 +48,5 @@ class ENTITY_TEAMS:
    ABILITY = "ability"
    ABILITY_BITMASK = BitMask32(0x04)
    MELEE_ATTACK_BITMASK = BitMask32(0x08)
+   ROOM = "room"
+   ROOM_BITMASK = BitMask32(0x08)

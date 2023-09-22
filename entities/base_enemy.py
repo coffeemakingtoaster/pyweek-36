@@ -92,14 +92,14 @@ class base_enemy(enity_base):
         
         # Only take damage from bullets targeted at own team 
         if entry.into_node.getTag("team") != self.team:
-            print("nope")
+            #print("nope")
             return
         
         self.takeDamage(1)
         
     def takeDamage(self,dmg):
         self.current_hp -=dmg
-        print("Taking damage")
+        #print("Taking damage")
         if self.current_hp <= 0:
             self.is_dead = True
             
@@ -107,12 +107,13 @@ class base_enemy(enity_base):
         print("attack")
         
     def enter_black_hole(self, collision: CollisionEntry):
-        print("In black hole")
+        #print("In black hole")
         self.in_black_hole = True
         self.black_hole_position = collision.into_node_path.getPos(render)
         
+        
     def leave_black_hole(self, collision):
-        print("Leaving black hole")
+        #print("Leaving black hole")
         self.in_black_hole = False
         self.black_hole_position = None
         
