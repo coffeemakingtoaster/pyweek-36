@@ -25,6 +25,8 @@ from direct.actor.Actor import Actor
 
 from os.path import join
 from mapGen import MapLoader
+import sys
+
 
 # Load panda3d configfile that disables model caching
 loadPrcFile("./settings.prc")
@@ -32,6 +34,11 @@ loadPrcFile("./settings.prc")
 class main_game(ShowBase):
     def __init__(self):
         
+        
+        
+
+        
+      
         ShowBase.__init__(self)
         
         #print(ENTITY_TEAMS.MAP_BITMASK)
@@ -40,6 +47,10 @@ class main_game(ShowBase):
         #print(ENTITY_TEAMS.ROOM_BITMASK)
         
         # Set camera position 
+        
+        render.setShaderAuto()
+        
+        
         base.cam.setPos(0, 50, 0) 
         base.cam.setHpr(0, 180+40, 0)
         
@@ -162,6 +173,7 @@ class main_game(ShowBase):
     
     def load_game(self):
         print("Loading game")
+        
         self.current_run_duration = 0
         self.active_ui.destroy()
         self.setBackgroundColor((0, 0, 0, 1))

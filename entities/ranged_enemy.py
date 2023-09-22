@@ -2,7 +2,7 @@ from entities.base_enemy import base_enemy
 from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionHandlerEvent, CollisionEntry
 import math
 import time
-from entities.bullet import bullet_entity
+from entities.light_bullet import lightBullet_entity
 from direct.actor.Actor import Actor
 
 class ranged_enemy(base_enemy):
@@ -10,7 +10,7 @@ class ranged_enemy(base_enemy):
     def __init__(self, spawn_x, spawn_z):
         super().__init__(spawn_x,spawn_z)
         self.bullets = []
-        self.attackcooldown = 0.3
+        self.attackcooldown = 0.5
     
     def loadModel(self):
         return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
@@ -26,7 +26,7 @@ class ranged_enemy(base_enemy):
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
         
-        if delta_to_player.length() < 10:
+        if delta_to_player.length() < 14:
             x_direction = -x_direction  
             z_direction = -z_direction
     
@@ -59,7 +59,7 @@ class ranged_enemy(base_enemy):
                 del self.bullets[i]
             
     def attack(self,delta_x_reversed):
-        self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
+        self.bullets.append(lightBullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
         self.model.play('Attack')
         
         
