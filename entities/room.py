@@ -7,6 +7,7 @@ from panda3d.core import LPoint3
 from panda3d.core import PointLight
 from entities.spawner import Spawner
 from entities.Altar import Altar
+from entities.Boss import boss
 import math
 from direct.actor.Actor import Actor
 
@@ -26,15 +27,13 @@ class Room(DirectObject.DirectObject):
         self.door = None
         self.doorCollider = None
         self.Altar = None
+        self.boss = None
         self.collision = None
         self.entered = False
         self.boss = None
         
         self.notifier = CollisionHandlerEvent()
         self.notifier.addInPattern("%fn-into-%in")
-        
-        
-        
         
     def loadRoomAssets(self, id):
         file_path = f'assets/rooms/{id}.json'
@@ -60,16 +59,13 @@ class Room(DirectObject.DirectObject):
             
             self.buildModel("bigWall",(-24,0,0),(0,0,0),True,"colliding")
             self.buildModel("bigWall",(24,0,0),(0,0,0),True,"colliding")
-            
         
         self.addEntryWall()
-        
-        
         
         return self
     
     def buildModel(self,asset,position,rotation,collision = False,assetType="deko",wave = 0,enemyType = ""):
-        if assetType != "spawner" and assetType != "altar" :
+        if assetType != "spawner" and assetType != "altar"  and assetType != "boss":
             #print(assetType)
             #print(self.gridPos)
             #print(self.gridPos-(self.prevRoomLength/2+self.size/2))
@@ -128,10 +124,15 @@ class Room(DirectObject.DirectObject):
             self.spawners.append(Spawner((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)),wave,enemyType))
         elif assetType == "altar":
             self.Altar = Altar((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)))
+        elif assetType == "boss":
+            self.boss = boss((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)))
+            print("Loaded boss \n\n\n\n\n")
+        
            
     def destroy(self):
         for model in self.models:
-            model.removeNode()
+            if model:
+                model.removeNode()
         for spawner in self.spawners:
             spawner.model.removeNode()
         if self.Altar:
@@ -139,6 +140,11 @@ class Room(DirectObject.DirectObject):
             if self.Altar.plnp:
                 self.Altar.plnp.removeNode()
             self.Altar.model.cleanup()
+        if self.boss:
+            print("removedBoss")
+            if self.boss.plnp:
+                self.boss.plnp.removeNode()
+            self.boss.model.cleanup()
             
     def addEntryWall(self):
         wall = None
@@ -188,14 +194,12 @@ class Room(DirectObject.DirectObject):
         
         self.doorHitBox()
         
-        
-        
-            
     def openDoor(self):
         self.door.play('Open')
         self.doorCollider.removeNode()
     
     def enter(self):
+        print(self.boss)
         self.closeDoor()
         self.collision.removeNode()
         self.entered = True
