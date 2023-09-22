@@ -37,21 +37,22 @@ class player_entity(enity_base):
         self.accept("q", self.cast_black_hole) 
         
         #self.model = load_model("player")
-        self.model = Actor("assets/anims/Player.egg",{"Dance":"assets/anims/Player-Idle.egg"})
+        self.model = Actor("assets/anims/Player.egg",{"Idle":"assets/anims/Player-Idle.egg"})
         
         self.model.reparentTo(render)
         
         plight = PointLight('plight')
-        #plight.setColor((-1, -1, -1, 1))
+        plight.setColor((-1, -1, -1, 1))
         plnp = self.model.attachNewNode(plight)
         plight.attenuation = (1, 0, 0.1)
         plnp.setPos(0, 0, 0)
         render.setLight(plnp)
         
         self.model.setPos(0,2,0)
-        self.model.setHpr(0, -90, 0)
-        #self.model.loop('Dance')
-        #self.model.getChild(0).setP(90)
+        #self.model.setHpr(0, 90, 180)
+        self.model.loop('Idle')
+        self.model.getChild(0).setP(90)
+        self.model.getChild(0).setR(180)
         
         self.current_hp = GAME_CONSTANTS.PLAYER_MAX_HP
         
