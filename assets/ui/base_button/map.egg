@@ -1,0 +1,61 @@
+<Comment> {
+  "egg-texture-cards -o '.\assets\ui\base_button\map.egg' -p 500,500 '.\assets\ui\base_button\base.png' '.\assets\ui\base_button\pressed.png'"
+}
+<Texture> pressed {
+  "./assets/ui/base_button/pressed.png"
+}
+<Texture> base {
+  "./assets/ui/base_button/base.png"
+}
+<Group> {
+  <Switch> { 1 }
+  <Scalar> fps { 2 }
+  <VertexPool> vpool {
+    <Vertex> 0 {
+      -0.08 0.03 0
+      <UV> { 0 1 }
+    }
+    <Vertex> 1 {
+      -0.08 -0.03 0
+      <UV> { 0 0 }
+    }
+    <Vertex> 2 {
+      0.08 -0.03 0
+      <UV> { 1 0 }
+    }
+    <Vertex> 3 {
+      0.08 0.03 0
+      <UV> { 1 1 }
+    }
+    <Vertex> 4 {
+      -0.08 0.03 0
+      <UV> { 0 1 }
+    }
+    <Vertex> 5 {
+      -0.08 -0.03 0
+      <UV> { 0 0 }
+    }
+    <Vertex> 6 {
+      0.08 -0.03 0
+      <UV> { 1 0 }
+    }
+    <Vertex> 7 {
+      0.08 0.03 0
+      <UV> { 1 1 }
+    }
+  }
+  <Group> base {
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { base }
+      <VertexRef> { 0 1 2 3 <Ref> { vpool } }
+    }
+  }
+  <Group> pressed {
+    <Polygon> {
+      <RGBA> { 1 1 1 1 }
+      <TRef> { pressed }
+      <VertexRef> { 4 5 6 7 <Ref> { vpool } }
+    }
+  }
+}
