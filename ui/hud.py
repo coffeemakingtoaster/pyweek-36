@@ -17,6 +17,7 @@ class game_hud(ui_base):
         self.ui_elements = []
         
         self.accept("display_hp", self.display_hp_count)
+        self.accept("display_boss_hp", self.display_boss_hp_count)
         
         self.accept("set_ability_on_cooldown", self.set_ability_cooldown)
         
@@ -35,6 +36,8 @@ class game_hud(ui_base):
         }
         
         self.is_paused = False
+        
+        self.boss_hp_display = None
         
     def _create_ability_icon(self, name,pos, scale=0.2):
         self.ui_elements.append(OnscreenImage(image=join("assets","icons","hud","backplane.png"), pos=pos, scale=scale))
@@ -94,3 +97,25 @@ class game_hud(ui_base):
         
     def resume(self):
         self.is_paused = False
+        
+    def display_boss_hp_count(self, hp_value):
+        if self.boss_hp_display is None:
+            return 
+        step = (hp_value/GAME_CONSTANTS.BOSS_HP) * 0.995
+        self.boss_hp_display.setScale(step, 1, 0.045)
+        # Pos of -0.995 is final
+        self.boss_hp_display.setX(0.995 - step)
+        
+    def enter_boss_mode(self, name):
+        print(name)
+        # Create Boss HP Bar
+        self.boss_name_display = DirectLabel(text=name, text_fg=(255,255,255,1), pos=(0,0,0.9), relief=None, scale=0.1, text_font=self.font)
+        self.ui_elements.append(self.boss_name_display)
+        boss_hp_base = OnscreenImage(image=join("assets","ui","hp_bar","background.png"), pos=(0,0,0.82), scale=(1,1, 0.05))
+        # CHANGING THESE X SCALES NEEDS TO BE UPDATED IN DISPLAY FUNCTION AS WELL
+        boss_hp_backpaint = OnscreenImage(image=join("assets","ui","hp_bar","hp_back.png"), pos=(0,0,0.82), scale=(0.995,1, 0.045))
+        self.boss_hp_display = OnscreenImage(image=join("assets","ui","hp_bar","hp_display.png"), pos=(0,0,0.82), scale=(0.995,1, 0.045))
+        self.ui_elements.append(boss_hp_base)
+        self.ui_elements.append(boss_hp_backpaint)
+        self.ui_elements.append(self.boss_hp_display)
+        

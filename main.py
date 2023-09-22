@@ -112,6 +112,7 @@ class main_game(ShowBase):
         self.notifier.addInPattern("%fn-into-%in")
         self.accept("player_melee_attack_hitbox-into-room", self.enterRoom)
         self.accept("player_melee_attack_hitbox-into-altar-sphere",self.activateAltar)
+        self.accept("player_melee_attack_hitbox-into-boss-sphere",self.activateBoss)
         
         # Load music
         background_music = base.loader.loadMusic(join("assets", "music", "music.mp3")) 
@@ -146,17 +147,26 @@ class main_game(ShowBase):
         if self.player.is_dead:
             self.finish_game(False)
             return Task.cont
-       
-        if self.enemies == 0 and not self.currentRoom.Altar:
+
+        if self.enemies == 0 and not self.currentRoom.Altar and not self.currentRoom.boss:
             if self.currentWave != 4 and self.currentWave != 0:
                 self.spawnWave()
                 self.currentWave += 1
             elif self.currentWave == 4:
+                print("reloading")
                 self.currentWave = 0
                 self.loadNextRoom()
         elif self.currentRoom.Altar and self.currentRoom.Altar.active:
             self.currentWave = 0
             self.loadNextRoom()
+            
+        if self.currentRoom.boss:
+            if self.currentRoom.boss.active:
+                if self.currentRoom.boss.is_dead:
+                    self.finish_game(True)
+                    return Task.cont
+                self.currentRoom.boss.update(dt)
+            
             
         for i, entity in enumerate(self.entities):
             entity.update(dt, self.player.model.getPos())
@@ -167,8 +177,6 @@ class main_game(ShowBase):
                         self.enemies -= 1
                         
                     del self.entities[i]
-                    
-        
         return Task.cont
     
     def load_game(self):
@@ -184,9 +192,9 @@ class main_game(ShowBase):
         self.pusher.setHorizontal(True)
     
         self.active_ui = game_hud()
+        self.current_hud = self.active_ui
         
         #self.entities.append(melee_enemy(10,10))
-        
         
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
@@ -197,7 +205,6 @@ class main_game(ShowBase):
         
         self.static_entities = self.map 
         self.set_game_status(GAME_STATUS.RUNNING)
-        
 
     def set_game_status(self, status):
         self.status_display["text"] = status
@@ -289,25 +296,24 @@ class main_game(ShowBase):
         self.newestRoomNumber += 1
         #self.oldRoom = self.currentRoom
         if self.newestRoomNumber < len(self.map):
+            print("appending")
             self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
         
-        
-        if len(self.loadedRooms) >4 and self.newestRoomNumber < len(self.map):
+        if len(self.loadedRooms) > 4 and self.newestRoomNumber < len(self.map):
             self.unloadOldestRoom()
             self.currentRoom = self.loadedRooms[2]
         elif self.newestRoomNumber == len(self.map):
             self.currentRoom = self.loadedRooms[len(self.loadedRooms)-1]
         else:
+            print("fallback")
             self.currentRoom = self.loadedRooms[len(self.loadedRooms)-2]
-            
         
         self.currentRoom.openDoor()
             
-        
-        
-        
     def enterRoom(self,entry = None):
+        print("Next room")
         if self.currentRoom.entered == False:
+            print("Now entered")
             self.spawnWave()
             self.currentWave = 1
             self.currentRoom.enter()
@@ -322,6 +328,13 @@ class main_game(ShowBase):
             self.current_hud.pause()
             release_mouse_from_window()
             self.active_ui = upgrade_menu()
+            
+    def activateBoss(self, entry=None):
+        print(self.currentRoomNumber)
+        print(len(self.loadedRooms))
+        self.currentRoom.boss.activate()
+        # Not needed as of now as gui does not exist 
+        self.current_hud.enter_boss_mode(self.currentRoom.boss.name)
        
     def upgradeSpeed(self):
         self.player.upGradeSpeed()
@@ -329,8 +342,6 @@ class main_game(ShowBase):
         self.player.heal()
     def upgradeDamage(self):
         print("Test Upgrade")
-        
-    
     
     def spawnWave(self):
         for spawner in self.currentRoom.spawners:
