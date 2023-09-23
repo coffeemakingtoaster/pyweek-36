@@ -10,6 +10,8 @@ from direct.actor.Actor import Actor
 from entities.ranged_enemy import ranged_enemy
 from entities.melee_enemy import melee_enemy
 from entities.tank_enemy import tank_enemy
+from entities.light_bullet import lightBullet_entity
+from entities.bullet import bullet_entity
 
 from direct.task.Task import Task
 
@@ -58,10 +60,10 @@ class boss(enity_base):
 
         self.activationsphere = self.model.attach_new_node(CollisionNode("boss-sphere"))
         self.collision = self.model.attach_new_node(CollisionNode("boss"))
-        
+
         self.activationsphere.setTag("team", ENTITY_TEAMS.ENEMIES)
         self.collision.setTag("team", ENTITY_TEAMS.ENEMIES)
-        
+
         # Needed for preloading
         self.collision.setTag("id", self.id)
         self.activationsphere.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
@@ -98,12 +100,19 @@ class boss(enity_base):
         self.melee_attack_hitbox = None
 
         self.notifier = CollisionHandlerEvent()
-        
+
         self.notifier.addInPattern("%fn-into-%in")
+
+        self.bullets = []
 
     # Set new  attack state/pattern
     def _roll_new_state(self):
-        pass
+        self.state = random.choice([BOSS_STATES.MELEE, BOSS_STATES.RANGED])
+        if self.state == BOSS_STATES.MELEE:
+            self.attackcooldown = GAME_CONSTANTS.BOSS_RANGED_ATTACK_COOLDOWN
+        else:
+            self.attackcooldown = GAME_CONSTANTS.BOSS_RANGED_ATTACK_COOLDOWN
+        print("Now in {}".format(self.state))
 
     def update(self, dt, player_pos):
         entity_pos = self.model.getPos()
@@ -123,7 +132,9 @@ class boss(enity_base):
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
 
-        if delta_to_player.length() <= 2 and self.state == BOSS_STATES.MELEE:
+        if (delta_to_player.length() <= 2 and self.state == BOSS_STATES.MELEE) and (
+            delta_to_player.length() <= 15 and self.state == BOSS_STATES.RANGED
+        ):
             x_direction = 0
             z_direction = 0
 
@@ -140,17 +151,48 @@ class boss(enity_base):
             ):
                 self.attack()
                 self.last_attack_time = current_time
+        elif self.state == BOSS_STATES.RANGED:
+            current_time = time.time()
+            if current_time - self.last_attack_time >= self.attackcooldown:
+                self.shoot(delta_to_player)
+                self.last_attack_time = current_time
 
         # Safeguard
         if self.model.getY() > self.pos[1]:
             self.model.setY(self.pos[1])
+
+        for i, bullet in enumerate(self.bullets):
+            bullet.update(dt)
+            if bullet.is_dead:
+                bullet.destroy()
+                del self.bullets[i]
+
+    def shoot(self, delta_to_player):
+        shoot_direction = delta_to_player.normalized() * -1
+        quat = Quat()
+        angle = 25 
+        axis = Vec3(0, 1, 0).normalized()
+        quat.setFromAxisAngle(-angle, axis)
+        shoot_direction = quat.xform(shoot_direction) 
+        for i in range(3):
+            quat = Quat()
+            quat.setFromAxisAngle(angle, axis)
+            shoot_direction = quat.xform(shoot_direction)
+            self.bullets.append(
+                bullet_entity(
+                    self.model.getX(),
+                    self.model.getZ(),
+                    shoot_direction,
+                    self.team,
+                )
+            )
 
     def _remove_hitbox(self, task):
         if self.model:
             self.melee_attack_hitbox.removeNode()
             self.melee_attack_hitbox = None
         return Task.done
-    
+
     def _activate_hitbox(self, task):
         base.cTrav.addCollider(self.melee_attack_hitbox, self.notifier)
         return Task.done
@@ -165,31 +207,39 @@ class boss(enity_base):
         wind_up_time = 0
         if attack_number == 1:
             self.model.play("Attack1")
-            self.melee_attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,0), 0.3, 1, 3))
+            self.melee_attack_hitbox.node().addSolid(
+                CollisionBox(Point3(0, 0, 0), 0.3, 1, 3)
+            )
             self.melee_attack_hitbox.setPos(0.75, 0, -1)
             wind_up_time = 0.5
-            attack_duration = 1.5 
+            attack_duration = 1.3
         elif attack_number == 2:
             self.model.play("Attack2")
-            self.melee_attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,0),2.75,0.5,2))
+            self.melee_attack_hitbox.node().addSolid(
+                CollisionBox(Point3(0, 0, 0), 2.75, 0.5, 2)
+            )
             self.melee_attack_hitbox.setPos(0.1, 0, -1)
             wind_up_time = 0.5
             attack_duration = 1
         else:
             self.model.play("Attack3")
-            self.melee_attack_hitbox.node().addSolid(CollisionSphere(0,0,0,4))
+            self.melee_attack_hitbox.node().addSolid(CollisionSphere(0, 0, 0, 4))
             self.melee_attack_hitbox.setPos(0, 0, 0)
             wind_up_time = 0.5
-            attack_duration = 1.75 
+            attack_duration = 1.1
 
         self.melee_attack_hitbox.setTag("team", ENTITY_TEAMS.PLAYER)
         # Set player team as player is the target
-        self.melee_attack_hitbox.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
+        self.melee_attack_hitbox.node().setCollideMask(
+            ENTITY_TEAMS.MELEE_ATTACK_BITMASK
+        )
         base.taskMgr.doMethodLater(
             wind_up_time, self._activate_hitbox, "destroy_boss_melee_attack_hitbox"
         )
         base.taskMgr.doMethodLater(
-            attack_duration + wind_up_time, self._remove_hitbox, "destroy_boss_melee_attack_hitbox"
+            attack_duration + wind_up_time,
+            self._remove_hitbox,
+            "destroy_boss_melee_attack_hitbox",
         )
 
     def _set_active(self, task):
@@ -214,6 +264,9 @@ class boss(enity_base):
             messenger.send("display_boss_hp", [self.current_hp])
             if self.current_hp <= 0:
                 self.is_dead = True
+            # Every 5 damage => Possibly switch attack pattern
+            if self.current_hp % 5 == 0:
+                self._roll_new_state()
 
     # collisionentry is not needed -> we ignore it
     def bullet_hit(self, entry: CollisionEntry):
