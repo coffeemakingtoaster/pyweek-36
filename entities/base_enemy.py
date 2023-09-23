@@ -19,7 +19,7 @@ class base_enemy(enity_base):
         
         self.team = ENTITY_TEAMS.ENEMIES 
         
-        self.speed = 6
+        self.speed = GAME_CONSTANTS.ENEMY_MOVEMENT_SPEED 
         
         self.attackcooldown = 2
         self.last_attack_time = time.time()

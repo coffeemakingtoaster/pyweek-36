@@ -165,7 +165,7 @@ class main_game(ShowBase):
                 if self.currentRoom.boss.is_dead:
                     self.finish_game(True)
                     return Task.cont
-                self.currentRoom.boss.update(dt)
+                self.currentRoom.boss.update(dt, self.player.model.getPos())
             
             
         for i, entity in enumerate(self.entities):
