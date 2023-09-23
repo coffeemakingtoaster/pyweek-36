@@ -250,7 +250,7 @@ class boss(enity_base):
         plight = PointLight("plight")
         plight.setColor((5, 5, 5, 5))
         self.plnp = self.model.attachNewNode(plight)
-        self.plnp.setPos(0, 0, 5)
+        self.plnp.setPos(0, 5, 0)
         plight.attenuation = (1, 0, 0.05)
         render.setLight(self.plnp)
         self.model.play("Stand")
