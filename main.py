@@ -7,6 +7,7 @@ from ui.victory_screen import victory_screen
 from ui.hud import game_hud 
 from config import GAME_STATUS, GAME_CONSTANTS, GAME_CONFIG, ENTITY_TEAMS
 from helpers.utilities import load_config, save_config, lock_mouse_in_window, release_mouse_from_window
+from helpers.model_helpers import load_model
 from entities.player import player_entity
 from entities.sample_enemy import sample_enemy_entity
 from entities.melee_enemy import melee_enemy
@@ -214,7 +215,17 @@ class main_game(ShowBase):
         Actor("assets/anims/sniper.egg")
         Actor("assets/anims/TankEnemy.egg")
         Actor("assets/anims/blackHole.egg")
+        Actor("assets/anims/blackHole-Expand.egg")
         Actor("assets/anims/Bullet.egg")
+        
+        load_model("barrel")
+        load_model("barrel2")
+        load_model("chair")
+        load_model("grid")
+        load_model("lightBullet")
+        load_model("lightSpear")
+        load_model("pillar")
+        load_model("vase")
         
     def toggle_pause(self):
         if self.game_status == GAME_STATUS.RUNNING:

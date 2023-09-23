@@ -18,12 +18,12 @@ class black_hole_entity(enity_base):
         self.model.setPos(spawn_pos)
         self.model.setP(90)
         
-        plight = PointLight('plight')
-        plight.setColor((-2, -2, -2, 2))
-        self.plnp = self.model.attachNewNode(plight)
-        self.plnp.setPos(0, 0, 0)
-        plight.attenuation = (1, 0, 0.01)
-        render.setLight(self.plnp)
+        #plight = PointLight('plight')
+        #plight.setColor((-2, -2, -2, 2))
+        #self.plnp = self.model.attachNewNode(plight)
+        #self.plnp.setPos(0, 0, 0)
+        #plight.attenuation = (1, 0, 0.01)
+        #render.setLight(self.plnp)
         
         self.model.reparentTo(render)
         
@@ -50,4 +50,4 @@ class black_hole_entity(enity_base):
     def destroy(self, task):
         self.destroy_sound.play()
         self.model.removeNode()
-        render.clearLight(self.plnp)
+        #render.clearLight(self.plnp)
