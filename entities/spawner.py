@@ -16,7 +16,7 @@ class Spawner(enity_base):
         super().__init__()
         self.pos = pos
         self.model = load_model("vase")
-        self.model.reparentTo(render)
+        #self.model.reparentTo(render)
         self.model.setPos(pos[0],pos[1],pos[2])
         self.wave = wave
         self.type = type

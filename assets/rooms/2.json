@@ -431,7 +431,7 @@
       "roty": 0.0,
       "rotz": 0.0,
       "type": "spawner",
-      "wave": 0,
+      "wave": 1,
       "enemy_type": "healer_enemy"
     },
     {

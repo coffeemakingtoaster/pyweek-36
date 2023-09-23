@@ -53,7 +53,7 @@ class base_enemy(enity_base):
         
         self.ability_collision.node().setCollideMask(ENTITY_TEAMS.ABILITY_BITMASK)
         
-        self.collision.show()
+        #self.collision.show()
         
         self.collision.setTag("team", self.team)
         self.ability_collision.setTag("team", self.team)

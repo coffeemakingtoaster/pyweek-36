@@ -74,7 +74,7 @@ class Room(DirectObject.DirectObject):
             model.reparentTo(render)
             if assetType == "lightsource":
                 plight = PointLight('plight')
-                plight.setColor((4, 2.4, 1.2, 1))
+                plight.setColor((2, 1.2, 0.6, 1))
                 plight.attenuation = (1, 0, 0.05)
                 plnp = model.attachNewNode(plight)
                 plnp.setPos(-1.5,4,0)
@@ -84,9 +84,9 @@ class Room(DirectObject.DirectObject):
         
             model.setPos(position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
             model.setScale(scale)
-            if assetType == "colliding" or assetType == "halfColliding" or assetType == "ground":
+            if assetType == "colliding" or assetType == "halfColliding" or assetType == "ground" or assetType == "altar":
                 min_point, max_point = model.getTightBounds()
-                if assetType == "colliding" or assetType == "ground" :
+                if assetType == "colliding" or assetType == "ground" or assetType == "altar" :
                     if min_point.y < max_point.y:
                         min_point.y = -10
                         max_point.y = 20
@@ -119,6 +119,7 @@ class Room(DirectObject.DirectObject):
                     csn.node().setCollideMask(ENTITY_TEAMS.MAP_BITMASK)
                 csn.node().addSolid(cp)
                 base.cTrav.addCollider(csn, CollisionHandlerEvent())
+                
                 self.models.append(csn)
             
             model.setHpr(rotation[0],rotation[1],rotation[2])

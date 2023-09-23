@@ -21,7 +21,7 @@ class tank_enemy(base_enemy):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         
     def loadModel(self):
-        return Actor("assets/anims/TankEnemy.egg",{"Attack":"assets/anims/TankEnemy-Attack.egg","Idle":"assets/anims/TankEnemy-Bite.egg"})
+        return Actor("assets/anims/TankEnemy.egg",{"Attack":"assets/anims/TankEnemy-Attack.egg"})
     
     def update(self, dt, player_pos):
         
@@ -66,7 +66,7 @@ class tank_enemy(base_enemy):
     def _spawn_attack_hitbox(self, _):
         if self.model:
             self.attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
-            self.attack_hitbox.show()
+            #self.attack_hitbox.show()
             self.attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,-1),1,1.5,2))
             self.attack_hitbox.setTag("team", ENTITY_TEAMS.PLAYER)
             self.attack_hitbox.setPos(1,0,-1)
@@ -78,7 +78,7 @@ class tank_enemy(base_enemy):
     def _destroy_attack_hitbox(self, _):
         if self.model:
             self.attack_hitbox.removeNode()
-        self.model.play('Idle')
+        
         return Task.done
       
     def attack(self):
