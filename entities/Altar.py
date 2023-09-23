@@ -52,7 +52,8 @@ class Altar(enity_base):
         self.activationsphere.removeNode()
         
     def destroy(self):
-        render.clearLight(self.plnp)
+        if self.plnp is not None:
+            render.clearLight(self.plnp)
         self.model.cleanup()
         
         

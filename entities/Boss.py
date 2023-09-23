@@ -15,6 +15,8 @@ from entities.bullet import bullet_entity
 
 from direct.task.Task import Task
 
+from os.path import join
+
 import math
 import time
 import random
@@ -74,6 +76,9 @@ class boss(enity_base):
         cp = CollisionSphere(0, 0, 0, 5)
 
         self.accept("bullet-into", self.bullet_hit)
+        
+        # Remove attack hitbox once the player has been damage 
+        self.accept("player-got-hit", self._remove_hitbox)
 
         self.activationsphere.node().addSolid(cp)
 
@@ -187,8 +192,8 @@ class boss(enity_base):
                 )
             )
 
-    def _remove_hitbox(self, task):
-        if self.model:
+    def _remove_hitbox(self, task=None):
+        if self.melee_attack_hitbox is not None:
             self.melee_attack_hitbox.removeNode()
             self.melee_attack_hitbox = None
         return Task.done
@@ -257,6 +262,10 @@ class boss(enity_base):
         self.activationsphere.removeNode()
         # Wait for standup animation to finish
         base.taskMgr.doMethodLater(1, self._set_active, "activate_boss")
+        base.musicManager.stopAllSounds()
+        background_music = base.loader.loadMusic(join("assets", "music", "boss_music.mp3")) 
+        background_music.setLoop(True)
+        background_music.play()
 
     def take_damage(self, damage):
         if self.active:

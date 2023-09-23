@@ -20,11 +20,15 @@ class ui_base(DirectObject.DirectObject):
         for ui_element in self.ui_elements:
             #print("destroying ui element")
             ui_element.destroy()
+            ui_element.removeNode()
 
     def hide(self):
         for ui_element in self.ui_elements:
             #print("hiding ui element")
-            ui_element.hide()
+            if ui_element is not None:
+                ui_element.hide()
+        self.ui_elements = []
+        
             
             
     def load_background_image(self):

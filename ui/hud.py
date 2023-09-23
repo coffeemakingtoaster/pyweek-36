@@ -13,6 +13,8 @@ from os.path import join
 class game_hud(ui_base):
     def __init__(self):
         ui_base.__init__(self)
+        
+        print("Hud init")
 
         self.ui_elements = []
         
@@ -37,14 +39,13 @@ class game_hud(ui_base):
         
         self.is_paused = False
         
-        self.boss_hp_display = None
-        
     def _create_ability_icon(self, name,pos, scale=0.2):
         self.ui_elements.append(OnscreenImage(image=join("assets","icons","hud","backplane.png"), pos=pos, scale=scale))
         img = OnscreenImage(image=join("assets","icons","hud","{}.png".format(name)), pos=pos, scale=scale)
         return img
         
     def display_hp_count(self, hp_value):
+        hp_value = max(0, hp_value)
         self.hp_display["text"] =  "{}/{}".format(hp_value, GAME_CONSTANTS.PLAYER_MAX_HP)
         
     def set_ability_cooldown(self, ability_name, ready_time):
@@ -73,6 +74,10 @@ class game_hud(ui_base):
         self.ignoreAll()
         base.taskMgr.removeTasksMatching("hud_update*")
         try:
+            self.boss_hp_display.setScale(0,0,0)
+            self.boss_name_display.setScale(0,0,0)
+            self.boss_hp_backpaint.setScale(0,0,0)
+            self.boss_hp_base.setScale(0,0,0) 
             super().destroy()
         except:
             print("Nodes were already cleaned up")
@@ -99,23 +104,21 @@ class game_hud(ui_base):
         self.is_paused = False
         
     def display_boss_hp_count(self, hp_value):
-        if self.boss_hp_display is None:
-            return 
+        hp_value = max(hp_value, 0)
         step = (hp_value/GAME_CONSTANTS.BOSS_HP) * 0.995
         self.boss_hp_display.setScale(step, 1, 0.045)
         # Pos of -0.995 is final
         self.boss_hp_display.setX(-0.995 + step)
         
     def enter_boss_mode(self, name):
-        print(name)
         # Create Boss HP Bar
         self.boss_name_display = DirectLabel(text=name, text_fg=(255,255,255,1), pos=(0,0,0.9), relief=None, scale=0.1, text_font=self.font)
         self.ui_elements.append(self.boss_name_display)
-        boss_hp_base = OnscreenImage(image=join("assets","ui","hp_bar","background.png"), pos=(0,0,0.82), scale=(1,1, 0.05))
+        self.boss_hp_base = OnscreenImage(image=join("assets","ui","hp_bar","background.png"), pos=(0,0,0.82), scale=(1,1, 0.05))
         # CHANGING THESE X SCALES NEEDS TO BE UPDATED IN DISPLAY FUNCTION AS WELL
-        boss_hp_backpaint = OnscreenImage(image=join("assets","ui","hp_bar","hp_back.png"), pos=(0,0,0.82), scale=(0.995,1, 0.045))
+        self.boss_hp_backpaint = OnscreenImage(image=join("assets","ui","hp_bar","hp_back.png"), pos=(0,0,0.82), scale=(0.995,1, 0.045))
         self.boss_hp_display = OnscreenImage(image=join("assets","ui","hp_bar","hp_display.png"), pos=(0,0,0.82), scale=(0.995,1, 0.045))
-        self.ui_elements.append(boss_hp_base)
-        self.ui_elements.append(boss_hp_backpaint)
+        self.ui_elements.append(self.boss_hp_base)
+        self.ui_elements.append(self.boss_hp_backpaint)
         self.ui_elements.append(self.boss_hp_display)
         
