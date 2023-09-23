@@ -1,6 +1,6 @@
 from entities.entity_base import enity_base
 
-from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionHandlerEvent, CollisionEntry
+from panda3d.core import Vec3, Point2,Point3, CollisionNode, CollisionSphere, CollisionHandlerEvent, CollisionEntry, CollisionCapsule
 
 import math
 import uuid
@@ -14,10 +14,12 @@ from direct.actor.Actor import Actor
 
 class base_enemy(enity_base):
     
-    def __init__(self, spawn_x, spawn_z):
+    def __init__(self, spawn_x, spawn_z,roomSize,roomZero):
         super().__init__()
         
         self.team = ENTITY_TEAMS.ENEMIES 
+        self.roomSize = roomSize
+        self.roomZero = roomZero
         
         self.speed = GAME_CONSTANTS.ENEMY_MOVEMENT_SPEED 
         
@@ -41,7 +43,7 @@ class base_enemy(enity_base):
         
         self.collision = self.model.attachNewNode(CollisionNode("enemy"))
         
-        self.collision.node().addSolid(CollisionSphere(0,0,0,0.9))
+        self.collision.node().addSolid(CollisionCapsule(Point3(0,-2,0),(0,2,0),0.9))
         
         self.collision.node().setCollideMask(ENTITY_TEAMS.ENEMIES_BITMASK)
         
@@ -51,7 +53,7 @@ class base_enemy(enity_base):
         
         self.ability_collision.node().setCollideMask(ENTITY_TEAMS.ABILITY_BITMASK)
         
-        #self.collision.show()
+        self.collision.show()
         
         self.collision.setTag("team", self.team)
         self.ability_collision.setTag("team", self.team)

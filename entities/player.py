@@ -37,7 +37,7 @@ class player_entity(enity_base):
         self.accept("q", self.cast_black_hole) 
         self.plnp = None
         
-        #self.model = load_model("player")
+        
         self.model = Actor("assets/anims/Player.egg",{"Idle":"assets/anims/Player-Idle.egg"})
         
         self.model.reparentTo(render)

@@ -2,6 +2,7 @@
   "assets": [
     {
       "asset": "bigGround",
+      "scale": 1,
       "x": 0.0,
       "y": 0.0,
       "z": 0.0,
@@ -15,6 +16,7 @@
     },
     {
       "asset": "vase",
+      "scale": 1,
       "x": 0,
       "y": 1.0,
       "z": 0,

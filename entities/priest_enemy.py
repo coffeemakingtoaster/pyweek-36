@@ -6,11 +6,12 @@ from entities.big_light_bullet import bigLightBullet_entity
 from entities.light_bullet import lightBullet_entity
 from direct.actor.Actor import Actor
 import random
+from config import MAP_CONSTANTS
 
 class priest_enemy(base_enemy):
     
-    def __init__(self, spawn_x, spawn_z,enemies):
-        super().__init__(spawn_x,spawn_z)
+    def __init__(self, spawn_x, spawn_z,roomSize,roomZero,enemies):
+        super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         self.attackcooldown = 1
         self.enemies = enemies
         self.healAmount = 1
@@ -30,7 +31,10 @@ class priest_enemy(base_enemy):
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
         
-        if delta_to_player.length() < 17:
+        leash = Vec3(entity_pos.x - self.roomZero[0], 0 , entity_pos.z - self.roomZero[2]).length()
+        
+       
+        if delta_to_player.length() < 12 and leash < (self.roomSize*MAP_CONSTANTS.ROOM_SIZE/2)-2:
             x_direction = -x_direction  
             z_direction = -z_direction
     
@@ -80,4 +84,6 @@ class priest_enemy(base_enemy):
         
         
     def destroy(self):
+        for bullet in self.bullets:
+            bullet.destroy()
         super().destroy()
