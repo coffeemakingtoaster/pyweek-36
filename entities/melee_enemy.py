@@ -72,7 +72,7 @@ class melee_enemy(base_enemy):
         self.attack_sound.play()
         if self.model:
             self.attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
-            self.attack_hitbox.show()
+            #self.attack_hitbox.show()
             self.attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,0),2,3,1.5))
             self.attack_hitbox.setTag("team", ENTITY_TEAMS.PLAYER)
             self.attack_hitbox.setPos(0,0,-1)

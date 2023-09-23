@@ -83,7 +83,7 @@ class boss(enity_base):
         self.activationsphere.node().addSolid(cp)
 
         self.collision.node().addSolid(CollisionSphere(0, 0, 0, 1))
-        self.collision.show()
+        #self.collision.show()
         base.cTrav.addCollider(self.activationsphere, CollisionHandlerEvent())
 
         self.current_hp = GAME_CONSTANTS.BOSS_HP
@@ -227,7 +227,7 @@ class boss(enity_base):
         if self.melee_attack_hitbox is not None:
             self._remove_hitbox(None)
         self.melee_attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
-        self.melee_attack_hitbox.show()
+        #self.melee_attack_hitbox.show()
         attack_duration = 0
         wind_up_time = 0
         if attack_number == 1:
