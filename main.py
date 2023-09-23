@@ -225,6 +225,7 @@ class main_game(ShowBase):
         Actor("assets/anims/sniper.egg")
         Actor("assets/anims/TankEnemy.egg")
         Actor("assets/anims/blackHole.egg")
+        Actor("assets/anims/Bullet.egg")
         
     def toggle_pause(self):
         if self.game_status == GAME_STATUS.RUNNING:
