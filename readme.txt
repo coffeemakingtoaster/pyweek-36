@@ -16,4 +16,8 @@ or
 
 python3 main.py
 
+To build:
+
+python setup.py build_apps
+
 
