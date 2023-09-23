@@ -218,6 +218,7 @@ class player_entity(enity_base):
 
         self.current_hp -= 1
         messenger.send("display_hp", [self.current_hp])
+        messenger.send("player-got-hit")
         
     def dash(self):
        current_time = base.clock.getLongTime()
@@ -274,7 +275,6 @@ class player_entity(enity_base):
         if self.current_hp < GAME_CONSTANTS.PLAYER_MAX_HP:
             self.current_hp +=1
             messenger.send("display_hp", [self.current_hp]) 
-            
             
     def upGradeSpeed(self):
         self.moveSpeed += 5

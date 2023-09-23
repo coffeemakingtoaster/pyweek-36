@@ -114,17 +114,20 @@ class main_game(ShowBase):
         self.accept("player_melee_attack_hitbox-into-altar-sphere",self.activateAltar)
         self.accept("player_melee_attack_hitbox-into-boss-sphere",self.activateBoss)
         
-        # Load music
-        background_music = base.loader.loadMusic(join("assets", "music", "music.mp3")) 
-        background_music.setLoop(True)
-        background_music.play()
-        
         base.disableMouse()
         
         base.cTrav.setRespectPrevTransform(True)
         
         self.current_run_duration = 0
         
+        self.play_normal_music()
+        
+    def play_normal_music(self):
+        base.musicManager.stopAllSounds()
+        # Load music
+        background_music = base.loader.loadMusic(join("assets", "music", "music.mp3")) 
+        background_music.setLoop(True)
+        background_music.play()
         
     def game_loop(self, task):
         
@@ -167,7 +170,6 @@ class main_game(ShowBase):
                     return Task.cont
                 self.currentRoom.boss.update(dt, self.player.model.getPos())
             
-            
         for i, entity in enumerate(self.entities):
             entity.update(dt, self.player.model.getPos())
             if hasattr(entity, "is_dead"):
@@ -191,10 +193,8 @@ class main_game(ShowBase):
         self.cTrav.addCollider(self.player.collision,self.pusher)
         self.pusher.setHorizontal(True)
     
-        self.active_ui = game_hud()
-        self.current_hud = self.active_ui
-        
-        #self.entities.append(melee_enemy(10,10))
+        self.current_hud = game_hud()
+        self.active_ui = None 
         
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
@@ -214,14 +214,12 @@ class main_game(ShowBase):
         if self.game_status == GAME_STATUS.RUNNING:
             self.set_game_status(GAME_STATUS.PAUSED)
             # Not needed as of now as gui does not exist 
-            self.current_hud = self.active_ui
             self.current_hud.pause()
             release_mouse_from_window()
             self.active_ui = pause_menu()
         elif self.game_status == GAME_STATUS.PAUSED:
             self.active_ui.destroy()
             self.current_hud.resume()
-            self.active_ui = self.current_hud 
             lock_mouse_in_window() 
             self.set_game_status(GAME_STATUS.RUNNING)
 
@@ -233,8 +231,8 @@ class main_game(ShowBase):
         if self.active_ui is not None:
             self.active_ui.destroy()
         if self.current_hud is not None:
+            print("Destroying hud")
             self.current_hud.destroy()
-            self.current_hud = None
         # delete all entities
         for entity in self.entities:
             entity.destroy()
@@ -245,6 +243,11 @@ class main_game(ShowBase):
         if self.player is not None:
             self.player.destroy()
             self.player = None
+        # Cancel boss music and play normal music
+        if self.currentRoom:
+            if self.currentRoom.boss:
+                if self.currentRoom.boss.active:
+                    self.play_normal_music()
         self.current_run_duration = 0
         self.active_ui = main_menu()
         self.setBackgroundColor((0, 0, 0, 1))
@@ -279,17 +282,13 @@ class main_game(ShowBase):
         directionalLight.setColor((0.3, 0.3, 0.3, 1))
         render.setLight(render.attachNewNode(directionalLight))
         render.setLight(render.attachNewNode(ambientLight))
-        
-    
     
     def loadFirstRoom(self):
-        
         self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
         self.newestRoomNumber += 1
         self.loadedRooms.append(self.mapLoader.loadRoom(self.map[self.newestRoomNumber]))
         self.currentRoom = self.loadedRooms[self.currentRoomNumber]
         self.enterRoom()
-        
         
     def loadNextRoom(self):
         #self.currentRoomNumber += 1
@@ -324,8 +323,6 @@ class main_game(ShowBase):
         if self.game_status == GAME_STATUS.RUNNING:
             self.set_game_status(GAME_STATUS.PAUSED)
             # Not needed as of now as gui does not exist 
-            self.current_hud = self.active_ui
-            self.current_hud.pause()
             release_mouse_from_window()
             self.active_ui = upgrade_menu()
             
@@ -338,8 +335,10 @@ class main_game(ShowBase):
        
     def upgradeSpeed(self):
         self.player.upGradeSpeed()
+        
     def upgradeHealth(self):
         self.player.heal()
+        
     def upgradeDamage(self):
         print("Test Upgrade")
     
@@ -350,19 +349,14 @@ class main_game(ShowBase):
                 self.pusher.addCollider(self.entities[-1].collision, self.entities[-1].model)
                 self.cTrav.addCollider(self.entities[-1].collision, self.pusher)
                 self.enemies += 1
-                
-
               
     def unloadOldestRoom(self):
         self.mapLoader.unloadRoom(self.loadedRooms[0])
         self.loadedRooms.pop(0)
-    
-    
         
     def finish_game(self, success: bool):
         self.set_game_status(GAME_STATUS.GAME_FINISH)
-        self.active_ui.destroy()
-        self.current_hud = None
+        self.current_hud.destroy()
         self.active_ui = victory_screen(self.current_run_duration, success) 
         
 def start_game():
