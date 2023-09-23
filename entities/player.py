@@ -38,7 +38,7 @@ class player_entity(enity_base):
         self.accept("q", self.cast_black_hole) 
         self.plnp = None
         
-        
+        self.id =  "player"
         self.model = Actor("assets/anims/Player.egg",{"Idle":"assets/anims/Player-Idle.egg"})
         
         self.model.reparentTo(render)
@@ -73,6 +73,7 @@ class player_entity(enity_base):
         self.collision.node().setCollideMask(ENTITY_TEAMS.PLAYER_BITMASK)
         
         self.collision.setTag("team", self.team)
+        self.collision.setTag("id", self.id)
               
         self.ability_collision = self.model.attachNewNode(CollisionNode("player_melee_attack_hitbox"))
         
@@ -210,16 +211,18 @@ class player_entity(enity_base):
         render.clearLight(self.plnp)
         
     def bullet_hit(self, entry: CollisionEntry):
-        #print(entry)
         # Dashing player does not receive damage 
         if self.is_dashing:
             return
        
-        #print(entry.into_node.getTag("team")) 
+        # print(entry.into_node.getTag("team")) 
         # Only take damage from bullets meant for my own team
         if entry.into_node.getTag("team") != self.team:
-            #print("wrong team")
             return
+        
+        if entry.into_node.getTag("id") != self.id:
+            return
+        
         self.damage_sfx.play()
         
         self.current_hp -= 1
