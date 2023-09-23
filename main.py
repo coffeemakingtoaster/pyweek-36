@@ -184,6 +184,8 @@ class main_game(ShowBase):
     def load_game(self):
         print("Loading game")
         
+        
+        
         self.current_run_duration = 0
         self.active_ui.destroy()
         self.setBackgroundColor((0, 0, 0, 1))
@@ -205,11 +207,25 @@ class main_game(ShowBase):
         
         self.static_entities = self.map 
         self.set_game_status(GAME_STATUS.RUNNING)
+        
+        self.preloadEnemies()
 
     def set_game_status(self, status):
         self.status_display["text"] = status
         self.game_status = status
 
+    def preloadEnemies(self):
+        Actor("assets/anims/Altar.egg")
+        Actor("assets/anims/Boss.egg")
+        Actor("assets/anims/Enemy.egg")
+        Actor("assets/anims/Healer.egg")
+        Actor("assets/anims/Priest.egg")
+        Actor("assets/anims/ranged.egg")
+        Actor("assets/anims/shotgun.egg")
+        Actor("assets/anims/sniper.egg")
+        Actor("assets/anims/TankEnemy.egg")
+        Actor("assets/anims/blackHole.egg")
+        
     def toggle_pause(self):
         if self.game_status == GAME_STATUS.RUNNING:
             self.set_game_status(GAME_STATUS.PAUSED)

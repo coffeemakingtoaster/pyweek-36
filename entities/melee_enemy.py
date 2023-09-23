@@ -27,7 +27,7 @@ class melee_enemy(base_enemy):
         
         
     def loadModel(self):
-        return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
+        return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-AttackMelee.egg"})
     
     def update(self, dt, player_pos):
         
@@ -73,28 +73,29 @@ class melee_enemy(base_enemy):
         if self.model:
             self.attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
             self.attack_hitbox.show()
-            self.attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,0),2,0.5,1.5))
+            self.attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,0),2,3,1.5))
             self.attack_hitbox.setTag("team", ENTITY_TEAMS.PLAYER)
             self.attack_hitbox.setPos(0,0,-1)
             # Set player team as player is the target
             self.attack_hitbox.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
             base.cTrav.addCollider(self.attack_hitbox, self.notifier)
-            base.taskMgr.doMethodLater(0.5, self._destroy_attack_hitbox, "destroy_melee_attack_hitbox")
+            base.taskMgr.doMethodLater(0.3, self._destroy_attack_hitbox, "destroy_melee_attack_hitbox")
+            
+        
         return Task.done
         
     def _destroy_attack_hitbox(self, _):
         if self.model:
             self.attack_hitbox.removeNode()
         self.speed = 8
-        base.taskMgr.doMethodLater(0.5, self._play_idle, "play_idle")
+        
     
         return Task.done
     
-    def _play_idle(self,_):
-        self.model.play('Idle')
+    
       
     def attack(self):
         self.speed = 12
         self.model.play('Attack')
-        base.taskMgr.doMethodLater(1, self._spawn_attack_hitbox, "spawn_melee_attack_hitbox")
+        base.taskMgr.doMethodLater(0.3, self._spawn_attack_hitbox, "spawn_melee_attack_hitbox")
         
