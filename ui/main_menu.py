@@ -8,8 +8,10 @@ import sys
 from os.path import join
 
 class main_menu(ui_base):
-    def __init__(self):
+    def __init__(self, is_first_run):
         ui_base.__init__(self)
+        
+        self.is_first_run = is_first_run
 
         self.ui_elements = []
         
@@ -21,13 +23,13 @@ class main_menu(ui_base):
         
         self.ui_elements.append(DirectLabel(text="Mage", scale=0.25, pos=(0.3,0,0.3), text_font=self.font, relief=None, text_fg=(255,255,255,1)))
         
-        start_button = DirectButton(text=("start"),pos=(0,0,0), scale=0.2, command=self.start_game, text_font=self.font, relief=None)
+        start_button = DirectButton(text=("Start"),pos=(0,0,0), scale=0.2, command=self.start_game, text_font=self.font, relief=None)
         self.ui_elements.append(start_button)
         
-        settings_button = DirectButton(text=("settings"), pos=(0,0,-0.3),scale=0.2, command=self.open_settings, text_font=self.font, relief=None)
+        settings_button = DirectButton(text=("Settings"), pos=(0,0,-0.3),scale=0.2, command=self.open_settings, text_font=self.font, relief=None)
         self.ui_elements.append(settings_button)
         
-        quit_button = DirectButton(text=("quit"), pos=(0,0,-0.6), scale=0.2, command=self.quit_game, text_font=self.font, relief=None)
+        quit_button = DirectButton(text=("Quit"), pos=(0,0,-0.6), scale=0.2, command=self.quit_game, text_font=self.font, relief=None)
         self.ui_elements.append(quit_button)
 
     def start_game(self):
@@ -39,5 +41,9 @@ class main_menu(ui_base):
        messenger.send('toggle_settings') 
        
     def quit_game(self):
-        save_config(join("user_config.json"))
+        save_config(join("user_config.json"), self.is_first_run)
         sys.exit()
+        
+    def display_loading(self):
+        loading_display = DirectLabel(text="Loading...", pos=(-0.8,0,-0.8), scale=0.2, text_fg=(255,255,255,1), text_font=self.font, relief=None) 
+        self.ui_elements.append(loading_display)

@@ -27,37 +27,26 @@ from os.path import join
 from mapGen import MapLoader
 import sys
 
+from direct.gui.DirectGui import DirectLabel
+
 
 # Load panda3d configfile that disables model caching
 loadPrcFile("./settings.prc")
 
 class main_game(ShowBase):
     def __init__(self):
-        
-        
-        
-
-        
       
         ShowBase.__init__(self)
-        
-        #print(ENTITY_TEAMS.MAP_BITMASK)
-        #print(ENTITY_TEAMS.ENEMIES_BITMASK)
-        #print(ENTITY_TEAMS.PLAYER_BITMASK)
-        #print(ENTITY_TEAMS.ROOM_BITMASK)
         
         # Set camera position 
         
         render.setShaderAuto()
         
-        
         base.cam.setPos(0, 50, 0) 
         base.cam.setHpr(0, 180+40, 0)
-        
-        
        
-        load_config(join("user_config.json"))
-
+        self.is_first_run = load_config(join("user_config.json"))
+        
         self.game_status = GAME_STATUS.MAIN_MENU 
         
         # This should be obvious
@@ -184,7 +173,9 @@ class main_game(ShowBase):
     def load_game(self):
         print("Loading game")
         
+        self.active_ui.display_loading()
         
+        self.preloadEnemies()
         
         self.current_run_duration = 0
         self.active_ui.destroy()
@@ -208,8 +199,6 @@ class main_game(ShowBase):
         self.static_entities = self.map 
         self.set_game_status(GAME_STATUS.RUNNING)
         
-        self.preloadEnemies()
-
     def set_game_status(self, status):
         self.status_display["text"] = status
         self.game_status = status
@@ -266,7 +255,7 @@ class main_game(ShowBase):
                 if self.currentRoom.boss.active:
                     self.play_normal_music()
         self.current_run_duration = 0
-        self.active_ui = main_menu()
+        self.active_ui = main_menu(self.is_first_run)
         self.setBackgroundColor((0, 0, 0, 1))
         self.set_game_status(GAME_STATUS.MAIN_MENU)
         self.currentWave = 0
@@ -288,7 +277,7 @@ class main_game(ShowBase):
             self.set_game_status(GAME_STATUS.SETTINGS)
         elif self.game_status == GAME_STATUS.SETTINGS:
             self.active_ui.destroy()
-            self.active_ui = main_menu() 
+            self.active_ui = main_menu(self.is_first_run) 
             self.set_game_status(GAME_STATUS.MAIN_MENU)
      
     def setupLights(self):  
@@ -372,6 +361,7 @@ class main_game(ShowBase):
         self.loadedRooms.pop(0)
         
     def finish_game(self, success: bool):
+        self.is_first_run = False
         self.set_game_status(GAME_STATUS.GAME_FINISH)
         self.current_hud.destroy()
         self.active_ui = victory_screen(self.current_run_duration, success) 
