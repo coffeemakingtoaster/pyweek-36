@@ -41,7 +41,7 @@ class MAP_CONSTANTS:
    ROOM_SIZE = 24
    ROOM_HEIGHT = 5
    MAP_LENGTH = 25 
-   ROOM_TYPES = 2
+   ROOM_TYPES = 3
    
 class ENTITY_TEAMS:
    PLAYER = "player"

@@ -112,13 +112,14 @@ class Room(DirectObject.DirectObject):
                     csn.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
                     self.collision = csn
                     base.cTrav.addCollider(self.collision, self.notifier)
-                    #csn.show()
+                    
                 else:
                     csn = model.attach_new_node(CollisionNode("wall"))
                     csn.setTag("team", ENTITY_TEAMS.MAP)
                     csn.node().setCollideMask(ENTITY_TEAMS.MAP_BITMASK)
                 csn.node().addSolid(cp)
                 base.cTrav.addCollider(csn, CollisionHandlerEvent())
+                
                 
                 self.models.append(csn)
             
