@@ -9,19 +9,24 @@ setup(
             },
 
             # Set up output logging, important for GUI apps!
-            'log_filename': '$USER_APPDATA/Asteroids/output.log',
+            'log_filename': './logs/output.log',
             'log_append': False,
 
             # Specify which files are included with the distribution
             'include_patterns': [
-                'assets/**/*'
+                'assets/**/*',
+                "user_config.json"
             ],
 
             # Include the OpenGL renderer and OpenAL audio plug-in
             'plugins': [
                 'pandagl',
                 'p3openal_audio',
+                'p3ffmpeg',
+                'p3assimp'
             ],
+            
+            'prefer_discrete_gpu': True
         }
     }
 )
