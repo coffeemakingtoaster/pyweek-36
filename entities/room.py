@@ -138,9 +138,19 @@ class Room(DirectObject.DirectObject):
             self.Altar = Altar((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)))
         elif assetType == "boss":
             self.boss = boss((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)))
+            self.rückWand()
             print("Loaded boss \n\n\n\n\n")
-        
+    
+    def rückWand(self):
+        wall = None
+        if max(self.size,self.prevRoomLength) == 1:
+           wall= self.buildModel("doorWall",(0,0,-12*self.size),(0,0,90),True)
+        elif max(self.size,self.prevRoomLength) ==1.5:
+           wall= self.buildModel("midDoorWall",(0,0,-12*self.size),(0,0,90),True)
+        elif max(self.size,self.prevRoomLength) == 2:
+           wall= self.buildModel("bigDoorWall",(0,0,-12*self.size),(0,0,90),True)
            
+        
     def destroy(self):
         for model in self.models:
             if model:
