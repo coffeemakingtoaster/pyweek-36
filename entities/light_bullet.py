@@ -4,7 +4,7 @@ from config import GAME_CONSTANTS, ENTITY_TEAMS
 
 from helpers.model_helpers import load_model
 
-from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionEntry, CollisionHandlerEvent, Point3, BitMask32, NodePath, CollideMask
+from panda3d.core import *
     
 import uuid
 import math
@@ -15,9 +15,11 @@ class lightBullet_entity(enity_base):
         
         self.team = team 
         
+        self.plnp = None
+        
         self.direction =  direction
        
-        self.model = load_model("bullet")
+        self.model = load_model("lightBullet")
         
         
         
@@ -46,7 +48,14 @@ class lightBullet_entity(enity_base):
         
         self.travelled_distance = 0
         
-        self.collision.show()
+        #self.collision.show()
+        
+        plight = PointLight('plight')
+        plight.setColor((0.5,0.5,0.5, 1))
+        self.plnp = self.model.attachNewNode(plight)
+        plight.attenuation = (1, 0, 0.2)
+        self.plnp.setPos(0, 0, 0)
+        render.setLight(self.plnp)
         
         self.notifier = CollisionHandlerEvent()
         
@@ -58,7 +67,7 @@ class lightBullet_entity(enity_base):
         
     def update(self, dt):
         
-        self.travelled_distance += Vec3(self.direction * GAME_CONSTANTS.BULLET_SPEED * dt).length()
+        self.travelled_distance += Vec3(self.direction * 20 * dt).length()
        
         # If max distance has been reached -> Kill object 
         if self.travelled_distance > GAME_CONSTANTS.BULLET_MAX_DISTANCE:
@@ -66,8 +75,8 @@ class lightBullet_entity(enity_base):
             return 
         
         # Why does this value have to be flipped?
-        self.model.setX(self.model.getX() + self.direction.x * GAME_CONSTANTS.BULLET_SPEED * dt)
-        self.model.setZ(self.model.getZ() + self.direction.z * GAME_CONSTANTS.BULLET_SPEED * dt)
+        self.model.setX(self.model.getX() + self.direction.x * 20 * dt)
+        self.model.setZ(self.model.getZ() + self.direction.z * 20 * dt)
         
     def on_collision(self, collision: CollisionEntry):
         # Is the bullet in the event the bullet from this entity class
@@ -79,6 +88,7 @@ class lightBullet_entity(enity_base):
         self.is_dead =  True
         
     def destroy(self):
+        render.clearLight(self.plnp)
         self.model.removeNode()
         self.collision.removeNode()
         self.ignore_all()

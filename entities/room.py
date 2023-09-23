@@ -4,7 +4,7 @@ import json
 from helpers.model_helpers import load_model
 from panda3d.core import BoundingBox, NodePath, PandaNode, ShowBoundsEffect, CollisionBox, CollisionNode, LVector3f, CollisionHandlerEvent, CollisionSphere,CollisionEntry
 from panda3d.core import LPoint3
-from panda3d.core import PointLight
+from panda3d.core import *
 from entities.spawner import Spawner
 from entities.Altar import Altar
 from entities.Boss import boss
@@ -75,9 +75,10 @@ class Room(DirectObject.DirectObject):
                 plight = PointLight('plight')
                 plight.setColor((2, 1.2, 0.6, 1))
                 plight.attenuation = (1, 0, 0.1)
-                plnp = render.attachNewNode(plight)
+                plnp = model.attachNewNode(plight)
                 plnp.setPos(position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
                 render.setLight(plnp)
+                print("no")
         
             model.setPos(position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
             if assetType == "colliding" or assetType == "halfColliding" or assetType == "ground":
@@ -118,6 +119,7 @@ class Room(DirectObject.DirectObject):
                 self.models.append(csn)
             
             model.setHpr(rotation[0],rotation[1],rotation[2])
+            
             self.models.append(model)
             return model
         elif assetType == "spawner":
@@ -136,9 +138,9 @@ class Room(DirectObject.DirectObject):
         for spawner in self.spawners:
             spawner.model.removeNode()
         if self.Altar:
-            print("removedAltar")
+            self.Altar.destroy()
             if self.Altar.plnp:
-                self.Altar.plnp.removeNode()
+                render.clearLight(self.Altar.plnp)
             self.Altar.model.cleanup()
         if self.boss:
             print("removedBoss")

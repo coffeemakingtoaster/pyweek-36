@@ -35,6 +35,7 @@ class player_entity(enity_base):
         self.accept("mouse1", self.shoot_bullet)
         self.accept("mouse3", self.dash)
         self.accept("q", self.cast_black_hole) 
+        self.plnp = None
         
         #self.model = load_model("player")
         self.model = Actor("assets/anims/Player.egg",{"Idle":"assets/anims/Player-Idle.egg"})
@@ -43,10 +44,10 @@ class player_entity(enity_base):
         
         plight = PointLight('plight')
         plight.setColor((-1, -1, -1, 1))
-        plnp = self.model.attachNewNode(plight)
+        self.plnp = self.model.attachNewNode(plight)
         plight.attenuation = (1, 0, 0.1)
-        plnp.setPos(0, 0, 0)
-        render.setLight(plnp)
+        self.plnp.setPos(0, 0, 0)
+        render.setLight(self.plnp)
         
         self.model.setPos(0,2,0)
         #self.model.setHpr(0, 90, 180)
@@ -201,6 +202,7 @@ class player_entity(enity_base):
             bullet.destroy()
         self.is_dead = True
         self.ignore_all()
+        render.clearLight(self.plnp)
         
     def bullet_hit(self, entry: CollisionEntry):
         #print(entry)

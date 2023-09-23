@@ -51,3 +51,8 @@ class Altar(enity_base):
         self.model.loop("Turn")
         self.activationsphere.removeNode()
         
+    def destroy(self):
+        render.clearLight(self.plnp)
+        self.model.cleanup()
+        
+        

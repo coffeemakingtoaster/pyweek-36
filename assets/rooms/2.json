@@ -180,7 +180,7 @@
       "rotz": 0.0,
       "type": "spawner",
       "wave": 0,
-      "enemy_type": "tank_enemy"
+      "enemy_type": "ranged_enemy"
     },
     {
       "asset": "Spawner",
@@ -193,7 +193,7 @@
       "rotz": 0.0,
       "type": "spawner",
       "wave": 1,
-      "enemy_type": "melee_enemy"
+      "enemy_type": "ranged_enemy"
     },
     {
       "asset": "Spawner",
@@ -206,7 +206,7 @@
       "rotz": 0.0,
       "type": "spawner",
       "wave": 0,
-      "enemy_type": "melee_enemy"
+      "enemy_type": "ranged_enemy"
     },
     {
       "asset": "Spawner",
@@ -219,7 +219,7 @@
       "rotz": 0.0,
       "type": "spawner",
       "wave": 1,
-      "enemy_type": "melee_enemy"
+      "enemy_type": "ranged_enemy"
     },
     {
       "asset": "Spawner",
@@ -232,7 +232,7 @@
       "rotz": 0.0,
       "type": "spawner",
       "wave": 2,
-      "enemy_type": "melee_enemy"
+      "enemy_type": "ranged_enemy"
     }
   ],
   "size":1.5
