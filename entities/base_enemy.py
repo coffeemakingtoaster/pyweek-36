@@ -5,6 +5,8 @@ from panda3d.core import Vec3, Point2,Point3, CollisionNode, CollisionSphere, Co
 import math
 import uuid
 
+from os.path import join
+
 from helpers.model_helpers import load_model
 from helpers.math_helpers import get_black_hole_pull_vector
 
@@ -78,6 +80,7 @@ class base_enemy(enity_base):
         self.enemy = True
         self.in_black_hole = False
         self.black_hole_position = None
+        self.hit_sfx = base.loader.loadSfx(join("assets", "sfx", "hit.wav"))
         
     def loadModel(self):
         return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Bite":"assets/anims/Enemy-Bite.egg"})
@@ -102,6 +105,7 @@ class base_enemy(enity_base):
         
     def takeDamage(self,dmg):
         self.current_hp -=dmg
+        self.hit_sfx.play()
         #print("Taking damage")
         print(self.current_hp)
         if self.current_hp <= 0:

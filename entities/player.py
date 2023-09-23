@@ -9,6 +9,7 @@ from helpers.math_helpers import get_vector_intersection_with_y_coordinate_plane
 from panda3d.core import *
 import math
 from direct.actor.Actor import Actor
+from os.path import join
 
 class player_entity(enity_base):
     
@@ -89,8 +90,6 @@ class player_entity(enity_base):
         
         self.accept("attack-into-player_melee_attack_hitbox", self.bullet_hit)
         
-        
-        
         base.cTrav.addCollider(self.ability_collision, self.notifier) 
         base.cTrav.addCollider(self.collision, self.notifier)
         
@@ -104,6 +103,12 @@ class player_entity(enity_base):
         self.ignore_push = False
         
         self.dash_particles = load_particles("smoke")
+        
+        self.dash_sfx = base.loader.loadSfx(join("assets", "sfx", "player_dash.wav"))
+        
+        self.shoot_sfx = base.loader.loadSfx(join("assets", "sfx", "player_shoot.wav"))
+        
+        self.damage_sfx = base.loader.loadSfx(join("assets", "sfx", "player_damage.wav"))
         
     def set_movement_status(self, direction):
         self.movement_status[direction] = 1
@@ -174,10 +179,10 @@ class player_entity(enity_base):
                 del self.bullets[i]
         
     def shoot_bullet(self):
+        self.shoot_sfx.play()
         target_point = self._get_mouse_position() 
         player_pos = self.model.getPos()
         delta_to_player = Vec3(target_point.x - player_pos.x, 0 , target_point.z - player_pos.z).normalized()
-        
         self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, self.team)) 
     
     def _get_mouse_position(self):
@@ -215,7 +220,8 @@ class player_entity(enity_base):
         if entry.into_node.getTag("team") != self.team:
             #print("wrong team")
             return
-
+        self.damage_sfx.play()
+        return
         self.current_hp -= 1
         messenger.send("display_hp", [self.current_hp])
         messenger.send("player-got-hit")
@@ -250,6 +256,7 @@ class player_entity(enity_base):
           
            self.is_dashing = True
            self.time_since_last_dash = 0
+           self.dash_sfx.play()
            
     def on_wall_collision(self, entry: CollisionEntry):
         # Stop dash when colliding with an object

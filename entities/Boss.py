@@ -109,6 +109,16 @@ class boss(enity_base):
         self.notifier.addInPattern("%fn-into-%in")
 
         self.bullets = []
+        
+        self.hit_sfx = base.loader.loadSfx(join("assets", "sfx", "enemy_hit.wav"))
+        
+        self.attack_1_sfx = base.loader.loadSfx(join("assets", "sfx", "boss_attack_1.wav"))
+       
+        self.attack_2_sfx = base.loader.loadSfx(join("assets", "sfx", "boss_attack_2.wav"))
+        
+        self.attack_3_sfx = base.loader.loadSfx(join("assets", "sfx", "boss_attack_3.wav"))
+        
+        self.shoot_sound = base.loader.loadSfx(join("assets", "sfx", "boss_shoot.wav"))
 
     # Set new  attack state/pattern
     def _roll_new_state(self):
@@ -179,6 +189,7 @@ class boss(enity_base):
         axis = Vec3(0, 1, 0).normalized()
         quat.setFromAxisAngle(-angle, axis)
         shoot_direction = quat.xform(shoot_direction) 
+        self.shoot_sound.play()
         for i in range(3):
             quat = Quat()
             quat.setFromAxisAngle(angle, axis)
@@ -193,19 +204,28 @@ class boss(enity_base):
             )
 
     def _remove_hitbox(self, task=None):
+        self.attack_1_sfx.stop()
+        self.attack_2_sfx.stop()
+        self.attack_3_sfx.stop()
         if self.melee_attack_hitbox is not None:
             self.melee_attack_hitbox.removeNode()
             self.melee_attack_hitbox = None
+        else:
+            Task.cont
         return Task.done
 
     def _activate_hitbox(self, task):
-        base.cTrav.addCollider(self.melee_attack_hitbox, self.notifier)
+        if self.melee_attack_hitbox is not None:
+            base.cTrav.addCollider(self.melee_attack_hitbox, self.notifier)
         return Task.done
 
     # This is only the melee attack
     def attack(self):
         attack_number = random.randint(1, 3)
         print("Attack {}".format(attack_number))
+        # Cleanup. This covers an edge case that kept attack hitboxes to stay indefinelty
+        if self.melee_attack_hitbox is not None:
+            self._remove_hitbox(None)
         self.melee_attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
         self.melee_attack_hitbox.show()
         attack_duration = 0
@@ -218,6 +238,8 @@ class boss(enity_base):
             self.melee_attack_hitbox.setPos(0.75, 0, -1)
             wind_up_time = 0.5
             attack_duration = 1.3
+            self.attack_1_sfx.setLoop(True)
+            self.attack_1_sfx.play()
         elif attack_number == 2:
             self.model.play("Attack2")
             self.melee_attack_hitbox.node().addSolid(
@@ -226,10 +248,14 @@ class boss(enity_base):
             self.melee_attack_hitbox.setPos(0.1, 0, -1)
             wind_up_time = 0.5
             attack_duration = 1
+            self.attack_2_sfx.setLoop(True)
+            self.attack_2_sfx.play()
         else:
             self.model.play("Attack3")
             self.melee_attack_hitbox.node().addSolid(CollisionSphere(0, 0, 0, 4))
             self.melee_attack_hitbox.setPos(0, 0, 0)
+            self.attack_3_sfx.setLoop(True)
+            self.attack_3_sfx.play()
             wind_up_time = 0.5
             attack_duration = 1.1
 
@@ -271,6 +297,7 @@ class boss(enity_base):
         if self.active:
             self.current_hp -= damage
             messenger.send("display_boss_hp", [self.current_hp])
+            self.hit_sfx.play()
             if self.current_hp <= 0:
                 self.is_dead = True
             # Every 5 damage => Possibly switch attack pattern

@@ -9,6 +9,8 @@ from panda3d.core import *
 import uuid
 import math
 
+from os.path import join
+
 class lightSpear_entity(enity_base):
     def __init__(self, spawn_x, spawn_z, direction, team: ENTITY_TEAMS):
         super().__init__()
@@ -69,6 +71,8 @@ class lightSpear_entity(enity_base):
         
         base.cTrav.addCollider(self.collision, self.notifier)
         
+        self.lightning_spear_sfx = base.loader.loadSfx(join("assets", "sfx", "lightning_spear_destroy.wav"))
+        
     def update(self, dt):
         
         self.travelled_distance += Vec3(self.direction * 40 * dt).length()
@@ -92,6 +96,7 @@ class lightSpear_entity(enity_base):
         self.is_dead =  True
         
     def destroy(self):
+        self.lightning_spear_sfx.play()
         #render.clearLight(self.plnp)
         self.model.removeNode()
         self.collision.removeNode()

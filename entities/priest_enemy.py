@@ -7,6 +7,7 @@ from entities.light_bullet import lightBullet_entity
 from direct.actor.Actor import Actor
 import random
 from config import MAP_CONSTANTS
+from os.path import join
 
 class priest_enemy(base_enemy):
     
@@ -16,6 +17,8 @@ class priest_enemy(base_enemy):
         self.enemies = enemies
         self.healAmount = 1
         self.bullets =[]
+        self.attack_sfx = base.loader.loadSfx(join("assets", "sfx","boss_shoot.wav"))
+        self.heal_sfx = base.loader.loadSfx(join("assets","sfx", "enemy_heal.wav"))
     
     def loadModel(self):
         return Actor("assets/anims/Priest.egg",{"Attack":"assets/anims/Priest-Attack.egg","Heal":"assets/anims/Priest-Heal.egg"})
@@ -80,6 +83,7 @@ class priest_enemy(base_enemy):
     def heal_enemies(self):
         for enemy in self.enemies:
             enemy.heal(self.healAmount)
+        self.heal_sfx.play()
         self.model.play('Heal')
         
         

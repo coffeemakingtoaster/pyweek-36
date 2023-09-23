@@ -5,6 +5,7 @@ import time
 from entities.light_spear import lightSpear_entity
 from direct.actor.Actor import Actor
 from config import MAP_CONSTANTS
+from os.path import join
 
 class sniper_enemy(base_enemy):
     
@@ -12,6 +13,8 @@ class sniper_enemy(base_enemy):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         self.bullets = []
         self.attackcooldown = 2
+        
+        self.attack_sound = base.loader.loadSfx(join("assets", "sfx", "sniper_shoot.wav"))
     
     def loadModel(self):
         return Actor("assets/anims/sniper.egg",{"Attack":"assets/anims/sniper-CrossbowAttack.egg"})
@@ -64,6 +67,7 @@ class sniper_enemy(base_enemy):
             
     def attack(self,delta_x_reversed):
         print("lightspear")
+        self.attack_sound.play()
         self.bullets.append(lightSpear_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
         self.model.play('Attack')
         
