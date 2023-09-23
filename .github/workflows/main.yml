@@ -22,7 +22,7 @@ jobs:
         run: mkdir artifacts
 
       - name: zip windows
-        run: zip -q -r artifacts/win.zip builds/win_amd64
+        run: zip -q -r ./artifacts/win.zip ./builds/win_amd64
 
       - uses: actions/upload-artifact@v3
         with:
@@ -30,7 +30,7 @@ jobs:
           path: atifacts/win_amd64 
 
       - name: zip linux 
-        run: zip -q -r artifacts/linux.zip build/manylinux2010_x86_64 
+        run: zip -q -r ./artifacts/linux.zip ./build/manylinux2010_x86_64 
 
       - uses: actions/upload-artifact@v3
         with:
@@ -38,7 +38,7 @@ jobs:
           path: artifacts/linux.zip
 
       - name: zip macos
-        run: zip -q -r artifacts/macos.zip build/macosx_10_9_x86_64
+        run: zip -q -r ./artifacts/macos.zip ./build/macosx_10_9_x86_64
 
       - uses: actions/upload-artifact@v3
         with:
