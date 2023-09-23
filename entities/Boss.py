@@ -10,7 +10,7 @@ from direct.actor.Actor import Actor
 from entities.ranged_enemy import ranged_enemy
 from entities.melee_enemy import melee_enemy
 from entities.tank_enemy import tank_enemy
-from entities.light_bullet import lightBullet_entity
+from entities.boss_bullet import boss_bullet_entity
 from entities.bullet import bullet_entity
 
 from direct.task.Task import Task
@@ -129,6 +129,12 @@ class boss(enity_base):
             self.attackcooldown = GAME_CONSTANTS.BOSS_RANGED_ATTACK_COOLDOWN
         print("Now in {}".format(self.state))
 
+
+    def destroy(self):
+        for bullet in self.bullets:
+            bullet.destroy()
+        super().destroy()
+    
     def update(self, dt, player_pos):
         entity_pos = self.model.getPos()
 
@@ -162,7 +168,7 @@ class boss(enity_base):
             current_time = time.time()
             if (
                 current_time - self.last_attack_time >= self.attackcooldown
-                and delta_to_player.length() < 4
+                and delta_to_player.length() < 10
             ):
                 self.attack()
                 self.last_attack_time = current_time
@@ -195,7 +201,7 @@ class boss(enity_base):
             quat.setFromAxisAngle(angle, axis)
             shoot_direction = quat.xform(shoot_direction)
             self.bullets.append(
-                lightBullet_entity(
+                boss_bullet_entity(
                     self.model.getX(),
                     self.model.getZ(),
                     shoot_direction,
@@ -300,6 +306,7 @@ class boss(enity_base):
             self.hit_sfx.play()
             if self.current_hp <= 0:
                 self.is_dead = True
+                self.destroy()
             # Every 5 damage => Possibly switch attack pattern
             if self.current_hp % 5 == 0:
                 self._roll_new_state()

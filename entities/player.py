@@ -221,7 +221,7 @@ class player_entity(enity_base):
             #print("wrong team")
             return
         self.damage_sfx.play()
-        return
+        
         self.current_hp -= 1
         messenger.send("display_hp", [self.current_hp])
         messenger.send("player-got-hit")
