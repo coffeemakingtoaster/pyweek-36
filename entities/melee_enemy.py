@@ -23,6 +23,8 @@ class melee_enemy(base_enemy):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         self.speed = 8
         self.attackcooldown = 3
+        self.max_hp = 5
+        self.current_hp = 5
         self.attack_sound = base.loader.loadSfx(join("assets", "sfx", "boss_attack_2.wav")) 
         
         

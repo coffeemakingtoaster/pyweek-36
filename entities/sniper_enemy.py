@@ -13,6 +13,8 @@ class sniper_enemy(base_enemy):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         self.bullets = []
         self.attackcooldown = 2
+        self.max_hp = 3
+        self.current_hp = 3
         
         self.attack_sound = base.loader.loadSfx(join("assets", "sfx", "sniper_shoot.wav"))
     

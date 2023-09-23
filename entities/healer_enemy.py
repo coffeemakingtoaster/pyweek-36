@@ -15,6 +15,8 @@ class healer_enemy(base_enemy):
         self.attackcooldown = 3
         self.enemies = enemies
         self.healAmount = 1
+        self.max_hp = 3
+        self.current_hp = 3
         self.heal_sound = base.loader.loadSfx(join("assets", "sfx", "enemy_heal.wav"))
             
     def loadModel(self):

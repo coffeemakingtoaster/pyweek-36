@@ -15,6 +15,8 @@ class priest_enemy(base_enemy):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         self.attackcooldown = 1
         self.enemies = enemies
+        self.max_hp = 8
+        self.current_hp = 8
         self.healAmount = 1
         self.bullets =[]
         self.attack_sfx = base.loader.loadSfx(join("assets", "sfx","boss_shoot.wav"))

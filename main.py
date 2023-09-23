@@ -191,7 +191,7 @@ class main_game(ShowBase):
         
         lock_mouse_in_window()
         self.mapLoader = MapLoader()
-        self.map = self.mapLoader.mapGen()
+        self.map = self.mapLoader.mapGen(self.is_first_run)
         self.loadFirstRoom()
         
         self.setupLights()

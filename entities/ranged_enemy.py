@@ -14,6 +14,8 @@ class ranged_enemy(base_enemy):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         self.bullets = []
         self.attackcooldown = 0.3
+        self.max_hp = 3
+        self.current_hp = 3
         
         self.shoot_sfx = base.loader.loadSfx(join("assets", "sfx", "enemy_shoot.wav"))
     

@@ -11,16 +11,18 @@ class MapLoader:
         
        
         
-    def mapGen(self):
+    def mapGen(self,is_first_run):
         map = []
         mapLength = 0.5
         prevRoomLength = 0
         for i in range(self.mapLength):
             if i == 0:
                 id = 0
+            elif i == 1 and is_first_run:
+                id= 1
             elif i == self.mapLength-1:
                 id = 100
-            elif i%5 == 0:
+            elif i%3 == 0:
                 id = 101
                 
             else:

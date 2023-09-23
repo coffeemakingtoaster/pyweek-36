@@ -21,6 +21,8 @@ class tank_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z,roomSize,roomZero):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
+        self.max_hp = 8
+        self.current_hp = 8
         
         self.attack_sfx = base.loader.loadSfx(join("assets", "sfx", "boss_attack_1.wav"))
         
