@@ -22,6 +22,7 @@ class Room(DirectObject.DirectObject):
         self.roomAssets , self.size = self.loadRoomAssets(id)
         self.prevRoomLength = prevRoomLength
         self.spawners = []
+        self.lights = []
         self.models = []
         self.walls = []
         self.door = None
@@ -43,7 +44,7 @@ class Room(DirectObject.DirectObject):
     
     def build(self):
         for asset in self.roomAssets:
-            self.buildModel(asset["asset"],(asset["x"],asset["y"],asset["z"]),(asset["rotx"],asset["roty"],asset["rotz"]),asset["collider"],asset["type"],asset["wave"],asset["enemy_type"])
+            self.buildModel(asset["asset"],(asset["x"],asset["y"],asset["z"]),(asset["rotx"],asset["roty"],asset["rotz"]),asset["collider"],asset["type"],asset["wave"],asset["enemy_type"],asset["scale"])
         
         if self.size == 1:
             
@@ -64,7 +65,7 @@ class Room(DirectObject.DirectObject):
         
         return self
     
-    def buildModel(self,asset,position,rotation,collision = False,assetType="deko",wave = 0,enemyType = ""):
+    def buildModel(self,asset,position,rotation,collision = False,assetType="deko",wave = 0,enemyType = "",scale = 1):
         if assetType != "spawner" and assetType != "altar"  and assetType != "boss":
             #print(assetType)
             #print(self.gridPos)
@@ -73,14 +74,16 @@ class Room(DirectObject.DirectObject):
             model.reparentTo(render)
             if assetType == "lightsource":
                 plight = PointLight('plight')
-                plight.setColor((2, 1.2, 0.6, 1))
-                plight.attenuation = (1, 0, 0.1)
+                plight.setColor((4, 2.4, 1.2, 1))
+                plight.attenuation = (1, 0, 0.05)
                 plnp = model.attachNewNode(plight)
-                plnp.setPos(position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
+                plnp.setPos(-1.5,4,0)
                 render.setLight(plnp)
-                print("no")
+                self.lights.append(plnp)
+                #print("no")
         
             model.setPos(position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))
+            model.setScale(scale)
             if assetType == "colliding" or assetType == "halfColliding" or assetType == "ground":
                 min_point, max_point = model.getTightBounds()
                 if assetType == "colliding" or assetType == "ground" :
@@ -147,6 +150,9 @@ class Room(DirectObject.DirectObject):
             if self.boss.plnp:
                 self.boss.plnp.removeNode()
             self.boss.model.cleanup()
+        
+        for light in self.lights:
+            render.clearLight(light)
             
     def addEntryWall(self):
         wall = None
@@ -174,7 +180,7 @@ class Room(DirectObject.DirectObject):
         cp2 = CollisionBox(min_point - wall.getPos(),max_point - wall.getPos())
         
         csn = wall.attach_new_node(CollisionNode("wall"))
-        csn.show()
+        #csn.show()
         csn.setTag("team", ENTITY_TEAMS.MAP)
         csn.node().addSolid(cp)
         csn.node().addSolid(cp2)
@@ -221,7 +227,7 @@ class Room(DirectObject.DirectObject):
         max_point.z = self.door.getPos().z +1
         cpDoor = CollisionBox(min_point - self.door.getPos(),max_point - self.door.getPos())
         self.doorCollider = self.door.attach_new_node(CollisionNode("wall"))
-        self.doorCollider.show()
+        #self.doorCollider.show()
         self.doorCollider.node().addSolid(cpDoor)
         self.doorCollider.setTag("team", ENTITY_TEAMS.MAP)
         base.cTrav.addCollider(self.doorCollider, CollisionHandlerEvent())
