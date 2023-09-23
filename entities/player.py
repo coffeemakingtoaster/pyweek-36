@@ -87,9 +87,9 @@ class player_entity(enity_base):
 
         self.notifier.addInPattern("%fn-into-%in")
         
-        self.accept("bullet-into", self.bullet_hit)
+        self.accept("bullet-into", self.bullet_hit, [True])
         
-        self.accept("attack-into-player_melee_attack_hitbox", self.bullet_hit)
+        self.accept("attack-into-player_melee_attack_hitbox", self.bullet_hit, [False])
         
         base.cTrav.addCollider(self.ability_collision, self.notifier) 
         base.cTrav.addCollider(self.collision, self.notifier)
@@ -210,7 +210,7 @@ class player_entity(enity_base):
         self.ignore_all()
         render.clearLight(self.plnp)
         
-    def bullet_hit(self, entry: CollisionEntry):
+    def bullet_hit(self, attack_was_ranged: bool,  entry: CollisionEntry):
         # Dashing player does not receive damage 
         if self.is_dashing:
             return
@@ -220,7 +220,7 @@ class player_entity(enity_base):
         if entry.into_node.getTag("team") != self.team:
             return
         
-        if entry.into_node.getTag("id") != self.id:
+        if entry.into_node.getTag("id") != self.id and attack_was_ranged:
             return
         
         self.damage_sfx.play()

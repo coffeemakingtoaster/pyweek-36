@@ -31,6 +31,10 @@ class main_menu(ui_base):
         
         quit_button = DirectButton(text=("Quit"), pos=(0,0,-0.6), scale=0.2, command=self.quit_game, text_font=self.font, relief=None)
         self.ui_elements.append(quit_button)
+        
+        self.loading_display = DirectLabel(text="Loading...", pos=(0.8,-1,-0.8), scale=0.2, text_fg=(255,255,255,1), text_font=self.font, relief=None) 
+        self.loading_display.setScale(0) 
+        self.ui_elements.append(self.loading_display)
 
     def start_game(self):
         print("Start button pressed")
@@ -45,5 +49,4 @@ class main_menu(ui_base):
         sys.exit()
         
     def display_loading(self):
-        loading_display = DirectLabel(text="Loading...", pos=(-0.8,0,-0.8), scale=0.2, text_fg=(255,255,255,1), text_font=self.font, relief=None) 
-        self.ui_elements.append(loading_display)
+        self.loading_display.setScale(0.2) 
