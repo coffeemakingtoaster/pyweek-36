@@ -24,7 +24,7 @@
       "rotz": 0.0,
       "type": "spawner",
       "wave": 1,
-      "enemy_type": "priest_enemy"
+      "enemy_type": "ranged_enemy"
     }
   ],
   "size":1

@@ -13,7 +13,7 @@ class sniper_enemy(base_enemy):
         self.attackcooldown = 2
     
     def loadModel(self):
-        return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
+        return Actor("assets/anims/sniper.egg",{"Attack":"assets/anims/sniper-CrossbowAttack.egg"})
     
     def update(self, dt, player_pos):
         entity_pos = self.model.getPos()
