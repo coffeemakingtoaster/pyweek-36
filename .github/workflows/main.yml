@@ -16,19 +16,19 @@ jobs:
         run: python3 -m pip install -r requirements.txt
 
       - name: build
-        run: python setup.py bdist_apps 
+        run: python setup.py build_apps 
 
       - uses: actions/upload-artifact@v3
         with:
           name: DarkMatterMage_Win
-          path: ./dist/Dark\ Matter\ Mage-0.0.0_win_amd64.zip 
+          path: ./build/win_amd64/
 
       - uses: actions/upload-artifact@v3
         with:
           name: DarkMatterMage_Linux
-          path: ./dist/Dark\ Matter\ Mage-0.0.0_manylinux2010_x86_64.tar.gz
+          path: ./build/manylinux2010_x86_64/ 
 
       - uses: actions/upload-artifact@v3
         with:
           name: DarkMatterMage_OSX
-          path: ./dist/Dark\ Matter\ Mage-0.0.0_macosx_10_9_x86_64.zip 
+          path: ./build/macosx_10_9_x86_64/
