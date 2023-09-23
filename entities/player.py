@@ -111,6 +111,10 @@ class player_entity(enity_base):
         
         self.damage_sfx = base.loader.loadSfx(join("assets", "sfx", "player_damage.wav"))
         
+        self.attack_cooldown = GAME_CONSTANTS.PLAYER_SHOOT_SPEED
+        
+        self.last_shoot_time = base.clock.getLongTime() 
+        
     def set_movement_status(self, direction):
         self.movement_status[direction] = 1
         
@@ -180,11 +184,15 @@ class player_entity(enity_base):
                 del self.bullets[i]
         
     def shoot_bullet(self):
+        current_time = base.clock.getLongTime()
+        if current_time - self.last_shoot_time < self.attack_cooldown: 
+            return
         self.shoot_sfx.play()
         target_point = self._get_mouse_position() 
         player_pos = self.model.getPos()
         delta_to_player = Vec3(target_point.x - player_pos.x, 0 , target_point.z - player_pos.z).normalized()
         self.bullets.append(bullet_entity(self.model.getX(), self.model.getZ(), delta_to_player, self.team)) 
+        self.last_shoot_time = current_time
     
     def _get_mouse_position(self):
         mouse_pos = base.mouseWatcherNode.getMouse()

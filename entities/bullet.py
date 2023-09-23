@@ -87,12 +87,12 @@ class bullet_entity(enity_base):
         self.model.play("Explode")
         self.stopped = True
         base.taskMgr.doMethodLater(0.2, self.die, "die") 
-        
     
     def die(self,_):
         self.is_dead =  True
         
     def destroy(self):
+        self.model.cleanup()
         self.model.removeNode()
         self.collision.removeNode()
         self.ignore_all()
