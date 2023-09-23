@@ -40,8 +40,8 @@ class GAME_STATUS:
 class MAP_CONSTANTS:
    ROOM_SIZE = 24
    ROOM_HEIGHT = 5
-   MAP_LENGTH = 5 
-   ROOM_TYPES = 3
+   MAP_LENGTH = 4
+   ROOM_TYPES = 4
    
 class ENTITY_TEAMS:
    PLAYER = "player"

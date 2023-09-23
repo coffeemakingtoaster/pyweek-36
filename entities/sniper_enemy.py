@@ -33,7 +33,7 @@ class sniper_enemy(base_enemy):
         leash = Vec3(entity_pos.x - self.roomZero[0], 0 , entity_pos.z - self.roomZero[2]).length()
         
        
-        if delta_to_player.length() < 18 and leash < (self.roomSize*MAP_CONSTANTS.ROOM_SIZE/2)-2:
+        if delta_to_player.length() < 20 and leash < (self.roomSize*MAP_CONSTANTS.ROOM_SIZE/2)-2:
             x_direction = -x_direction  
             z_direction = -z_direction
     

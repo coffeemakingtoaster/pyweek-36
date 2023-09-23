@@ -195,7 +195,7 @@ class boss(enity_base):
             quat.setFromAxisAngle(angle, axis)
             shoot_direction = quat.xform(shoot_direction)
             self.bullets.append(
-                bullet_entity(
+                lightBullet_entity(
                     self.model.getX(),
                     self.model.getZ(),
                     shoot_direction,

@@ -3,6 +3,7 @@ from entities.entity_base import enity_base
 from config import GAME_CONSTANTS, ENTITY_TEAMS
 
 from helpers.model_helpers import load_model
+from direct.actor.Actor import Actor
 
 from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionEntry, CollisionHandlerEvent, Point3, BitMask32, NodePath, CollideMask
     
@@ -17,9 +18,9 @@ class bullet_entity(enity_base):
         
         self.direction =  direction
        
-        self.model = load_model("bullet")
+        self.model = Actor("assets/anims/Bullet.egg",{"Explode":"assets/anims/Bullet-Explode.egg"})
         
-        self.model.setScale(0.3)
+        self.model.setScale(1)
         
         self.model.reparentTo(render)
         
@@ -51,13 +52,15 @@ class bullet_entity(enity_base):
         
         self.travelled_distance = 0
         
-        self.collision.show()
+        #self.collision.show()
         
         self.notifier = CollisionHandlerEvent()
         
         self.notifier.addInPattern("%fn-into")
         
         self.accept("bullet-into", self.on_collision)
+        
+        self.stopped = False
         
         base.cTrav.addCollider(self.collision, self.notifier)
         
@@ -69,10 +72,10 @@ class bullet_entity(enity_base):
         if self.travelled_distance > GAME_CONSTANTS.BULLET_MAX_DISTANCE:
             self.is_dead = True
             return 
-        
+        if not self.stopped:
         # Why does this value have to be flipped?
-        self.model.setX(self.model.getX() + self.direction.x * GAME_CONSTANTS.BULLET_SPEED * dt)
-        self.model.setZ(self.model.getZ() + self.direction.z * GAME_CONSTANTS.BULLET_SPEED * dt)
+            self.model.setX(self.model.getX() + self.direction.x * GAME_CONSTANTS.BULLET_SPEED * dt)
+            self.model.setZ(self.model.getZ() + self.direction.z * GAME_CONSTANTS.BULLET_SPEED * dt)
         
     def on_collision(self, collision: CollisionEntry):
         # Is the bullet in the event the bullet from this entity class
@@ -81,6 +84,12 @@ class bullet_entity(enity_base):
         # Ignore object that are on the same team or is an ability
         if collision.into_node.getTag("team") == self.team or collision.into_node.getTag("team") == ENTITY_TEAMS.ABILITY:
             return
+        self.model.play("Explode")
+        self.stopped = True
+        base.taskMgr.doMethodLater(0.2, self.die, "die") 
+        
+    
+    def die(self,_):
         self.is_dead =  True
         
     def destroy(self):
