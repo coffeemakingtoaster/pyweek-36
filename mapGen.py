@@ -17,7 +17,7 @@ class MapLoader:
         prevRoomLength = 0
         for i in range(self.mapLength):
             if i == 0:
-                id = 7
+                id = 0
             elif i == self.mapLength-1:
                 id = 100
             elif i%5 == 0:
