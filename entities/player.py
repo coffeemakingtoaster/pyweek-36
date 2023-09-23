@@ -273,6 +273,9 @@ class player_entity(enity_base):
     def heal(self):
         if self.current_hp < GAME_CONSTANTS.PLAYER_MAX_HP:
             self.current_hp +=1
+            messenger.send("display_hp", [self.current_hp]) 
+            
+            
     def upGradeSpeed(self):
         self.moveSpeed += 5
             
