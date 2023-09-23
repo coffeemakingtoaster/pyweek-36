@@ -10,6 +10,7 @@ from entities.Altar import Altar
 from entities.Boss import boss
 import math
 from direct.actor.Actor import Actor
+from os.path import join
 
 class Room(DirectObject.DirectObject):
       
@@ -35,6 +36,10 @@ class Room(DirectObject.DirectObject):
         
         self.notifier = CollisionHandlerEvent()
         self.notifier.addInPattern("%fn-into-%in")
+        
+        self.open_sfx = base.loader.loadSfx(join("assets", "sfx", "door_opening.wav")) 
+        
+        self.close_sfx = base.loader.loadSfx(join("assets", "sfx", "door_closing.wav"))
         
     def loadRoomAssets(self, id):
         file_path = f'assets/rooms/{id}.json'
@@ -205,6 +210,7 @@ class Room(DirectObject.DirectObject):
     def openDoor(self):
         self.door.play('Open')
         self.doorCollider.removeNode()
+        self.open_sfx.play()
     
     def enter(self):
         print(self.boss)
@@ -216,6 +222,7 @@ class Room(DirectObject.DirectObject):
     def closeDoor(self):
         self.door.play('Close')
         self.doorHitBox()
+        self.close_sfx.play()
         
     def doorHitBox(self):
         min_point, max_point = self.door.getTightBounds()

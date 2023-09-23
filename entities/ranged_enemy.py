@@ -6,12 +6,16 @@ from entities.light_bullet import lightBullet_entity
 from direct.actor.Actor import Actor
 from config import MAP_CONSTANTS
 
+from os.path import join
+
 class ranged_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z,roomSize,roomZero):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         self.bullets = []
         self.attackcooldown = 0.3
+        
+        self.shoot_sfx = base.loader.loadSfx(join("assets", "sfx", "enemy_shoot.wav"))
     
     def loadModel(self):
         return Actor("assets/anims/ranged.egg",{"Attack":"assets/anims/ranged-RangedAttack.egg"})
@@ -65,6 +69,7 @@ class ranged_enemy(base_enemy):
     def attack(self,delta_x_reversed):
         self.bullets.append(lightBullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
         self.model.play('Attack')
+        self.shoot_sfx.play()
         
         
     def destroy(self):

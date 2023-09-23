@@ -9,6 +9,8 @@ from panda3d.core import *
 import uuid
 import math
 
+from os.path import join
+
 class bigLightBullet_entity(enity_base):
     def __init__(self, spawn_x, spawn_z, direction, team: ENTITY_TEAMS):
         super().__init__()
@@ -20,8 +22,6 @@ class bigLightBullet_entity(enity_base):
         self.direction =  direction
        
         self.model = load_model("lightBullet")
-        
-        
         
         self.model.reparentTo(render)
         
@@ -64,6 +64,8 @@ class bigLightBullet_entity(enity_base):
         
         self.accept("bullet-into", self.on_collision)
         
+        self.destroy_sound = base.loader.loadSfx(join("assets", "sfx", "light_bullet_destroy.wav"))
+        
         base.cTrav.addCollider(self.collision, self.notifier)
         
     def update(self, dt):
@@ -89,6 +91,7 @@ class bigLightBullet_entity(enity_base):
         self.is_dead =  True
         
     def destroy(self):
+        self.destroy_sound.play()
         render.clearLight(self.plnp)
         self.model.removeNode()
         self.collision.removeNode()

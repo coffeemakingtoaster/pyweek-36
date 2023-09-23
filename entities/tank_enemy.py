@@ -14,11 +14,15 @@ import time
 from direct.actor.Actor import Actor
 from config import MAP_CONSTANTS
 
+from os.path import join
+
 
 class tank_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z,roomSize,roomZero):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
+        
+        self.attack_sfx = base.loader.loadSfx(join("assets", "sfx", "boss_attack_1.wav"))
         
     def loadModel(self):
         return Actor("assets/anims/TankEnemy.egg",{"Attack":"assets/anims/TankEnemy-Attack.egg","Idle":"assets/anims/TankEnemy-Bite.egg"})
@@ -79,9 +83,12 @@ class tank_enemy(base_enemy):
         if self.model:
             self.attack_hitbox.removeNode()
         self.model.play('Idle')
+        self.attack_sfx.stop()
         return Task.done
       
     def attack(self):
         self.model.play('Attack')
         base.taskMgr.doMethodLater(0.8, self._spawn_attack_hitbox, "spawn_tank_attack_hitbox")
         base.taskMgr.doMethodLater(1.2, self._destroy_attack_hitbox, "destroy_tank_attack_hitbox")
+        self.attack_sfx.setLoop(True)
+        self.attack_sfx.play()

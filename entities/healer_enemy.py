@@ -6,6 +6,8 @@ from entities.light_bullet import lightBullet_entity
 from direct.actor.Actor import Actor
 from config import MAP_CONSTANTS
 
+from os.path import join
+
 class healer_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z,roomSize,roomZero,enemies):
@@ -13,6 +15,7 @@ class healer_enemy(base_enemy):
         self.attackcooldown = 3
         self.enemies = enemies
         self.healAmount = 1
+        self.heal_sound = base.loader.loadSfx(join("assets", "sfx", "enemy_heal.wav"))
             
     def loadModel(self):
         return Actor("assets/anims/Healer.egg",{"Heal":"assets/anims/Healer-Heal.egg"})
@@ -62,6 +65,7 @@ class healer_enemy(base_enemy):
         for enemy in self.enemies:
             enemy.heal(self.healAmount)
         self.model.play('Heal')
+        self.heal_sound.play()
         
         
     def destroy(self):

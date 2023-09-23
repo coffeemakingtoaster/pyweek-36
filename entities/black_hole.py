@@ -6,6 +6,8 @@ from panda3d.core import CollisionNode, CollisionSphere
 
 from helpers.model_helpers import load_model
 
+from os.path import join
+
 class black_hole_entity(enity_base):
     
     def __init__(self, spawn_pos):
@@ -27,8 +29,15 @@ class black_hole_entity(enity_base):
         # Player is not affected 
         self.collision.node().setCollideMask(ENTITY_TEAMS.ABILITY_BITMASK)
         
+        self.spawn_sound = base.loader.loadSfx(join("assets", "sfx", "black_hole_spawn.wav"))
+        
+        self.destroy_sound = base.loader.loadSfx(join("assets", "sfx", "black_hole_destroy.wav"))
+        
+        self.spawn_sound.play()
+        
         base.taskMgr.doMethodLater(GAME_CONSTANTS.BLACK_HOLE_DURATION, self.destroy, "black_hole_destroy")
         
     # basic wrapper for destroy
     def destroy(self, task):
+        self.destroy_sound.play()
         self.model.removeNode()

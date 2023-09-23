@@ -14,6 +14,8 @@ import time
 from direct.actor.Actor import Actor
 from config import MAP_CONSTANTS
 
+from os.path import join
+
 
 class melee_enemy(base_enemy):
     
@@ -21,6 +23,7 @@ class melee_enemy(base_enemy):
         super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         self.speed = 8
         self.attackcooldown = 3
+        self.attack_sound = base.loader.loadSfx(join("assets", "sfx", "boss_attack_2.wav")) 
         
         
     def loadModel(self):
@@ -64,10 +67,9 @@ class melee_enemy(base_enemy):
         if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<6:
             self.attack()
             self.last_attack_time = current_time
-      
-    
         
     def _spawn_attack_hitbox(self, _):
+        self.attack_sound.play()
         if self.model:
             self.attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
             self.attack_hitbox.show()
@@ -78,8 +80,6 @@ class melee_enemy(base_enemy):
             self.attack_hitbox.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
             base.cTrav.addCollider(self.attack_hitbox, self.notifier)
             base.taskMgr.doMethodLater(0.5, self._destroy_attack_hitbox, "destroy_melee_attack_hitbox")
-            
-        
         return Task.done
         
     def _destroy_attack_hitbox(self, _):
