@@ -12,12 +12,13 @@ from helpers.model_helpers import load_model
 from config import GAME_CONSTANTS, ENTITY_TEAMS
 import time
 from direct.actor.Actor import Actor
+from config import MAP_CONSTANTS
 
 
 class tank_enemy(base_enemy):
     
-    def __init__(self, spawn_x, spawn_z):
-        super().__init__(spawn_x,spawn_z)
+    def __init__(self, spawn_x, spawn_z,roomSize,roomZero):
+        super().__init__(spawn_x,spawn_z,roomSize,roomZero)
         
     def loadModel(self):
         return Actor("assets/anims/TankEnemy.egg",{"Attack":"assets/anims/TankEnemy-Attack.egg","Idle":"assets/anims/TankEnemy-Bite.egg"})

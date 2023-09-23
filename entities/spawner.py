@@ -12,7 +12,7 @@ from entities.sniper_enemy import sniper_enemy
 from entities.priest_enemy import priest_enemy
 
 class Spawner(enity_base):
-    def __init__(self,pos,wave,type):
+    def __init__(self,pos,wave,type,roomSize,roomZero):
         super().__init__()
         self.pos = pos
         self.model = load_model("vase")
@@ -20,21 +20,23 @@ class Spawner(enity_base):
         self.model.setPos(pos[0],pos[1],pos[2])
         self.wave = wave
         self.type = type
+        self.roomSize = roomSize
+        self.roomZero = roomZero
         
         
     def spawn(self,entities):
         if self.type == "ranged_enemy":
-            entities.append(ranged_enemy(self.pos[0], self.pos[2]))
+            entities.append(ranged_enemy(self.pos[0], self.pos[2],self.roomSize,self.roomZero))
         elif self.type == "melee_enemy":
-            entities.append(melee_enemy(self.pos[0], self.pos[2]))
+            entities.append(melee_enemy(self.pos[0], self.pos[2],self.roomSize,self.roomZero))
         elif self.type == "tank_enemy":
-            entities.append(tank_enemy(self.pos[0], self.pos[2]))
+            entities.append(tank_enemy(self.pos[0], self.pos[2],self.roomSize,self.roomZero))
         elif self.type == "healer_enemy":
-            entities.append(healer_enemy(self.pos[0], self.pos[2],entities))
+            entities.append(healer_enemy(self.pos[0], self.pos[2],self.roomSize,self.roomZero,entities))
         elif self.type == "sniper_enemy":
-            entities.append(sniper_enemy(self.pos[0], self.pos[2]))
+            entities.append(sniper_enemy(self.pos[0], self.pos[2],self.roomSize,self.roomZero))
         elif self.type == "priest_enemy":
-            entities.append(priest_enemy(self.pos[0], self.pos[2],entities))
+            entities.append(priest_enemy(self.pos[0], self.pos[2],self.roomSize,self.roomZero,entities))
         else:
             pass
         

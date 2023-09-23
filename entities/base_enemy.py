@@ -14,10 +14,12 @@ from direct.actor.Actor import Actor
 
 class base_enemy(enity_base):
     
-    def __init__(self, spawn_x, spawn_z):
+    def __init__(self, spawn_x, spawn_z,roomSize,roomZero):
         super().__init__()
         
         self.team = ENTITY_TEAMS.ENEMIES 
+        self.roomSize = roomSize
+        self.roomZero = roomZero
         
         self.speed = GAME_CONSTANTS.ENEMY_MOVEMENT_SPEED 
         

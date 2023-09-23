@@ -123,7 +123,7 @@ class Room(DirectObject.DirectObject):
             self.models.append(model)
             return model
         elif assetType == "spawner":
-            self.spawners.append(Spawner((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)),wave,enemyType))
+            self.spawners.append(Spawner((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)),wave,enemyType,self.size,(0,0,((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE))))
         elif assetType == "altar":
             self.Altar = Altar((position[0],position[1],position[2]+((self.gridPos-(self.prevRoomLength/2+self.size/2))*MAP_CONSTANTS.ROOM_SIZE)))
         elif assetType == "boss":
@@ -162,19 +162,19 @@ class Room(DirectObject.DirectObject):
         #wall.show_tight_bounds()
         min_point.y = -10
         max_point.y = 10
-        max_point.z = wall.getPos().z -1
+        max_point.z = wall.getPos().z -2
         
         cp = CollisionBox(min_point - wall.getPos(),max_point - wall.getPos())
         
         min_point, max_point = wall.getTightBounds()
         min_point.y = -10
         max_point.y = 10
-        min_point.z = wall.getPos().z +1
+        min_point.z = wall.getPos().z +2
         
         cp2 = CollisionBox(min_point - wall.getPos(),max_point - wall.getPos())
         
         csn = wall.attach_new_node(CollisionNode("wall"))
-        #csn.show()
+        csn.show()
         csn.setTag("team", ENTITY_TEAMS.MAP)
         csn.node().addSolid(cp)
         csn.node().addSolid(cp2)
@@ -215,12 +215,13 @@ class Room(DirectObject.DirectObject):
         min_point, max_point = self.door.getTightBounds()
         min_point.y = -10
         max_point.y = 10
-        min_point.x = self.door.getPos().x -2
+        min_point.x = self.door.getPos().x -3
+        max_point.x = self.door.getPos().x +1
         min_point.z = self.door.getPos().z -1
         max_point.z = self.door.getPos().z +1
         cpDoor = CollisionBox(min_point - self.door.getPos(),max_point - self.door.getPos())
         self.doorCollider = self.door.attach_new_node(CollisionNode("wall"))
-        #self.doorCollider.show()
+        self.doorCollider.show()
         self.doorCollider.node().addSolid(cpDoor)
         self.doorCollider.setTag("team", ENTITY_TEAMS.MAP)
         base.cTrav.addCollider(self.doorCollider, CollisionHandlerEvent())
