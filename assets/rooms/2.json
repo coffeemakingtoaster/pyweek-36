@@ -167,7 +167,7 @@
       "rotz": 0.0,
       "type": "spawner",
       "wave": 0,
-      "enemy_type": "ranged_enemy"
+      "enemy_type": "healer_enemy"
     },
     {
       "asset": "Spawner",
@@ -206,7 +206,7 @@
       "rotz": 0.0,
       "type": "spawner",
       "wave": 0,
-      "enemy_type": "ranged_enemy"
+      "enemy_type": "sniper_enemy"
     },
     {
       "asset": "Spawner",

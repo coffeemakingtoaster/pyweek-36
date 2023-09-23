@@ -34,7 +34,8 @@ class base_enemy(enity_base):
         
         self.model.setPos(spawn_x,2,spawn_z)
         
-        self.current_hp = GAME_CONSTANTS.SAMPLE_ENEMY_MAX_HP
+        self.max_hp = 5
+        self.current_hp = 5
         
         self.id = str(uuid.uuid4())
         
@@ -100,11 +101,16 @@ class base_enemy(enity_base):
     def takeDamage(self,dmg):
         self.current_hp -=dmg
         #print("Taking damage")
+        print(self.current_hp)
         if self.current_hp <= 0:
             self.is_dead = True
             
     def attack(self):
         print("attack")
+    
+    def heal(self,amount):
+        if self.current_hp < self.max_hp:
+            self.current_hp += amount
         
     def enter_black_hole(self, collision: CollisionEntry):
         #print("In black hole")

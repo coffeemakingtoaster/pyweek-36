@@ -7,6 +7,8 @@ from direct.actor.Actor import Actor
 from entities.ranged_enemy import ranged_enemy
 from entities.melee_enemy import melee_enemy
 from entities.tank_enemy import tank_enemy
+from entities.healer_enemy import healer_enemy
+from entities.sniper_enemy import sniper_enemy
 
 class Spawner(enity_base):
     def __init__(self,pos,wave,type):
@@ -26,6 +28,10 @@ class Spawner(enity_base):
             entities.append(melee_enemy(self.pos[0], self.pos[2]))
         elif self.type == "tank_enemy":
             entities.append(tank_enemy(self.pos[0], self.pos[2]))
+        elif self.type == "healer_enemy":
+            entities.append(healer_enemy(self.pos[0], self.pos[2],entities))
+        elif self.type == "sniper_enemy":
+            entities.append(sniper_enemy(self.pos[0], self.pos[2]))
         else:
             pass
         
