@@ -2,19 +2,22 @@ from entities.base_enemy import base_enemy
 from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionHandlerEvent, CollisionEntry
 import math
 import time
+from entities.big_light_bullet import bigLightBullet_entity
 from entities.light_bullet import lightBullet_entity
 from direct.actor.Actor import Actor
+import random
 
-class healer_enemy(base_enemy):
+class priest_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z,enemies):
         super().__init__(spawn_x,spawn_z)
-        self.attackcooldown = 3
+        self.attackcooldown = 1
         self.enemies = enemies
         self.healAmount = 1
+        self.bullets =[]
     
     def loadModel(self):
-        return Actor("assets/anims/Healer.egg",{"Heal":"assets/anims/Healer-Heal.egg"})
+        return Actor("assets/anims/Priest.egg",{"Attack":"assets/anims/Priest-Attack.egg","Heal":"assets/anims/Priest-Heal.egg"})
     
     def update(self, dt, player_pos):
         entity_pos = self.model.getPos()
@@ -27,7 +30,7 @@ class healer_enemy(base_enemy):
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
         
-        if delta_to_player.length() < 12:
+        if delta_to_player.length() < 17:
             x_direction = -x_direction  
             z_direction = -z_direction
     
@@ -49,12 +52,28 @@ class healer_enemy(base_enemy):
         
         current_time = time.time()
         if current_time - self.last_attack_time >= self.attackcooldown:
-            self.attack()
+            action = random.randint(1,2)
+            if action == 1:
+                self.attack(delta_x_reversed.normalized())
+            else:
+                self.heal_enemies()
+            
             self.last_attack_time = current_time
-            
         
+        bullets_to_delete = []
+        for i, bullet in enumerate(self.bullets):
+            bullet.update(dt)
+            if bullet.is_dead:
+                bullet.destroy()
+                del self.bullets[i]
             
-    def attack(self):
+    def attack(self,delta_x_reversed):
+        self.bullets.append(bigLightBullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
+        
+        self.model.play('Attack')
+          
+            
+    def heal_enemies(self):
         for enemy in self.enemies:
             enemy.heal(self.healAmount)
         self.model.play('Heal')

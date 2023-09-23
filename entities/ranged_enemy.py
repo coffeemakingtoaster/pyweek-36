@@ -10,7 +10,7 @@ class ranged_enemy(base_enemy):
     def __init__(self, spawn_x, spawn_z):
         super().__init__(spawn_x,spawn_z)
         self.bullets = []
-        self.attackcooldown = 0.5
+        self.attackcooldown = 0.3
     
     def loadModel(self):
         return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})

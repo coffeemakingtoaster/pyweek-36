@@ -66,7 +66,7 @@ class tank_enemy(base_enemy):
         if self.model:
             self.attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
             self.attack_hitbox.show()
-            self.attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,0),1,1.5,1.5))
+            self.attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,-1),1,1.5,2))
             self.attack_hitbox.setTag("team", ENTITY_TEAMS.PLAYER)
             self.attack_hitbox.setPos(1,0,-1)
             # Set player team as player is the target
@@ -82,5 +82,5 @@ class tank_enemy(base_enemy):
       
     def attack(self):
         self.model.play('Attack')
-        base.taskMgr.doMethodLater(0.5, self._spawn_attack_hitbox, "spawn_tank_attack_hitbox")
+        base.taskMgr.doMethodLater(0.8, self._spawn_attack_hitbox, "spawn_tank_attack_hitbox")
         base.taskMgr.doMethodLater(1.2, self._destroy_attack_hitbox, "destroy_tank_attack_hitbox")

@@ -18,10 +18,14 @@ class lightSpear_entity(enity_base):
         self.plnp = None
         
         self.direction =  direction
+        
        
         self.model = load_model("lightSpear")
-        
-        self.model.lookAt(direction-Vec3(0, 1, 0))
+        if(direction.x < 0): 
+            self.model.setR((Vec3(0,0,-1).angle_deg(direction)))
+        else:
+            self.model.setR(-(Vec3(0,0,-1).angle_deg(direction)))
+        self.model.setScale(1.5)
         
         self.model.reparentTo(render)
         
