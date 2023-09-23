@@ -34,7 +34,7 @@ class base_enemy(enity_base):
         
         self.model.reparentTo(render)
         
-        self.model.setPos(spawn_x,2,spawn_z)
+        self.model.setPos(spawn_x,0.5,spawn_z)
         
         self.max_hp = 5
         self.current_hp = 5
