@@ -210,16 +210,22 @@ class boss(enity_base):
         if self.melee_attack_hitbox is not None:
             self.melee_attack_hitbox.removeNode()
             self.melee_attack_hitbox = None
+        else:
+            Task.cont
         return Task.done
 
     def _activate_hitbox(self, task):
-        base.cTrav.addCollider(self.melee_attack_hitbox, self.notifier)
+        if self.melee_attack_hitbox is not None:
+            base.cTrav.addCollider(self.melee_attack_hitbox, self.notifier)
         return Task.done
 
     # This is only the melee attack
     def attack(self):
         attack_number = random.randint(1, 3)
         print("Attack {}".format(attack_number))
+        # Cleanup. This covers an edge case that kept attack hitboxes to stay indefinelty
+        if self.melee_attack_hitbox is not None:
+            self._remove_hitbox(None)
         self.melee_attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
         self.melee_attack_hitbox.show()
         attack_duration = 0
