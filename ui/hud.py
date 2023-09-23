@@ -104,7 +104,7 @@ class game_hud(ui_base):
         step = (hp_value/GAME_CONSTANTS.BOSS_HP) * 0.995
         self.boss_hp_display.setScale(step, 1, 0.045)
         # Pos of -0.995 is final
-        self.boss_hp_display.setX(0.995 - step)
+        self.boss_hp_display.setX(-0.995 + step)
         
     def enter_boss_mode(self, name):
         print(name)

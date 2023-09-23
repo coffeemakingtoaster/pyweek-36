@@ -67,7 +67,6 @@ class melee_enemy(base_enemy):
         
     def _spawn_attack_hitbox(self, _):
         if self.model:
-            
             self.attack_hitbox = self.model.attachNewNode(CollisionNode("attack"))
             self.attack_hitbox.show()
             self.attack_hitbox.node().addSolid(CollisionBox(Point3(0,0,0),2,0.5,1.5))
