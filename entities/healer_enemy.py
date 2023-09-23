@@ -5,15 +5,16 @@ import time
 from entities.light_bullet import lightBullet_entity
 from direct.actor.Actor import Actor
 
-class ranged_enemy(base_enemy):
+class healer_enemy(base_enemy):
     
-    def __init__(self, spawn_x, spawn_z):
+    def __init__(self, spawn_x, spawn_z,enemies):
         super().__init__(spawn_x,spawn_z)
-        self.bullets = []
-        self.attackcooldown = 0.3
+        self.attackcooldown = 3
+        self.enemies = enemies
+        self.healAmount = 1
     
     def loadModel(self):
-        return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
+        return Actor("assets/anims/Healer.egg",{"Heal":"assets/anims/Healer-Heal.egg"})
     
     def update(self, dt, player_pos):
         entity_pos = self.model.getPos()
@@ -26,7 +27,7 @@ class ranged_enemy(base_enemy):
         x_direction = diff_to_player_normalized[0] * self.speed * dt
         z_direction = diff_to_player_normalized[1] * self.speed * dt
         
-        if delta_to_player.length() < 14:
+        if delta_to_player.length() < 12:
             x_direction = -x_direction  
             z_direction = -z_direction
     
@@ -48,22 +49,16 @@ class ranged_enemy(base_enemy):
         
         current_time = time.time()
         if current_time - self.last_attack_time >= self.attackcooldown:
-            self.attack(delta_x_reversed.normalized())
+            self.attack()
             self.last_attack_time = current_time
             
-        bullets_to_delete = []
-        for i, bullet in enumerate(self.bullets):
-            bullet.update(dt)
-            if bullet.is_dead:
-                bullet.destroy()
-                del self.bullets[i]
+        
             
-    def attack(self,delta_x_reversed):
-        self.bullets.append(lightBullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
-        self.model.play('Attack')
+    def attack(self):
+        for enemy in self.enemies:
+            enemy.heal(self.healAmount)
+        self.model.play('Heal')
         
         
     def destroy(self):
-        for bullet in self.bullets:
-            bullet.destroy()
         super().destroy()

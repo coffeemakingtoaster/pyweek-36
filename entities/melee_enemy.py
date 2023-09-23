@@ -18,8 +18,9 @@ class melee_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z):
         super().__init__(spawn_x,spawn_z)
+        self.speed = 8
+        self.attackcooldown = 3
         
-        print("Melee enemy")
         
     def loadModel(self):
         return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
@@ -40,7 +41,7 @@ class melee_enemy(base_enemy):
         
         black_hole_pull_vector = self.get_black_hole_pull_vector()
         
-        if delta_to_player.length() <= 2:
+        if delta_to_player.length() <= 1:
             x_direction = 0
             z_direction = 0
                     
@@ -59,7 +60,7 @@ class melee_enemy(base_enemy):
         self.model.setR(x)
         
         current_time = time.time()
-        if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<4:
+        if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<6:
             self.attack()
             self.last_attack_time = current_time
       
@@ -75,7 +76,7 @@ class melee_enemy(base_enemy):
             # Set player team as player is the target
             self.attack_hitbox.node().setCollideMask(ENTITY_TEAMS.MELEE_ATTACK_BITMASK)
             base.cTrav.addCollider(self.attack_hitbox, self.notifier)
-            base.taskMgr.doMethodLater(1.5, self._destroy_attack_hitbox, "destroy_melee_attack_hitbox")
+            base.taskMgr.doMethodLater(0.5, self._destroy_attack_hitbox, "destroy_melee_attack_hitbox")
             
         
         return Task.done
@@ -83,10 +84,16 @@ class melee_enemy(base_enemy):
     def _destroy_attack_hitbox(self, _):
         if self.model:
             self.attack_hitbox.removeNode()
-        self.model.play('Idle')
+        self.speed = 8
+        base.taskMgr.doMethodLater(0.5, self._play_idle, "play_idle")
+    
         return Task.done
+    
+    def _play_idle(self,_):
+        self.model.play('Idle')
       
     def attack(self):
+        self.speed = 12
         self.model.play('Attack')
-        base.taskMgr.doMethodLater(0.7, self._spawn_attack_hitbox, "spawn_melee_attack_hitbox")
+        base.taskMgr.doMethodLater(1, self._spawn_attack_hitbox, "spawn_melee_attack_hitbox")
         

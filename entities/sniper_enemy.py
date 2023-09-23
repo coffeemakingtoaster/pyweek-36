@@ -2,15 +2,15 @@ from entities.base_enemy import base_enemy
 from panda3d.core import Vec3, Point2, CollisionNode, CollisionSphere, CollisionHandlerEvent, CollisionEntry
 import math
 import time
-from entities.light_bullet import lightBullet_entity
+from entities.light_spear import lightSpear_entity
 from direct.actor.Actor import Actor
 
-class ranged_enemy(base_enemy):
+class sniper_enemy(base_enemy):
     
     def __init__(self, spawn_x, spawn_z):
         super().__init__(spawn_x,spawn_z)
         self.bullets = []
-        self.attackcooldown = 0.3
+        self.attackcooldown = 2
     
     def loadModel(self):
         return Actor("assets/anims/Enemy.egg",{"Attack":"assets/anims/Enemy-Attack.egg","Idle":"assets/anims/Enemy-Bite.egg"})
@@ -59,7 +59,8 @@ class ranged_enemy(base_enemy):
                 del self.bullets[i]
             
     def attack(self,delta_x_reversed):
-        self.bullets.append(lightBullet_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
+        print("lightspear")
+        self.bullets.append(lightSpear_entity(self.model.getX(), self.model.getZ(), delta_x_reversed, self.team))
         self.model.play('Attack')
         
         
