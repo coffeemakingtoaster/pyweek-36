@@ -44,6 +44,10 @@ class healer_enemy(base_enemy):
             
         self.model.setX(self.model.getX() - x_direction)
         self.model.setZ(self.model.getZ() - z_direction)
+        
+        # Safeguard 
+        if self.model.getY() > 2: 
+            self.model.setY(2)
 
         self.model.setR(x)
         

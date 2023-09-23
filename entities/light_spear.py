@@ -54,12 +54,12 @@ class lightSpear_entity(enity_base):
         
         #self.collision.show()
         
-        plight = PointLight('plight')
-        plight.setColor((0.5,0.5,0.5, 1))
-        self.plnp = self.model.attachNewNode(plight)
-        plight.attenuation = (1, 0, 0.2)
-        self.plnp.setPos(0, 0, 0)
-        render.setLight(self.plnp)
+        #plight = PointLight('plight')
+        #plight.setColor((0.5,0.5,0.5, 1))
+        #self.plnp = self.model.attachNewNode(plight)
+        #plight.attenuation = (1, 0, 0.2)
+        #self.plnp.setPos(0, 0, 0)
+        #render.setLight(self.plnp)
         
         self.notifier = CollisionHandlerEvent()
         
@@ -92,7 +92,7 @@ class lightSpear_entity(enity_base):
         self.is_dead =  True
         
     def destroy(self):
-        render.clearLight(self.plnp)
+        #render.clearLight(self.plnp)
         self.model.removeNode()
         self.collision.removeNode()
         self.ignore_all()

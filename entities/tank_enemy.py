@@ -59,7 +59,7 @@ class tank_enemy(base_enemy):
             self.model.setY(2)
         
         current_time = time.time()
-        if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<4:
+        if current_time - self.last_attack_time >= self.attackcooldown and delta_to_player.length()<6:
             self.attack()
             self.last_attack_time = current_time
             
@@ -76,6 +76,7 @@ class tank_enemy(base_enemy):
         return Task.done
         
     def _destroy_attack_hitbox(self, _):
+        self.speed = 6
         if self.model:
             self.attack_hitbox.removeNode()
         
@@ -83,5 +84,6 @@ class tank_enemy(base_enemy):
       
     def attack(self):
         self.model.play('Attack')
+        self.speed = 8
         base.taskMgr.doMethodLater(0.8, self._spawn_attack_hitbox, "spawn_tank_attack_hitbox")
         base.taskMgr.doMethodLater(1.2, self._destroy_attack_hitbox, "destroy_tank_attack_hitbox")
