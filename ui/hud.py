@@ -22,14 +22,17 @@ class game_hud(ui_base):
         self.accept("display_boss_hp", self.display_boss_hp_count)
         
         self.accept("set_ability_on_cooldown", self.set_ability_cooldown)
-        
-        self.hp_display = DirectLabel(text="{}/{}".format(GAME_CONSTANTS.PLAYER_MAX_HP, GAME_CONSTANTS.PLAYER_MAX_HP), scale=0.2, pos=(-0.6, 0, -0.8), color=(255,0,0,1), text_font=self.font)
+
+        self.hp_display_background = OnscreenImage(scale=0.2, pos=(0, 0, -0.7), image=join("assets", "icons", "hud", "hp_backplane.png"))
+        self.hp_display_background.setTransparency(TransparencyAttrib.MAlpha)
+        self.ui_elements.append(self.hp_display_background)
+        self.hp_display = DirectLabel(text="{}".format(GAME_CONSTANTS.PLAYER_MAX_HP), scale=0.2, pos=(-0.015, 0, -0.77), text_font=self.font, relief=None, text_fg=(255,255,255,1))
         self.ui_elements.append(self.hp_display)
         
         self.dash_ability_icon = self._create_ability_icon(PLAYER_ABILITIES.DASH, (0.4,0,-0.8))
         self.ui_elements.append(self.dash_ability_icon)
         
-        self.black_hole_ability_icon = self._create_ability_icon(PLAYER_ABILITIES.BLACK_HOLE, (1, 0, -0.8))
+        self.black_hole_ability_icon = self._create_ability_icon(PLAYER_ABILITIES.BLACK_HOLE, (-0.4, 0, -0.8))
         self.ui_elements.append(self.black_hole_ability_icon)
         
         self.current_cooldowns = {
@@ -40,13 +43,19 @@ class game_hud(ui_base):
         self.is_paused = False
         
     def _create_ability_icon(self, name,pos, scale=0.2):
-        self.ui_elements.append(OnscreenImage(image=join("assets","icons","hud","backplane.png"), pos=pos, scale=scale))
+        backplane = OnscreenImage(image=join("assets","icons","hud","backplane.png"), pos=pos, scale=scale)
+        backplane.setTransparency(TransparencyAttrib.MAlpha)
+        self.ui_elements.append(backplane)
         img = OnscreenImage(image=join("assets","icons","hud","{}.png".format(name)), pos=pos, scale=scale)
+        img.setTransparency(TransparencyAttrib.MAlpha)
+        border = OnscreenImage(image=join("assets", "icons", "hud", "border.png"), pos=pos, scale=scale)
+        border.setTransparency(TransparencyAttrib.MAlpha)
+        self.ui_elements.append(border)
         return img
         
     def display_hp_count(self, hp_value):
         hp_value = max(0, hp_value)
-        self.hp_display["text"] =  "{}/{}".format(hp_value, GAME_CONSTANTS.PLAYER_MAX_HP)
+        self.hp_display["text"] =  "{}".format(hp_value)
         
     def set_ability_cooldown(self, ability_name, ready_time):
         print(ability_name)
@@ -63,7 +72,7 @@ class game_hud(ui_base):
         ability_icon.setTransparency(1, 0)
         ability_icon.setAlphaScale(0.5)
         self.current_cooldowns[ability_name] = ready_time - self._get_current_time()
-        cooldownText = DirectLabel(text=format_float(self.current_cooldowns[ability_name]), pos=ability_icon.getPos(), scale=ability_icon.getScale(), text_font=self.font)
+        cooldownText = DirectLabel(text=format_float(self.current_cooldowns[ability_name]), pos=(ability_icon.getX(), ability_icon.getY(), ability_icon.getZ() - 0.03), scale=ability_icon.getScale() - 0.1, text_font=self.font, text_fg=(255,255,255,1), relief=False)
         self.ui_elements.append(cooldownText)
         base.taskMgr.add(self._update_abilities_cooldown_display, "hud_update_{}".format(ability_name), extraArgs=[ability_name, cooldownText, ability_icon])
             

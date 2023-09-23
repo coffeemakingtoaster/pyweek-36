@@ -2,7 +2,7 @@ from ui.ui_base import ui_base
 from config import GAME_STATUS
 from helpers.utilities import save_config
 
-from direct.gui.DirectGui import DirectButton, OnscreenImage
+from direct.gui.DirectGui import DirectButton, OnscreenImage, DirectLabel
 
 import sys
 from os.path import join
@@ -14,6 +14,12 @@ class main_menu(ui_base):
         self.ui_elements = []
         
         self.load_background_image()
+        
+        self.ui_elements.append(DirectLabel(text="Dark", scale=0.25, pos=(-0.5,0,0.7), text_font=self.font, relief=None, text_fg=(255,255,255,1)))
+        
+        self.ui_elements.append(DirectLabel(text="Matter", scale=0.25, pos=(0,0,0.5), text_font=self.font, relief=None, text_fg=(255,255,255,1)))
+        
+        self.ui_elements.append(DirectLabel(text="Mage", scale=0.25, pos=(0.3,0,0.3), text_font=self.font, relief=None, text_fg=(255,255,255,1)))
         
         start_button = DirectButton(text=("start"),pos=(0,0,0), scale=0.2, command=self.start_game, text_font=self.font, relief=None)
         self.ui_elements.append(start_button)
